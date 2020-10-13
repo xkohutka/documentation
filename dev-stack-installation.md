@@ -69,15 +69,82 @@ To auto-mount the partition create a new directory in the root of your filesyste
 ```
 Save the file and now you can mount the new disk to your VM with `mount -a`.
 
+### Setup Acme.sh for issuing Let's Encrypt certificates
+
+Acme.sh script is used to generate SSL certificates for our web server and mail server.
+
+- `curl https://get.acme.sh | sh`
+- `cd /root/.acme.sh/`
+- `mkdir /etc/nginx/certs`
+
+Now you can issue a certificate for your domain:
+```bash
+./acme.sh --issue -d team01-20.studenti.fiit.stuba.sk \
+                  -w /var/www/html/ \
+                  --cert-file /etc/nginx/certs/team01-20.studenti.fiit.stuba.sk/cert.cer \
+                  --key-file /etc/nginx/certs/team01-20.studenti.fiit.stuba.sk/key.key \
+                  --fullchain-file /etc/nginx/certs/team01-20.studenti.fiit.stuba.sk/fullchain.cer
+```
+
+This command will issue a certificate with the use of our NginX server. By default all domains pointing to the VM will use the website in the webroot `/var/www/html/`. We tell the `acme.sh` script where to store the domain verification files, then where to output the certificate files themselves.
+
 ### Setting up your webserver
 
-- Create a SSL certificate with Let's Encrypt
-- Create a new directory in /etc/nginx/ for SSL certificates: `mkdir /etc/nginx/certs`
-- Copy certificate files into /etc/nginx/certs
+- Create an SSL certificate with Let's Encrypt (use step above for all domains)
 - Create a new directory in /etc/nginx/ for custom configuration files: `mkdir /etc/nginx/conf`
 
-#### Create configuration files for repetitive tasks
+The folder structure will look like this:
+```
+/etc/nginx
+  ./certs                                                         | SSL certificates for domains
+    ./{domain1}                                                   | SSL certificates for domain1
+      fullchain.cer                                               | SSL fullchain certificate
+      key.key                                                     | SSL certificate key
+    ./{domain2}                                                   | SSL certificates for domain2
+      fullchain.cer                                               | SSL fullchain certificate
+      key.key                                                     | SSL certificate key
+    ...
+  ./conf                                                          | custom configuration directory
+    default.conf                                                  | default virtual host configuration
+    logging.conf                                                  | logging configuration
+    php.conf                                                      | PHP configuration
+    redirect_https.conf                                           | redirect rule HTTP to HTTPS
+    redirect_www.conf                                             | redirect rule non-www to www
+    ssl_{domain1}.conf                                            | SSL config for domain
+    ssl_{domain2}.conf                                            | SSL config for domain
+    ...
+  ./conf.d                                                        | NginX additional global configuration
+  ./modules-available                                             | NginX available modules
+  ./modules-enabled                                               | NginX enabled modules
+  ./sites-available                                               | NginX available sites configs
+    ./{domain1}                                                   | domain config folder
+      proxy.subdomain.conf                                        | subdomain config
+      subdomain.conf                                              | subdomain config
+      www.conf                                                    | subdomain config
+      ...
+    ./{domain2}                                                   | domain config folder
+      www.conf                                                    | subdomain config
+    {domain1}.conf                                                | main domain name configuration
+    {domain2}.conf                                                | main domain name configuration
+  ./sites-enabled                                                 | NginX enabled sites configs
+    {domain1}.conf -> /etc/nginx/sites-available/{domain1}.conf   | linked domain config
+    {domain2}.conf -> /etc/nginx/sites-available/{domain2}.conf   | linked domain config
+  ./snippets                                                      | NginX snippets
+  fastcgi.conf
+  fastcgi_params
+  koi-utf
+  koi-win
+  mime.types
+  nginx.conf                                                      | main NginX configuration
+  proxy_params
+  scgi_params
+  uwsgi_params
+  win-utf
+```
 
+#### Create custom configuration files for repetitive tasks
+
+Default virtual host configuration
 - `vim /etc/nginx/conf/default.conf`
   ```apacheconf
   index index.php index.html;
@@ -87,12 +154,14 @@ Save the file and now you can mount the new disk to your VM with `mount -a`.
   }
   ```
 
+Logging configuration
 - `vim /etc/nginx/conf/logging.conf`
   ```apacheconf
-  access_log /data/logs/nginx_access.log main;
+  access_log /data/logs/nginx_access.log;
   error_log /data/logs/nginx_error.log warn;
   ```
 
+PHP configuration
 - `vim /etc/nginx/conf/php.conf`
   ```apacheconf
   location ~ \.php$ {
@@ -111,27 +180,31 @@ Save the file and now you can mount the new disk to your VM with `mount -a`.
   }
   ```
 
+Permanent redirect from HTTP to HTTPS
 - `vim /etc/nginx/conf/redirect_https.conf`
   ```apacheconf
   return 301 https://$host$request_uri;
   ```
 
+Permanent redirect from non-www to www
 - `vim /etc/nginx/conf/redirect_www.conf`
   ```apacheconf
   return 301 https://www.$host$request_uri;
   ```
 
-- `vim /etc/nginx/conf/ssl_main.conf`
+SSL configuration for main domain
+- `vim /etc/nginx/conf/ssl_team01-20.studenti.fiit.stuba.sk.conf`
   ```apacheconf
-  ssl_certificate /etc/nginx/certs/team01-20.studenti.fiit.stuba.sk.cer;
-  ssl_certificate_key /etc/nginx/certs/team01-20.studenti.fiit.stuba.sk.key;
+  ssl_certificate /etc/nginx/certs/team01-20.studenti.fiit.stuba.sk/fullchain.cer;
+  ssl_certificate_key /etc/nginx/certs/team01-20.studenti.fiit.stuba.sk/key.key;
   ssl_stapling on;
   ```
 
+SSL configuration for custom domain
 - `vim /etc/nginx/conf/ssl_asicde.org.conf`
   ```apacheconf
-  ssl_certificate /etc/nginx/certs/asicde.org.cer;
-  ssl_certificate_key /etc/nginx/certs/asicde.org.key;
+  ssl_certificate /etc/nginx/certs/asicde.org/fullchain.cer;
+  ssl_certificate_key /etc/nginx/certs/asicde.org/key.key;
   ssl_stapling on;
   ```
 
@@ -157,7 +230,7 @@ Setup a main configuration file for the domain name:
   include /etc/nginx/sites-available/team01-20.studenti.fiit.stuba.sk/*.conf;
   ```
 
-Then create configuration files for any subdomains:
+Then create configuration files for any subdomains (for example www - root domain):
 - `vim /etc/nginx/sites-available/team01-20.studenti.fiit.stuba.sk/www.conf`
   ```apacheconf
   # Subdomain: www
@@ -170,13 +243,13 @@ Then create configuration files for any subdomains:
     root /data/www/team01-20.studenti.fiit.stuba.sk/www/;
 
     include /etc/nginx/conf/default.conf;
-    include /etc/nginx/conf/ssl_main.conf;
+    include /etc/nginx/conf/ssl_team01-20.studenti.fiit.stuba.sk.conf;
     include /etc/nginx/conf/php.conf;
     include /etc/nginx/conf/logging.conf;
   }
   ```
 
-For additional domains create a new main config:
+For additional custom domains create a new main config:
 - `mkdir /etc/nginx/sites-available/asicde.org`
 - `vim /etc/nginx/sites-available/asicde.org.conf`
   ```apacheconf
@@ -246,6 +319,10 @@ An example of a Proxy subdomain configuration:
 **To enable a domain name, you need to link the configuration to enabled sites and reload NginX:**
 - `ln -s /etc/nginx/sites-available/team01-20.studenti.fiit.stuba.sk.conf /etc/nginx/sites-enabled/team01-20.studenti.fiit.stuba.sk.conf`
 - `ln -s /etc/nginx/sites-available/asicde.org.conf /etc/nginx/sites-enabled/asicde.org.conf`
+- `mkdir /data/logs`
+- `chown www-data:www-data /data/logs`
+- `chown -R root:www-data /etc/nginx/`
 - `systemctl reload nginx`
-- *Note: Subdomains are included automatically*
+- *Note: Subdomains are included automatically - see configuration for a custom domain*
+
 

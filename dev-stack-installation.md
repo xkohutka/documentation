@@ -45,6 +45,11 @@ Table of Contents
             * [Docker](#docker)
          * [Maven configuration](#maven-configuration)
          * [NPM configuration](#npm-configuration)
+         * [Setting up credentials](#setting-up-credentials)
+            * [Github SSH access](#github-ssh-access)
+            * [Nexus access](#nexus-access)
+            * [<em>(Optional)</em> Slack access](#optional-slack-access)
+      * [10. Setup Jenkins pipelines](#10-setup-jenkins-pipelines)
 
 ## 1. Preparation
 - Configure SSH keys for you VM to enable remote access
@@ -655,7 +660,7 @@ Open a web browser, go to the Jenkins proxy URL and enter the password.
   - NodeJS
   - Pipeline NPM Integration
   - Pipeline Utility Steps
-  - Slack Notification
+  - *(Optional)* Slack Notification
 
 ### Global tool configuration
 
@@ -675,6 +680,7 @@ Open a web browser, go to the Jenkins proxy URL and enter the password.
 - Add NodeJS
 - Name: `nodejs`
 - Install automatically
+- Global NPM packages to install: `@angular/cli@9.1.5`
 
 #### Docker
 - Add Docker
@@ -767,3 +773,31 @@ Then copy this file into the Jenkins container:
 ```bash
 docker cp ./.npmrc jenkins:/var/jenkins_home/.npmrc
 ```
+
+### Setting up credentials
+
+Go to Manage Jenkins -> Manage credentials -> Jenkins -> Global credentials
+
+#### Github SSH access
+
+- Type: SSH username with private key
+- ID: `github`
+- Username: `git`
+- Private key -> Enter directly
+
+#### Nexus access
+
+- Type: Username with password
+- ID: `nexus`
+- Username: `jenkins`
+- Password: `supersecret`
+
+#### *(Optional)* Slack access
+
+- Type: Secret text
+- ID: `slack`
+- Secret: `somesecrettoken`
+
+## 10. Setup Jenkins pipelines
+
+Each part of the project contains a Jenkinsfile (if the project module is buildable). You can use this pipeline as a reference to create your own. To add this pipeline simply open Jenkins, click on New item -> Type in name -> Select Pipeline project type -> Create. Then you can insert the pipeline code into the build item.

@@ -16,7 +16,7 @@ Connect to your Ubuntu VM and update the system
   - Remove old packages
   - Reboot
 
-### Installing basic packages
+### Installing required packages
 
 We need to install some packages in order to be able to configure the development stack. A rundown of the packages is listed below:
 
@@ -35,7 +35,7 @@ We need to install some packages in order to be able to configure the developmen
 `apt install git mc wget htop zip unzip docker docker-compose nginx php-fpm postfix dovecot-imapd`
   - Postifx configuration: Internet site
 
-### Setup your data disk
+## Setup your data disk
 
 Your VM should come with a separate data disk. This disk isn't formatted or mounted by default.
 
@@ -69,7 +69,7 @@ To auto-mount the partition create a new directory in the root of your filesyste
 ```
 Save the file and now you can mount the new disk to your VM with `mount -a`.
 
-### Setup Acme.sh for issuing Let's Encrypt certificates
+## Setup Acme.sh for issuing Let's Encrypt certificates
 
 Acme.sh script is used to generate SSL certificates for our web server and mail server.
 
@@ -88,7 +88,7 @@ Now you can issue a certificate for your domain:
 
 This command will issue a certificate with the use of our NginX server. By default all domains pointing to the VM will use the website in the webroot `/var/www/html/`. We tell the `acme.sh` script where to store the domain verification files, then where to output the certificate files themselves.
 
-### Setting up your webserver
+## Setting up your webserver
 
 - Create an SSL certificate with Let's Encrypt (use step above for all domains)
 - Create a new directory in /etc/nginx/ for custom configuration files: `mkdir /etc/nginx/conf`
@@ -142,9 +142,9 @@ The folder structure will look like this:
   win-utf
 ```
 
-#### Create custom configuration files for repetitive tasks
+### Create custom configuration files for repetitive tasks
 
-Default virtual host configuration
+#### Default virtual host configuration
 - `vim /etc/nginx/conf/default.conf`
   ```apacheconf
   index index.php index.html;
@@ -154,14 +154,14 @@ Default virtual host configuration
   }
   ```
 
-Logging configuration
+#### Logging configuration
 - `vim /etc/nginx/conf/logging.conf`
   ```apacheconf
   access_log /data/logs/nginx_access.log;
   error_log /data/logs/nginx_error.log warn;
   ```
 
-PHP configuration
+#### PHP configuration
 - `vim /etc/nginx/conf/php.conf`
   ```apacheconf
   location ~ \.php$ {
@@ -180,19 +180,19 @@ PHP configuration
   }
   ```
 
-Permanent redirect from HTTP to HTTPS
+#### Permanent redirect from HTTP to HTTPS
 - `vim /etc/nginx/conf/redirect_https.conf`
   ```apacheconf
   return 301 https://$host$request_uri;
   ```
 
-Permanent redirect from non-www to www
+#### Permanent redirect from non-www to www
 - `vim /etc/nginx/conf/redirect_www.conf`
   ```apacheconf
   return 301 https://www.$host$request_uri;
   ```
 
-SSL configuration for main domain
+#### SSL configuration for main domain
 - `vim /etc/nginx/conf/ssl_team01-20.studenti.fiit.stuba.sk.conf`
   ```apacheconf
   ssl_certificate /etc/nginx/certs/team01-20.studenti.fiit.stuba.sk/fullchain.cer;
@@ -200,7 +200,7 @@ SSL configuration for main domain
   ssl_stapling on;
   ```
 
-SSL configuration for custom domain
+#### SSL configuration for custom domain
 - `vim /etc/nginx/conf/ssl_asicde.org.conf`
   ```apacheconf
   ssl_certificate /etc/nginx/certs/asicde.org/fullchain.cer;
@@ -208,11 +208,11 @@ SSL configuration for custom domain
   ssl_stapling on;
   ```
 
-#### Create your virtual host config
+### Create your virtual host config
 
 In order to server a web site to the user, you need to define a virtual host configuration that tells the NginX server how to handle incomming connections from your domain name.
 
-Setup a main configuration file for the domain name:
+#### Setup a main configuration file for the domain name:
 - `mkdir /etc/nginx/sites-available/team01-20.studenti.fiit.stuba.sk`
 - `vim /etc/nginx/sites-available/team01-20.studenti.fiit.stuba.sk.conf`
   ```apacheconf
@@ -230,10 +230,10 @@ Setup a main configuration file for the domain name:
   include /etc/nginx/sites-available/team01-20.studenti.fiit.stuba.sk/*.conf;
   ```
 
-Then create configuration files for any subdomains (for example www - root domain):
+#### Create configuration files for any subdomains (for example www - root domain):
 - `vim /etc/nginx/sites-available/team01-20.studenti.fiit.stuba.sk/www.conf`
   ```apacheconf
-  # Subdomain: www
+  # Virtual Host: team01-20.studenti.fiit.stuba.sk
 
   server {
     listen 443 ssl http2;
@@ -249,7 +249,7 @@ Then create configuration files for any subdomains (for example www - root domai
   }
   ```
 
-For additional custom domains create a new main config:
+#### Create a new main config for additional custom domains:
 - `mkdir /etc/nginx/sites-available/asicde.org`
 - `vim /etc/nginx/sites-available/asicde.org.conf`
   ```apacheconf
@@ -284,10 +284,10 @@ For additional custom domains create a new main config:
   include /etc/nginx/sites-available/asicde.org/*.conf;
   ```
 
-An example of a Proxy subdomain configuration:
+#### An example of a Proxy subdomain configuration:
 - `vim /etc/nginx/sites-available/asicde.org/proxy.dockerhub.conf`
   ```apacheconf
-  # Subdomain: hub
+  # Virtual Host: hub.asicde.org
 
   server {
     listen 443 ssl http2;
@@ -324,5 +324,150 @@ An example of a Proxy subdomain configuration:
 - `chown -R root:www-data /etc/nginx/`
 - `systemctl reload nginx`
 - *Note: Subdomains are included automatically - see configuration for a custom domain*
+
+## Setup Postfix
+TODO
+
+## Setup Dovecot
+TODO
+
+## Setup Portainer
+
+Portainer is a tool for management of Docker containers and other components. It provides a web interface which is easy to navigate and user-friendly.
+
+First make sure that Docker service is running `systemctl status docker`. If it is not running, enable the service like so: `systemctl enable --now docker`.
+
+Now we can run Portainer:
+```bash
+docker volume create portainer_data
+docker run -d -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce
+```
+
+### Configure NginX proxy for Portainer
+
+Create a configuration for new subdomain in the NginX sites-available directory:
+- `vim /etc/nginx/sites-available/asicde.org/proxy.portainer.conf`
+  ```apacheconf
+  # Virtual Host: admin.asicde.org
+
+  server {
+    listen 443 ssl http2;
+
+    server_name admin.asicde.org;
+
+    location / {
+      proxy_pass http://localhost:9000/;
+    }
+
+    include /etc/nginx/conf/ssl_asicde.org.conf;
+    include /etc/nginx/conf/logging.conf;
+
+  }
+  ```
+
+### Portainer configuration
+
+On first start, you will be asked to enter administrator user credentials and then select to use a local Docker server.
+
+## Setup Jenkins
+
+We will be running Jenkins in a Docker container. For this, we will need to create a custom container based on the original Jenkins image to be able to inject some other libraries and executables that are needed for building of Maven, NPM and Docker projects.
+
+For this, let's create a workspace directory where we will store our configuration files `mkdir /opt/jenkins-docker`. In here we will create a Dockerfile for the app:
+
+```dockerfile
+# Get LTS version of Jenkins Docker image
+FROM jenkins/jenkins:lts
+
+# Switch to root user
+USER root
+
+# Update apt repositories
+RUN apt -y update
+
+# Download Docker and docker-compose
+RUN cd /opt/; wget https://download.docker.com/linux/static/stable/x86_64/docker-19.03.13.tgz; tar xzvf docker-19.03.13.tgz; rm docker-19.03.13.tgz
+RUN cd /opt/docker/; wget "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -O ./docker-compose; chmod +x ./docker-compose
+ENV PATH="/opt/docker:${PATH}"
+
+# Install JDK 13
+COPY ./jdk-13.0.2_linux-x64_bin.deb /tmp/jdk-13.0.2_linux-x64_bin.deb
+RUN apt -y install /tmp/jdk-13.0.2_linux-x64_bin.deb; rm -f /tmp/jdk-13.0.2_linux-x64_bin.deb
+RUN update-alternatives --install /usr/bin/java java /usr/lib/jvm/jdk-13.0.2/bin/java 2
+RUN update-alternatives --set java /usr/lib/jvm/jdk-13.0.2/bin/java
+ENV JAVA_HOME /usr/lib/jvm/jdk-13.0.2/
+
+# Remove Java 8
+RUN apt -y purge openjdk-8-jre-headless
+RUN rm -rf /usr/local/openjdk-8/
+
+# Install NodeJS
+RUN apt -y install nodejs
+
+# Download Maven
+RUN cd /opt/; wget https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz; tar xzvf apache-maven-3.6.3-bin.tar.gz; rm apache-maven-3.6.3-bin.tar.gz
+ENV PATH="/opt/apache-maven-3.6.3/bin:${PATH}"
+
+# Enable never versions of Java
+ENV JENKINS_OPTS --enable-future-java
+USER jenkins
+```
+
+You also need to download [JDK 13 Debian installation package](https://www.oracle.com/java/technologies/javase-jdk13-downloads.html) and place it in the same folder (`/opt/jenkins-docker/jdk-13.0.2_linux-x64_bin.deb`).
+
+Then build the image `docker build -t jenkins-docker .`.
+
+Now we can create a Docker container that will run the Jenkins build service:
+`docker run -d -v /var/run/docker.sock:/var/run/docker.sock -v jenkins_home:/var/jenkins_home -p 8080:8080 --name jenkins jenkins-docker`
+
+
+### Configure NginX proxy for Jenkins
+
+Create a configuration for new subdomain in the NginX sites-available directory:
+- `vim /etc/nginx/sites-available/asicde.org/proxy.jenkins.conf`
+  ```apacheconf
+  # Virtual Host: jenkins.asicde.org
+
+  server {
+    listen 443 ssl http2;
+
+    server_name jenkins.asicde.org;
+
+    location / {
+      proxy_pass http://localhost:8080;
+      proxy_set_header Host $http_host;
+      proxy_redirect http://localhost:8080 $scheme://jenkins.asicde.org;
+      proxy_read_timeout 90;
+      proxy_set_header X-Forwarded-Host $host:$server_port;
+      proxy_set_header X-Forwarded-Server $host;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    include /etc/nginx/conf/ssl_asicde.org.conf;
+    include /etc/nginx/conf/logging.conf;
+
+  }
+  ```
+
+### Jenkins configuration
+
+On first start a temporary password is generated for the Jenkins instance. You can get the password with the following command:
+`docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword`
+
+Open a web browser, go to the Jenkins proxy URL and enter the password.
+
+- Select option to automatically install suggested plugins
+- Once the installation is finished, go to Manage Jenkins -> Manage Plugins
+- Install the following additional plugins:
+  - Docker Pipeline
+  - File Operations
+  - Maven Integration
+  - Nexus Artifact Uploader
+  - NodeJS
+  - Pipeline NPM Integration
+  - Pipeline Utility Steps
+  - Slack Notification
 
 

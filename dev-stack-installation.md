@@ -1,6 +1,6 @@
 # Installation guide for the development stack
 
-## Preparation
+## 1. Preparation
 - Configure SSH keys for you VM to enable remote access
 - Download and install Putty (on Windows) SSH client
 
@@ -35,7 +35,7 @@ We need to install some packages in order to be able to configure the developmen
 `apt install git mc wget htop zip unzip docker docker-compose nginx php-fpm postfix dovecot-imapd`
   - Postifx configuration: Internet site
 
-## Setup your data disk
+## 2. Setup your data disk
 
 Your VM should come with a separate data disk. This disk isn't formatted or mounted by default.
 
@@ -69,7 +69,7 @@ To auto-mount the partition create a new directory in the root of your filesyste
 ```
 Save the file and now you can mount the new disk to your VM with `mount -a`.
 
-## Setup Acme.sh for issuing Let's Encrypt certificates
+## 3. Setup Acme.sh for issuing Let's Encrypt certificates
 
 Acme.sh script is used to generate SSL certificates for our web server and mail server.
 
@@ -88,7 +88,7 @@ Now you can issue a certificate for your domain:
 
 This command will issue a certificate with the use of our NginX server. By default all domains pointing to the VM will use the website in the webroot `/var/www/html/`. We tell the `acme.sh` script where to store the domain verification files, then where to output the certificate files themselves.
 
-## Setting up your webserver
+## 4. Setting up your webserver
 
 - Create an SSL certificate with Let's Encrypt (use step above for all domains)
 - Create a new directory in /etc/nginx/ for custom configuration files: `mkdir /etc/nginx/conf`
@@ -325,19 +325,30 @@ In order to server a web site to the user, you need to define a virtual host con
 - `systemctl reload nginx`
 - *Note: Subdomains are included automatically - see configuration for a custom domain*
 
-## Setup Postfix
+## 5. Setup Postfix
 TODO
 
-## Setup Dovecot
+## 6. Setup Dovecot
 TODO
 
-## Setup Portainer
+## 7. Setup Portainer
 
 Portainer is a tool for management of Docker containers and other components. It provides a web interface which is easy to navigate and user-friendly.
 
-First make sure that Docker service is running `systemctl status docker`. If it is not running, enable the service like so: `systemctl enable --now docker`.
+### Configure docker
 
-Now we can run Portainer:
+First we need to stop Docker and change the storage location for Docker volumes. Stop Docker with `systemctl stop docker`.
+
+Now create a new directory called `docker` in the `/data` directory and add the entry below into `/etc/fstab`:
+```
+# Docker data bind mount
+/data/docker                    /var/lib/docker         none    bind            0       0
+```
+
+Refresh mounts with `mount -a` and start docker again `systemctl start docker`.
+
+### Start Portainer
+
 ```bash
 docker volume create portainer_data
 docker run -d -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce
@@ -369,7 +380,20 @@ Create a configuration for new subdomain in the NginX sites-available directory:
 
 On first start, you will be asked to enter administrator user credentials and then select to use a local Docker server.
 
-## Setup Jenkins
+## 8. Setup Sonatype Nexus
+
+Nexus is a portal for multiple package repositories including Maven repository, Docker registry and NPM repository. We will use this service to store our Maven artefacts, Docker images and cache downloaded packages in order to save some internet bandwidth.
+
+To install Nexus, run the following command:
+```bash
+docker volume create --name nexus_data
+docker run -d -p 8081:8081 \
+              --name nexus \
+              --restart unless-stopped \
+              -v nexus_data:/nexus-data sonatype/nexus3
+```
+
+## 9. Setup Jenkins
 
 We will be running Jenkins in a Docker container. For this, we will need to create a custom container based on the original Jenkins image to be able to inject some other libraries and executables that are needed for building of Maven, NPM and Docker projects.
 
@@ -418,7 +442,13 @@ You also need to download [JDK 13 Debian installation package](https://www.oracl
 Then build the image `docker build -t jenkins-docker .`.
 
 Now we can create a Docker container that will run the Jenkins build service:
-`docker run -d -v /var/run/docker.sock:/var/run/docker.sock -v jenkins_home:/var/jenkins_home -p 8080:8080 --name jenkins jenkins-docker`
+```bash
+docker run -d -v /var/run/docker.sock:/var/run/docker.sock \
+              -v jenkins_home:/var/jenkins_home \
+              -p 8080:8080 \
+              --name jenkins \
+              --restart unless-stopped jenkins-docker
+```
 
 
 ### Configure NginX proxy for Jenkins
@@ -454,7 +484,9 @@ Create a configuration for new subdomain in the NginX sites-available directory:
 ### Jenkins configuration
 
 On first start a temporary password is generated for the Jenkins instance. You can get the password with the following command:
-`docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword`
+```bash
+docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+```
 
 Open a web browser, go to the Jenkins proxy URL and enter the password.
 
@@ -470,4 +502,76 @@ Open a web browser, go to the Jenkins proxy URL and enter the password.
   - Pipeline Utility Steps
   - Slack Notification
 
+### Maven configuration
 
+Create a new m2.settings.xml file containing a basic Maven repository configuration:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd">
+
+  <servers>
+    <server>
+      <id>{CREDENTIALS_ID}</id>
+      <username>{USER}</username>
+      <password>{PASSWORD}</password>
+    </server>
+  </servers>
+
+  <mirrors>
+    <mirror>
+      <id>{CREDENTIALS_ID}</id>
+      <name>{SERVER_NAME}</name>
+      <url>{SERVER_URL}</url>
+      <mirrorOf>*</mirrorOf>
+    </mirror>
+  </mirrors>
+
+  <profiles>
+    <profile>
+      <id>{PROFILE_ID}</id>
+      <repositories>
+        <repository>
+          <id>{CREDENTIALS_ID}</id>
+          <url>{SERVER_URL}</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>true</enabled></snapshots>
+        </repository>
+      </repositories>
+     <pluginRepositories>
+        <pluginRepository>
+          <id>{CREDENTIALS_ID}</id>
+          <url>{SERVER_URL}</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>true</enabled></snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+  </profiles>
+  <activeProfiles>
+    <activeProfile>{PROFILE_ID}</activeProfile>
+  </activeProfiles>
+
+</settings>
+```
+
+Fill the information based on the previous setup for Sonatype Nexus.
+
+- **{CREDENTIALS_ID}**: name for your credentials, e.g. `credentials`
+- **{USER}**: Nexus server username, e.g. `admin`
+- **{PASSWORD}**: Nexus server password, e.g. `supersecret`
+- **{SERVER_NAME}**: name for your server, e.g. `nexus`
+- **{SERVER_URL}**: Nexus Maven repository URL, e.g. `https://nexus.asicde.org/repository/maven-group/`
+- **{PROFILE_ID}**: name for profile, e.g. `asicde`
+
+### NPM configuration
+
+Create .npmrc file containing configuration for default NPM repository:
+```
+registry={REPO_URL}
+_auth={CREDENTIALS}
+```
+
+- **{REPO_URL}**: Nexus NPM repository URL, e.g. `https://nexus.asicde.org/repository/asicde-npm/`
+- **{CREDENTIALS}**: credentials for Nexus (username:password encoded with base64), e.g. `bmljZTp0cnkK`

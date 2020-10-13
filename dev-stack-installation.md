@@ -1,5 +1,51 @@
 # Installation guide for the development stack
 
+Table of Contents
+=================
+
+   * [Installation guide for the development stack](#installation-guide-for-the-development-stack)
+   * [Table of Contents](#table-of-contents)
+      * [1. Preparation](#1-preparation)
+         * [Updating the Ubuntu installation](#updating-the-ubuntu-installation)
+         * [Installing required packages](#installing-required-packages)
+      * [2. Setup your data disk](#2-setup-your-data-disk)
+      * [3. Setup Acme.sh for issuing Let's Encrypt certificates](#3-setup-acmesh-for-issuing-lets-encrypt-certificates)
+      * [4. Setting up your webserver](#4-setting-up-your-webserver)
+         * [Create custom configuration files for repetitive tasks](#create-custom-configuration-files-for-repetitive-tasks)
+            * [Default virtual host configuration](#default-virtual-host-configuration)
+            * [Logging configuration](#logging-configuration)
+            * [PHP configuration](#php-configuration)
+            * [Permanent redirect from HTTP to HTTPS](#permanent-redirect-from-http-to-https)
+            * [Permanent redirect from non-www to www](#permanent-redirect-from-non-www-to-www)
+            * [SSL configuration for main domain](#ssl-configuration-for-main-domain)
+            * [SSL configuration for custom domain](#ssl-configuration-for-custom-domain)
+         * [Create your virtual host config](#create-your-virtual-host-config)
+            * [Setup a main configuration file for the domain name:](#setup-a-main-configuration-file-for-the-domain-name)
+            * [Create configuration files for any subdomains (for example www - root domain):](#create-configuration-files-for-any-subdomains-for-example-www---root-domain)
+            * [Create a new main config for additional custom domains:](#create-a-new-main-config-for-additional-custom-domains)
+            * [An example of a Proxy subdomain configuration:](#an-example-of-a-proxy-subdomain-configuration)
+      * [5. Setup Postfix](#5-setup-postfix)
+      * [6. Setup Dovecot](#6-setup-dovecot)
+      * [7. Setup Portainer](#7-setup-portainer)
+         * [Configure docker](#configure-docker)
+         * [Start Portainer](#start-portainer)
+         * [Configure NginX proxy for Portainer](#configure-nginx-proxy-for-portainer)
+         * [Portainer configuration](#portainer-configuration)
+      * [8. Setup Sonatype Nexus](#8-setup-sonatype-nexus)
+         * [Configure NginX proxy for Nexus](#configure-nginx-proxy-for-nexus)
+         * [Configure Nexus](#configure-nexus)
+         * [Configure NginX proxy for Nexus Docker registry](#configure-nginx-proxy-for-nexus-docker-registry)
+      * [9. Setup Jenkins](#9-setup-jenkins)
+         * [Configure NginX proxy for Jenkins](#configure-nginx-proxy-for-jenkins)
+         * [Jenkins configuration](#jenkins-configuration)
+         * [Global tool configuration](#global-tool-configuration)
+            * [JDK](#jdk)
+            * [Maven](#maven)
+            * [NodeJS](#nodejs)
+            * [Docker](#docker)
+         * [Maven configuration](#maven-configuration)
+         * [NPM configuration](#npm-configuration)
+
 ## 1. Preparation
 - Configure SSH keys for you VM to enable remote access
 - Download and install Putty (on Windows) SSH client
@@ -174,7 +220,7 @@ The folder structure will look like this:
     #Avoid sending the security headers twice
     fastcgi_param modHeadersAvailable true;
     fastcgi_param front_controller_active true;
-    fastcgi_pass unix:/var/run/php-fpm/php-fpm.sock;
+    fastcgi_pass unix:/run/php/php7.4-fpm.sock;
     fastcgi_intercept_errors on;
     fastcgi_request_buffering off;
   }
@@ -322,6 +368,7 @@ In order to server a web site to the user, you need to define a virtual host con
 - `mkdir /data/logs`
 - `chown www-data:www-data /data/logs`
 - `chown -R root:www-data /etc/nginx/`
+- `systemctl enable --now php7.4-fpm`
 - `systemctl reload nginx`
 - *Note: Subdomains are included automatically - see configuration for a custom domain*
 
@@ -392,6 +439,7 @@ To install Nexus, run the following command:
 ```bash
 docker volume create --name nexus_data
 docker run -d -p 8081:8081 \
+              -p 8082:8082 \
               --name nexus \
               --restart unless-stopped \
               -v nexus_data:/nexus-data sonatype/nexus3
@@ -421,6 +469,7 @@ Create a configuration for new subdomain in the NginX sites-available directory:
     include /etc/nginx/conf/logging.conf;
 
   }
+  ```
 
 ### Configure Nexus
 
@@ -469,6 +518,39 @@ Create new user for Jenkins to use:
 - Status: `Active`
 - Role: `jenkins`
 
+### Configure NginX proxy for Nexus Docker registry
+
+Create a configuration for new subdomain in the NginX sites-available directory:
+- `vim /etc/nginx/sites-available/asicde.org/proxy.dockerhub.conf`
+  ```apacheconf
+  # Virtual Host: hub.asicde.org
+
+  server {
+    listen 443 ssl http2;
+
+    server_name hub.asicde.org;
+
+    chunked_transfer_encoding on;
+
+    location / {
+      root /var/www/html/;
+    }
+
+    location /v2/ {
+      proxy_pass http://localhost:8082/v2/;
+      add_header 'Docker-Distribution-Api-Version' 'registry/2.0' always;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto "https";
+    }
+
+    include /etc/nginx/conf/ssl_asicde.org.conf;
+    include /etc/nginx/conf/logging.conf;
+
+  }
+  ```
+
 ## 9. Setup Jenkins
 
 We will be running Jenkins in a Docker container. For this, we will need to create a custom container based on the original Jenkins image to be able to inject some other libraries and executables that are needed for building of Maven, NPM and Docker projects.
@@ -500,9 +582,6 @@ ENV JAVA_HOME /usr/lib/jvm/jdk-13.0.2/
 # Remove Java 8
 RUN apt -y purge openjdk-8-jre-headless
 RUN rm -rf /usr/local/openjdk-8/
-
-# Install NodeJS
-RUN apt -y install nodejs
 
 # Download Maven
 RUN cd /opt/; wget https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz; tar xzvf apache-maven-3.6.3-bin.tar.gz; rm apache-maven-3.6.3-bin.tar.gz
@@ -578,6 +657,30 @@ Open a web browser, go to the Jenkins proxy URL and enter the password.
   - Pipeline Utility Steps
   - Slack Notification
 
+### Global tool configuration
+
+#### JDK
+- Add JDK
+- Name: `jdk`
+- Uncheck install automatically
+- JAVA_HOME: `/usr/lib/jvm/jdk-13.0.2`
+
+#### Maven
+- Add Maven
+- Name: `maven`
+- Uncheck install automatically
+- MAVEN_HOME: `/opt/apache-maven-3.6.3/`
+
+#### NodeJS
+- Add NodeJS
+- Name: `nodejs`
+- Install automatically
+
+#### Docker
+- Add Docker
+- Name: `docker`
+- Installation root: `/opt/docker`
+
 ### Maven configuration
 
 Create a new m2.settings.xml file containing a basic Maven repository configuration:
@@ -632,14 +735,20 @@ Create a new m2.settings.xml file containing a basic Maven repository configurat
 </settings>
 ```
 
-Fill the information based on the previous setup for Sonatype Nexus.
+Fill the information based on the previous step for Configuring Nexus.
 
 - **{CREDENTIALS_ID}**: name for your credentials, e.g. `credentials`
-- **{USER}**: Nexus server username, e.g. `admin`
+- **{USER}**: Nexus server username, e.g. `jenkins`
 - **{PASSWORD}**: Nexus server password, e.g. `supersecret`
 - **{SERVER_NAME}**: name for your server, e.g. `nexus`
 - **{SERVER_URL}**: Nexus Maven repository URL, e.g. `https://nexus.asicde.org/repository/maven-group/`
 - **{PROFILE_ID}**: name for profile, e.g. `asicde`
+
+Then copy this file into the Jenkins container:
+```bash
+docker exec -it jenkins mkdir -p /var/jenkins_home/.m2/
+docker cp ./m2.settings.xml jenkins:/var/jenkins_home/.m2/settings.xml
+```
 
 ### NPM configuration
 
@@ -649,5 +758,12 @@ registry={REPO_URL}
 _auth={CREDENTIALS}
 ```
 
+Fill the information based on the previous step for Configuring Nexus.
+
 - **{REPO_URL}**: Nexus NPM repository URL, e.g. `https://nexus.asicde.org/repository/asicde-npm/`
-- **{CREDENTIALS}**: credentials for Nexus (username:password encoded with base64), e.g. `bmljZTp0cnkK`
+- **{CREDENTIALS}**: credentials for Nexus (`username:password` encoded with base64), e.g. `bmljZTp0cnkK`
+
+Then copy this file into the Jenkins container:
+```bash
+docker cp ./.npmrc jenkins:/var/jenkins_home/.npmrc
+```

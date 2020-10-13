@@ -351,7 +351,11 @@ Refresh mounts with `mount -a` and start docker again `systemctl start docker`.
 
 ```bash
 docker volume create portainer_data
-docker run -d -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce
+docker run -d -p 9000:9000 \
+              --name=portainer \
+              --restart=always \
+              -v /var/run/docker.sock:/var/run/docker.sock \
+              -v portainer_data:/data portainer/portainer-ce
 ```
 
 ### Configure NginX proxy for Portainer
@@ -392,6 +396,78 @@ docker run -d -p 8081:8081 \
               --restart unless-stopped \
               -v nexus_data:/nexus-data sonatype/nexus3
 ```
+
+### Configure NginX proxy for Nexus
+
+Create a configuration for new subdomain in the NginX sites-available directory:
+- `vim /etc/nginx/sites-available/asicde.org/proxy.nexus.conf`
+  ```apacheconf
+  # Virtual Host: nexus.asicde.org
+
+  server {
+    listen 443 ssl http2;
+
+    server_name nexus.asicde.org;
+
+    location / {
+      proxy_pass http://localhost:8081/;
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto "https";
+    }
+
+    include /etc/nginx/conf/ssl_asicde.org.conf;
+    include /etc/nginx/conf/logging.conf;
+
+  }
+
+### Configure Nexus
+
+During your first installation a password will be created for you which you can get with `docker exec -it nexus cat /nexus-data/admin.password`.
+
+You will be asked to change your password and then enable anonymous access.
+
+Setup repositories:
+
+- NEW: docker (hosted)
+  - Name: `asicde-docker`
+  - Create HTTP connector on `8082`
+  - Allow anonymous docker pull
+- NEW: npm (proxy)
+  - Name: `asicde-npm`
+  - Remote storage: `https://registry.npmjs.org`
+  - Use stored certificates
+  - View certificate -> Add certificate to truststore
+
+Setup reader user permission:
+
+- Go to Security -> Roles
+- Create role -> Nexus role
+- Reader
+  - Role ID: `reader`
+  - Role name: `reader`
+  - Add all `-read` and `-browse` permissions
+- Jenkins
+  - Role ID: `jenkins`
+  - Role name: `jenkins`
+  - Add permission `nx-repository-admin-*-*-add`
+  - Add permission `nx-repository-admin-*-*-browse`
+  - Add permission `nx-repository-admin-*-*-edit`
+  - Add permission `nx-repository-admin-*-*-read`
+
+Allow anonymous user to download files from repository:
+- Security -> Users -> Anonymous user
+- Add role `reader`
+
+Create new user for Jenkins to use:
+- Security -> Users -> Create user
+- ID: `jenkins`
+- First name: `Jenkins`
+- Last name: `Jenkins`
+- Email: `test@test.com`
+- Status: `Active`
+- Role: `jenkins`
 
 ## 9. Setup Jenkins
 

@@ -8,9 +8,11 @@ Table of Contents
       * [1. Preparation](#1-preparation)
          * [Updating the Ubuntu installation](#updating-the-ubuntu-installation)
          * [Installing required packages](#installing-required-packages)
+         * [Desired architecture](#desired-architecture)
       * [2. Setup your data disk](#2-setup-your-data-disk)
       * [3. Setup Acme.sh for issuing Let's Encrypt certificates](#3-setup-acmesh-for-issuing-lets-encrypt-certificates)
       * [4. Setting up your webserver](#4-setting-up-your-webserver)
+         * [Increase request size limit](#increase-request-size-limit)
          * [Create custom configuration files for repetitive tasks](#create-custom-configuration-files-for-repetitive-tasks)
             * [Default virtual host configuration](#default-virtual-host-configuration)
             * [Logging configuration](#logging-configuration)
@@ -85,6 +87,10 @@ We need to install some packages in order to be able to configure the developmen
 
 `apt install git mc wget htop zip unzip docker docker-compose nginx php-fpm postfix dovecot-imapd`
   - Postifx configuration: Internet site
+
+### Desired architecture
+
+![System architecture](./resources/dev-stack-architecture.png)
 
 ## 2. Setup your data disk
 
@@ -191,6 +197,13 @@ The folder structure will look like this:
   scgi_params
   uwsgi_params
   win-utf
+```
+
+### Increase request size limit
+
+Create a new configuration file for request size `vim /etc/nginx/conf.d/request_size.conf`:
+```apacheconf
+client_max_body_size 1G;
 ```
 
 ### Create custom configuration files for repetitive tasks
@@ -584,16 +597,10 @@ RUN update-alternatives --install /usr/bin/java java /usr/lib/jvm/jdk-13.0.2/bin
 RUN update-alternatives --set java /usr/lib/jvm/jdk-13.0.2/bin/java
 ENV JAVA_HOME /usr/lib/jvm/jdk-13.0.2/
 
-# Remove Java 8
-RUN apt -y purge openjdk-8-jre-headless
-RUN rm -rf /usr/local/openjdk-8/
-
 # Download Maven
 RUN cd /opt/; wget https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz; tar xzvf apache-maven-3.6.3-bin.tar.gz; rm apache-maven-3.6.3-bin.tar.gz
 ENV PATH="/opt/apache-maven-3.6.3/bin:${PATH}"
 
-# Enable never versions of Java
-ENV JENKINS_OPTS --enable-future-java
 USER jenkins
 ```
 
@@ -653,6 +660,7 @@ Open a web browser, go to the Jenkins proxy URL and enter the password.
 - Select option to automatically install suggested plugins
 - Once the installation is finished, go to Manage Jenkins -> Manage Plugins
 - Install the following additional plugins:
+  - Docker
   - Docker Pipeline
   - File Operations
   - Maven Integration

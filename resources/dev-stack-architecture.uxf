@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>15</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>150</x>
+      <y>1005</y>
+      <w>1905</w>
+      <h>75</h>
+    </coordinates>
+    <panel_attributes>KVM
+valign=center
+bg=red</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>150</x>
+      <y>900</y>
+      <w>1905</w>
+      <h>75</h>
+    </coordinates>
+    <panel_attributes>Ubuntu 20.04.1 LTS
+valign=center
+bg=orange</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>555</x>
+      <y>795</y>
+      <w>1500</w>
+      <h>75</h>
+    </coordinates>
+    <panel_attributes>Docker
+valign=center
+bg=blue
+fg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>150</x>
+      <y>795</y>
+      <w>375</w>
+      <h>75</h>
+    </coordinates>
+    <panel_attributes>NginX
+valign=center
+bg=black
+fg=white</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>405</x>
+      <y>705</y>
+      <w>120</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>...
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>270</x>
+      <y>705</y>
+      <w>120</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>Proxy5
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>150</x>
+      <y>705</y>
+      <w>105</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>Proxy4
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>555</x>
+      <y>630</y>
+      <w>180</w>
+      <h>135</h>
+    </coordinates>
+    <panel_attributes>Portainer
+valign=center
+bg=cyan</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>750</x>
+      <y>630</y>
+      <w>180</w>
+      <h>135</h>
+    </coordinates>
+    <panel_attributes>Jenkins
+valign=center
+bg=cyan</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>945</x>
+      <y>630</y>
+      <w>180</w>
+      <h>135</h>
+    </coordinates>
+    <panel_attributes>Nexus
+valign=center
+bg=cyan</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1140</x>
+      <y>630</y>
+      <w>450</w>
+      <h>135</h>
+    </coordinates>
+    <panel_attributes>ASICDE-dev
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1605</x>
+      <y>630</y>
+      <w>450</w>
+      <h>135</h>
+    </coordinates>
+    <panel_attributes>ASICDE-prod
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>150</x>
+      <y>630</y>
+      <w>105</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>Proxy1
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>270</x>
+      <y>630</y>
+      <w>120</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>Proxy2
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>405</x>
+      <y>630</y>
+      <w>120</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>Proxy3
+valign=center</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1140</x>
+      <y>570</y>
+      <w>450</w>
+      <h>45</h>
+    </coordinates>
+    <panel_attributes>asicde/auth-dev
+valign=center
+bg=cyan</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1140</x>
+      <y>510</y>
+      <w>450</w>
+      <h>45</h>
+    </coordinates>
+    <panel_attributes>asicde/repo-dev
+valign=center
+bg=cyan</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1140</x>
+      <y>450</y>
+      <w>450</w>
+      <h>45</h>
+    </coordinates>
+    <panel_attributes>asicde/parser-dev
+valign=center
+bg=cyan</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1140</x>
+      <y>330</y>
+      <w>450</w>
+      <h>45</h>
+    </coordinates>
+    <panel_attributes>asicde/router-dev
+valign=center
+bg=cyan</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1140</x>
+      <y>390</y>
+      <w>450</w>
+      <h>45</h>
+    </coordinates>
+    <panel_attributes>asicde/frontend-dev
+valign=center
+bg=cyan</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1605</x>
+      <y>450</y>
+      <w>450</w>
+      <h>45</h>
+    </coordinates>
+    <panel_attributes>asicde/parser
+valign=center
+bg=cyan</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1605</x>
+      <y>570</y>
+      <w>450</w>
+      <h>45</h>
+    </coordinates>
+    <panel_attributes>asicde/auth
+valign=center
+bg=cyan</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1605</x>
+      <y>510</y>
+      <w>450</w>
+      <h>45</h>
+    </coordinates>
+    <panel_attributes>asicde/repo
+valign=center
+bg=cyan</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1605</x>
+      <y>330</y>
+      <w>450</w>
+      <h>45</h>
+    </coordinates>
+    <panel_attributes>asicde/router
+valign=center
+bg=cyan</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1605</x>
+      <y>390</y>
+      <w>450</w>
+      <h>45</h>
+    </coordinates>
+    <panel_attributes>asicde/frontend
+valign=center
+bg=cyan</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>180</x>
+      <y>240</y>
+      <w>1680</w>
+      <h>420</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>1100.0;60.0;1100.0;10.0;10.0;10.0;10.0;260.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>315</x>
+      <y>270</y>
+      <w>1095</w>
+      <h>390</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>710.0;40.0;710.0;10.0;10.0;10.0;10.0;240.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>450</x>
+      <y>510</y>
+      <w>615</w>
+      <h>150</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>390.0;80.0;390.0;10.0;10.0;10.0;10.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>480</x>
+      <y>540</y>
+      <w>390</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>240.0;60.0;240.0;10.0;10.0;10.0;10.0;60.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>510</x>
+      <y>570</y>
+      <w>165</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>90.0;40.0;90.0;10.0;10.0;10.0;10.0;40.0</additional_attributes>
+  </element>
+</diagram>

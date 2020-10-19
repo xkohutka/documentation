@@ -52,7 +52,7 @@ git clone -b dev git@github.com:ASICDE/asicde-backend.git
 
 All repositories have been cloned by using the `dev` branch which is dedicated for project development and holds the latest versions of the code.
 
-### Using IntelliJ Idea
+### Using IntelliJ IDEA for backend projects
 
 - We strongly recommend using IntelliJ IDEA for further project development, as it integrates every important technology used in the project, namely Maven, Spring Boot, Angular and more.
   - Ideally, you should have the latest IDEA (2020.2.3) Ultimate installed.
@@ -125,3 +125,12 @@ docker-compose up -d
 ### Using Visual Studio Code
 
 As a reference for the project structure, please refer to the repository's [Readme file](https://github.com/ASICDE/asicde-frontend/blob/master/README.md).
+
+### Using IntelliJ IDEA for frontend project execution
+
+In case you want to run the Angular project in connection with manually executed Spring Boot project, you can use following guide to run the frontend application.
+
+- Open terminal in the frontend project root (where the `package.json` file is located)
+- Run `npm install && npm start` commands
+![Running Angular app](resources/idea-run-angular-app.png)
+- Application should be available at port 4200 by default.

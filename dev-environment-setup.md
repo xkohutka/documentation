@@ -12,7 +12,7 @@ This document describes the process of setting up a development environment for 
 - [Git](https://git-scm.com/)
 - *(Optional)* [Docker](https://www.docker.com/)
 
-#### Setting up JDK 13
+#### Setup JDK 13
 
 - Download the installation package for your desired operating system
 - Install the JDK
@@ -52,10 +52,31 @@ git clone -b dev git@github.com:ASICDE/asicde-backend.git
 
 All repositories have been cloned by using the `dev` branch which is dedicated for project development and holds the latest versions of the code.
 
-### Using Intellij Idea
+### Using IntelliJ Idea
 
-TODO
+- We strongly recommend using IntelliJ IDEA for further project development, as it integrates every important technology used in the project, namely Maven, Spring Boot, Angular and more.
+  - Ideally, you should have the latest IDEA (2020.2.3) Ultimate installed.
+- In order to run the Spring Boot projects, you first need to install projects using Maven in the following order:
+  1. [parent](https://github.com/ASICDE/asicde-parent/)
+  2. [api](https://github.com/ASICDE/asicde-api)
+  3. [backend](https://github.com/ASICDE/asicde-backend)
+  See guide for installing project with Maven below.
+  
+- After installing each project, you should be able to run Spring Boot application as follows:
+  1. Locate the executable application file and create a Run configuration as shown in the picture.
+     ![Spring Boot run configuration](resources/idea-run-config-spring.png)
+    - set this as your VM variable: `-Dspring.profiles.active=local`. This command sets the Spring Boot profile of the whole configuration (in this case, we use `local` profile).
+    
+  2. Execute the created run configuration.
 
+
+- To install a project using Maven, you need to follow these steps:
+  - Open Maven tab in the side menu and select the project with (root) label.
+  - Select Lifecycle goals `clean` and `install`
+    ![Maven build options](resources/mvn-install.png)
+  - Run the selected goals using `Run Maven Build` button.
+  - The IDE should automatically open a console window, indicating the build status and results.
+  
 For an overview of the project module structure, please refer to each repository's Readme file ([parent](https://github.com/ASICDE/asicde-parent/blob/master/README.md), [api](https://github.com/ASICDE/asicde-api/blob/master/README.md), [backend](https://github.com/ASICDE/asicde-backend/blob/master/README.md)).
 
 ## Setting up development environment for frontend

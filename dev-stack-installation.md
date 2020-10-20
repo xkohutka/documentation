@@ -26,18 +26,16 @@ Table of Contents
             * [Create configuration files for any subdomains (for example www - root domain):](#create-configuration-files-for-any-subdomains-for-example-www---root-domain)
             * [Create a new main config for additional custom domains:](#create-a-new-main-config-for-additional-custom-domains)
             * [An example of a Proxy subdomain configuration:](#an-example-of-a-proxy-subdomain-configuration)
-      * [5. Setup Postfix](#5-setup-postfix)
-      * [6. Setup Dovecot](#6-setup-dovecot)
-      * [7. Setup Portainer](#7-setup-portainer)
+      * [5. Setup Portainer](#5-setup-portainer)
          * [Configure docker](#configure-docker)
          * [Start Portainer](#start-portainer)
          * [Configure NginX proxy for Portainer](#configure-nginx-proxy-for-portainer)
          * [Portainer configuration](#portainer-configuration)
-      * [8. Setup Sonatype Nexus](#8-setup-sonatype-nexus)
+      * [6. Setup Sonatype Nexus](#6-setup-sonatype-nexus)
          * [Configure NginX proxy for Nexus](#configure-nginx-proxy-for-nexus)
          * [Configure Nexus](#configure-nexus)
          * [Configure NginX proxy for Nexus Docker registry](#configure-nginx-proxy-for-nexus-docker-registry)
-      * [9. Setup Jenkins](#9-setup-jenkins)
+      * [7. Setup Jenkins](#7-setup-jenkins)
          * [Configure NginX proxy for Jenkins](#configure-nginx-proxy-for-jenkins)
          * [Jenkins configuration](#jenkins-configuration)
          * [Global tool configuration](#global-tool-configuration)
@@ -51,7 +49,7 @@ Table of Contents
             * [Github SSH access](#github-ssh-access)
             * [Nexus access](#nexus-access)
             * [<em>(Optional)</em> Slack access](#optional-slack-access)
-      * [10. Setup Jenkins pipelines](#10-setup-jenkins-pipelines)
+      * [8. Setup Jenkins pipelines](#8-setup-jenkins-pipelines)
 
 ## 1. Preparation
 - Configure SSH keys for you VM to enable remote access
@@ -390,13 +388,7 @@ In order to server a web site to the user, you need to define a virtual host con
 - `systemctl reload nginx`
 - *Note: Subdomains are included automatically - see configuration for a custom domain*
 
-## 5. Setup Postfix
-TODO
-
-## 6. Setup Dovecot
-TODO
-
-## 7. Setup Portainer
+## 5. Setup Portainer
 
 Portainer is a tool for management of Docker containers and other components. It provides a web interface which is easy to navigate and user-friendly.
 
@@ -449,7 +441,7 @@ Create a configuration for new subdomain in the NginX sites-available directory:
 
 On first start, you will be asked to enter administrator user credentials and then select to use a local Docker server.
 
-## 8. Setup Sonatype Nexus
+## 6. Setup Sonatype Nexus
 
 Nexus is a portal for multiple package repositories including Maven repository, Docker registry and NPM repository. We will use this service to store our Maven artefacts, Docker images and cache downloaded packages in order to save some internet bandwidth.
 
@@ -569,7 +561,7 @@ Create a configuration for new subdomain in the NginX sites-available directory:
   }
   ```
 
-## 9. Setup Jenkins
+## 7. Setup Jenkins
 
 We will be running Jenkins in a Docker container. For this, we will need to create a custom container based on the original Jenkins image to be able to inject some other libraries and executables that are needed for building of Maven, NPM and Docker projects.
 
@@ -806,6 +798,6 @@ Go to Manage Jenkins -> Manage credentials -> Jenkins -> Global credentials
 - ID: `slack`
 - Secret: `somesecrettoken`
 
-## 10. Setup Jenkins pipelines
+## 8. Setup Jenkins pipelines
 
 Each part of the project contains a Jenkinsfile (if the project module is buildable). You can use this pipeline as a reference to create your own. To add this pipeline simply open Jenkins, click on New item -> Type in name -> Select Pipeline project type -> Create. Then you can insert the pipeline code into the build item.

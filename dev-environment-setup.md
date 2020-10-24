@@ -1,3 +1,22 @@
+Table of Contents
+=================
+
+   * [Setting up a development environment](#setting-up-a-development-environment)
+      * [Setting up development environment for backend](#setting-up-development-environment-for-backend)
+         * [Prerequisites](#prerequisites)
+            * [Setup JDK 13](#setup-jdk-13)
+            * [Setup Maven](#setup-maven)
+         * [Clone backend repositories](#clone-backend-repositories)
+         * [Using IntelliJ IDEA for backend projects](#using-intellij-idea-for-backend-projects)
+         * [Setup local database, frontend and service orchestrator](#setup-local-database-frontend-and-service-orchestrator)
+      * [Setting up development environment for frontend](#setting-up-development-environment-for-frontend)
+         * [Prerequisites](#prerequisites-1)
+         * [Setup Visual Studio Code](#setup-visual-studio-code)
+         * [Clone frontend and docker repository](#clone-frontend-and-docker-repository)
+         * [Start the backend](#start-the-backend)
+         * [Using Visual Studio Code](#using-visual-studio-code)
+         * [Using IntelliJ IDEA for frontend project execution](#using-intellij-idea-for-frontend-project-execution)
+
 # Setting up a development environment
 
 This document describes the process of setting up a development environment for the ASICDE project.
@@ -10,7 +29,7 @@ This document describes the process of setting up a development environment for 
 - [Oracle JDK 13](https://www.oracle.com/java/technologies/javase-jdk13-downloads.html)
 - [Intellij Idea](https://www.jetbrains.com/idea/)
 - [Git](https://git-scm.com/)
-- *(Optional)* [Docker](https://www.docker.com/)
+- [Docker](https://www.docker.com/)
 
 #### Setup JDK 13
 
@@ -63,23 +82,46 @@ All repositories have been cloned by using the `dev` branch which is dedicated f
   See guide for installing project with Maven below.
   
 - After installing each project, you should be able to run Spring Boot application as follows:
-  1. Locate the executable application file and create a Run configuration as shown in the picture.
+  1. Locate the executable application file for each of the services (`AuthApplication`, `ParserApplication` and `RepoApplication`) and create a Run configuration as shown in the picture.
+     ![Spring Boot run configuration](resources/idea-locate-runnable.png)
      ![Spring Boot run configuration](resources/idea-run-config-spring.png)
-    - set this as your VM variable: `-Dspring.profiles.active=local`. This command sets the Spring Boot profile of the whole configuration (in this case, we use `local` profile).
+    - set this as your VM variable: `-Dspring.profiles.active=local`. This command sets the Spring Boot profile of the whole configuration (in this case, we use `local` profile which is located in: `/<module>/src/main/resources/application-local.properties`).
     
   2. Execute the created run configuration.
 
 
-- To install a project using Maven, you need to follow these steps:
+- To install the project dependencies using Maven, you need to follow these steps:
   - Open Maven tab in the side menu and select the project with (root) label.
   - Select Lifecycle goals `clean` and `install`
     ![Maven build options](resources/mvn-install.png)
   - Run the selected goals using `Run Maven Build` button.
   - The IDE should automatically open a console window, indicating the build status and results.
   
-For an overview of the project module structure, please refer to each repository's Readme file ([parent](https://github.com/ASICDE/asicde-parent/blob/master/README.md), [api](https://github.com/ASICDE/asicde-api/blob/master/README.md), [backend](https://github.com/ASICDE/asicde-backend/blob/master/README.md)).
+For an overview of the project module structure and detailed documentation, please refer to each repository's Readme file ([parent](https://github.com/ASICDE/asicde-parent/blob/master/README.md), [api](https://github.com/ASICDE/asicde-api/blob/master/README.md), [backend](https://github.com/ASICDE/asicde-backend/blob/master/README.md)).
 
-## Setting up development environment for frontend
+### Setup local database, frontend and service orchestrator
+
+In order to test the backend you can use Postman or other REST API client. The other option is to create an instance of the frontend with the custom orchestrator (router) to tell the frontend to use individual applications running in Intellij IDEA.
+
+Clone repositories for local Docker development stack:
+
+```bash
+git clone -b dev git@github.com:ASICDE/asicde-docker-dev.git
+```
+
+This stack will contain PostgreSQL database that is required by the backend, together with an instance of the frontend and a custom router. To set individual backend module IP addresses and ports, open `docker-compose.yml` and change the host configuration for the router service:
+
+```
+  router:
+    environment:
+      AUTH_HOST: "http\\:\\/\\/host.docker.internal\\:8080"
+      PARSER_HOST: "http\\:\\/\\/host.docker.internal\\:8081"
+      REPO_HOST: "http\\:\\/\\/host.docker.internal\\:8082"
+```
+
+Each module has the option to be configured for individual IP addresses and ports. You can find more information about the local development stack in the [asicde-docker-dev repository](https://github.com/ASICDE/asicde-docker-dev).
+
+## Setting up development environment for frontend 
 
 ### Prerequisites
 

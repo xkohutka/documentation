@@ -1,4 +1,4 @@
-# ASCIDE - SystemVerilog WEB IDE
+# ASICDE - SystemVerilog WEB IDE
 
 This repository holds the documentation for various dependencies of this project as well as some development, installation and deployment guides.
 
@@ -21,3 +21,7 @@ This repository holds the documentation for various dependencies of this project
 ## Development guides
 
 - [Development lifecycle](dev-lifecycle.md)
+
+## Deployment guides
+
+- [Automated deployment](auto-deployment.md)

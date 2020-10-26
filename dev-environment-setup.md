@@ -1,3 +1,9 @@
+[<< Return to documentation overview](README.md)
+
+# Setting up a development environment
+
+This document describes the process of setting up a development environment for the ASICDE project.
+
 Table of Contents
 =================
 
@@ -16,10 +22,6 @@ Table of Contents
          * [Start the backend](#start-the-backend)
          * [Using Visual Studio Code](#using-visual-studio-code)
          * [Using IntelliJ IDEA for frontend project execution](#using-intellij-idea-for-frontend-project-execution)
-
-# Setting up a development environment
-
-This document describes the process of setting up a development environment for the ASICDE project.
 
 ## Setting up development environment for backend
 

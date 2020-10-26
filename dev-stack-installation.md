@@ -1,3 +1,5 @@
+[<< Return to documentation overview](README.md)
+
 # Installation guide for the development stack
 
 Table of Contents

@@ -1,3 +1,5 @@
+[<< Return to documentation overview](README.md)
+
 # Automatic deployment with Jenkins and Docker
 
 Based on the [development lifecycle](dev-lifecycle.md), you can see that our project is split into two environments - one for production ready version and one for development version. Because of these split environments, our Jenkins server is set-up to build & serve two distinct versions of the application concurrently.
@@ -144,11 +146,17 @@ The project website is also built automatically and served to the users without 
 
 The development environment has separate build and deployment tasks for each project module:
 
-- [ASICDE-dev-parent](#asicde-dev-parent)
-- [ASICDE-dev-api](#asicde-dev-api)
-- [ASICDE-dev-backend](#asicde-dev-backend)
-- [ASICDE-dev-frontend](#asicde-dev-frontend)
-- [ASICDE-deploy-dev](#asicde-deploy-dev)
+- [Automatic deployment with Jenkins and Docker](#automatic-deployment-with-jenkins-and-docker)
+  - [Separate project modules](#separate-project-modules)
+    - [ASICDE-router](#asicde-router)
+    - [ASICDE-website](#asicde-website)
+  - [Development version deployment](#development-version-deployment)
+    - [ASICDE-dev-parent](#asicde-dev-parent)
+    - [ASICDE-dev-api](#asicde-dev-api)
+    - [ASICDE-dev-backend](#asicde-dev-backend)
+    - [ASICDE-dev-frontend](#asicde-dev-frontend)
+    - [ASICDE-deploy-dev](#asicde-deploy-dev)
+  - [Production version deployment](#production-version-deployment)
 
 ### ASICDE-dev-parent
 

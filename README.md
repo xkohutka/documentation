@@ -4,14 +4,14 @@ This repository holds the documentation for various dependencies of this project
 
 ## Code documentation
 
-- [API `asicde-api`](https://github.com/ASICDE/asicde-api/blob/master/README.md)
-- [Backend `asicde-backend`](https://github.com/ASICDE/asicde-backend/blob/master/README.md)
-- [Docker deployment `asicde-docker`](https://github.com/ASICDE/asicde-docker/blob/master/README.md)
-- [Docker local development stack `asicde-docker-dev`](https://github.com/ASICDE/asicde-docker-dev/blob/master/README.md)
-- [Frontend `asicde-frontend`](https://github.com/ASICDE/asicde-frontend/blob/master/README.md)
-- [Project parent `asicde-parent`](https://github.com/ASICDE/asicde-parent/blob/master/README.md)
-- [Request router `asicde-router`](https://github.com/ASICDE/asicde-router/blob/master/README.md)
-- [ASICDE.org website `website`](https://github.com/ASICDE/website/blob/master/README.md)
+- [API `asicde-api`](asicde-api.md)
+- [Backend `asicde-backend`](asicde-backend.md)
+- [Docker deployment `asicde-docker`](asicde-docker.md)
+- [Docker local development stack `asicde-docker-dev`](asicde-docker-dev.md)
+- [Frontend `asicde-frontend`](asicde-frontend.md)
+- [Project parent `asicde-parent`](asicde-parent.md)
+- [Request router `asicde-router`](asicde-router.md)
+- [ASICDE.org website `website`](website.md)
 
 ## Installation guides
 

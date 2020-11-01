@@ -63,7 +63,10 @@ Set the TCP port that will be exposed on the machine to serve HTTP requests:
 Set the TCP port that will be exposed on the machine to serve the web application:
 
 - `10001:80` - `host-port : container-port` - do not change the container port (this is the port of the service inside the Docker container)
-- TODO - other config
+
+The frontend application also requires additional configuration of environment variables:
+
+- `API_URL=http://localhost:10000` - this variable tells frontend where the backend API is located
 
 ### Environment files
 

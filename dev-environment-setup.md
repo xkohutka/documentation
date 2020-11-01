@@ -19,7 +19,7 @@ Table of Contents
          * [Prerequisites](#prerequisites-1)
          * [Setup Visual Studio Code](#setup-visual-studio-code)
          * [Clone frontend and docker repository](#clone-frontend-and-docker-repository)
-         * [Start the backend](#start-the-backend)
+         * [Frontend - Backend communication](#frontend-backend-communication)
          * [Using Visual Studio Code](#using-visual-studio-code)
          * [Using IntelliJ IDEA for frontend project execution](#using-intellij-idea-for-frontend-project-execution)
 
@@ -153,7 +153,7 @@ git clone git@github.com:ASICDE/asicde-docker.git
 
 Frontend has been cloned by using the `dev` branch which is dedicated for project development and holds the latest versions of the code.
 
-### Frontend - Backend communication
+### Frontend-Backend communication
 
 `asicde-fronted`, when started in dev mode using `npm start`, uses `proxy.conf.json` file to proxy all requests to respective endpoints.
 By default, all frontend requests are sent to  `localhost:10000` (default option), unless changed in `proxy.conf.json`.

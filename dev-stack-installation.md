@@ -52,6 +52,12 @@ Table of Contents
             * [Nexus access](#nexus-access)
             * [<em>(Optional)</em> Slack access](#optional-slack-access)
       * [8. Setup Jenkins pipelines](#8-setup-jenkins-pipelines)
+      * [9. Setup simple mail server for backend services](#9-setup-simple-mail-server-for-backend-services)
+         * [Install required packages](#install-required-packages)
+         * [Prepare the MySQL database structure](#prepare-the-mysql-database-structure)
+         * [Configure Postfix](#configure-postfix)
+         * [Configure Dovecot](#configure-dovecot)
+         * [Finish](#finish)
 
 ## 1. Preparation
 - Configure SSH keys for you VM to enable remote access

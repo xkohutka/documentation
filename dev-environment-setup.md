@@ -153,18 +153,73 @@ git clone git@github.com:ASICDE/asicde-docker.git
 
 Frontend has been cloned by using the `dev` branch which is dedicated for project development and holds the latest versions of the code.
 
-### Start the backend
+### Frontend - Backend communication
 
-In order to work on the frontend, you need to have a backend service to serve your API requests. For this purpose, you should clone the docker repository holding docker-compose stack configuration and start it locally. 
+`asicde-fronted`, when started in dev mode using `npm start`, uses `proxy.conf.json` file to proxy all requests to respective endpoints.
+By default, all frontend requests are sent to  `localhost:10000` (default option), unless changed in `proxy.conf.json`.
 
-To have the latest version of the backend services, you can rename `docker-compose.dev.yml` to `docker-compose.yml` (or rename it to `docker-compose.override.yml` if you do not want to overwrite the original file). Although these versions may not be 100% stable.
+There are two options to run backend services along with frontend:
 
-The backend should be already configured to have it's own database and the orchestrator service running locally on port `10000`, so no extra modifications are needed.
+#### Using asicde-router (default)
+
+For this purpose, you should clone the `asicde-docker` repository holding docker-compose stack configuration and start it locally. 
 
 ```bash
 cd asicde-docker
 docker-compose up -d
 ```
+
+`asicde-router` routes all incoming requests on port `:10000` to respective endpoints:
+
+- auth - all requests with prefix `/api/auth/*`
+- parser - all requests with prefix `/api/parser/*`
+- repo - all requests for `/api/repo/*`
+
+This option is used by default, so no extra modifications in frontend are needed.
+
+#### Specifying separate endpoints
+
+If you want to run backend services separately (e.g. outside Docker) without `asicde-router`, specify respective ports inside
+`proxy.conf.json`.
+
+**Example:**
+ 
+We want to develop auth service (port 1234) and frontend together:
+
+```json
+{
+  "/api/auth": {
+    "target": "http://localhost:1234",
+    "secure": false,
+    "logLevel": "debug"
+  }
+}
+```
+
+All requests sent by frontend with prefix `/api/auth` will be redirected to our locally running auth service on port 1234.
+
+*Example request:*
+
+`http://localhost:4200/api/auth/login ---> http://localhost:1234/api/auth/login`
+
+In case we want to strip prefix (e.g. `/api`) and forward only some part of request URL, we change config to following:
+
+```json
+{
+  "/api/auth": {
+    "target": "http://localhost:1234",
+    "secure": false,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api": ""
+    }
+  }
+}
+```
+*Example request:*
+
+`http://localhost:4200/api/auth/login ---> http://localhost:1234/auth/login`
+
 
 ### Using Visual Studio Code
 

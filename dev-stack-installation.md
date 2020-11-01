@@ -73,19 +73,17 @@ Connect to your Ubuntu VM and update the system
 
 We need to install some packages in order to be able to configure the development stack. A rundown of the packages is listed below:
 
-- git: Commandline tool for git repository management
-- *(Optional)* mc: Midnight commander - a visual interface for browsing through directory structures (with many useful features)
-- wget: Commandline tool for downloading files
-- docker: Service for Docker container deployment and management
-- docker-compose: Commandline tool for working with Docker container stacks
-- nginx: Web server and HTTP/HTTPS/WS/WSS proxy
-- php-fpm: PHP file interpretter for integration with Nginx
-- *(Optional)* postfix: SMTP mail server
-- *(Optional)* dovecot-imapd: IMAP mail server
-- *(Optional)* htop: Utility to monitor system resources
-- zip & unzip: Utilities for file compression and decompression
+- `git`: Commandline tool for git repository management
+- *(Optional)* `mc`: Midnight commander - a visual interface for browsing through directory structures (with many useful features)
+- `wget`: Commandline tool for downloading files
+- `docker`: Service for Docker container deployment and management
+- `docker-compose`: Commandline tool for working with Docker container stacks
+- `nginx`: Web server and HTTP/HTTPS/WS/WSS proxy
+- `php-fpm`: PHP file interpretter for integration with Nginx
+- *(Optional)* `htop`: Utility to monitor system resources
+- `zip` & `unzip`: Utilities for file compression and decompression
 
-`apt install git mc wget htop zip unzip docker docker-compose nginx php-fpm postfix dovecot-imapd`
+`apt install git mc wget htop zip unzip docker docker-compose nginx php-fpm`
   - Postifx configuration: Internet site
 
 ### Desired architecture
@@ -803,3 +801,365 @@ Go to Manage Jenkins -> Manage credentials -> Jenkins -> Global credentials
 ## 8. Setup Jenkins pipelines
 
 Each part of the project contains a Jenkinsfile (if the project module is buildable). You can use this pipeline as a reference to create your own. To add this pipeline simply open Jenkins, click on New item -> Type in name -> Select Pipeline project type -> Create. Then you can insert the pipeline code into the build item.
+
+## 9. Setup simple mail server for backend services
+
+The backend requires a way of sending emails to users. For example, when a new user is invited into any organization, they will receive the invitation email to confirm the invitation and create their user account.
+
+### Install required packages
+
+- `postfix`: SMTP mail server
+- `postfix-mysql`: Postfix MySQL plugin
+- `dovecot-core`: Dovecot mail server
+- `dovecot-imapd`: Dovecot IMAP plugin
+- `dovecot-lmtpd`: Dovecot LMTP plugin
+- `dovecot-mysql`: Dovecot MySQL plugin
+- `mariadb-server`: MySQL server
+
+```bash
+apt install postfix postfix-mysql dovecot-core dovecot-imapd dovecot-lmtpd dovecot-mysql mariadb-server
+```
+
+### Prepare the MySQL database structure
+
+Create a database for server mail:
+```sql
+CREATE DATABASE mail;
+```
+
+Create a new user for server mail:
+```sql
+GRANT SELECT ON mail.* TO 'mail'@'localhost' IDENTIFIED BY 'mailpassword';
+FLUSH PRIVILEGES;
+```
+
+Create tables for domains, mailboxes and mail aliases:
+```sql
+# user database 'mail'
+USE mail;
+
+# create table for domains
+CREATE TABLE `virtual_domains` (
+`id`  INT NOT NULL AUTO_INCREMENT,
+`name` VARCHAR(50) NOT NULL,
+PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+# create table for mailboxes
+CREATE TABLE `virtual_users` (
+`id` INT NOT NULL AUTO_INCREMENT,
+`domain_id` INT NOT NULL,
+`password` VARCHAR(106) NOT NULL,
+`email` VARCHAR(120) NOT NULL,
+PRIMARY KEY (`id`),
+UNIQUE KEY `email` (`email`),
+FOREIGN KEY (domain_id) REFERENCES virtual_domains(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+# create table for mail aliases
+CREATE TABLE `virtual_aliases` (
+`id` INT NOT NULL AUTO_INCREMENT,
+`domain_id` INT NOT NULL,
+`source` varchar(100) NOT NULL,
+`destination` varchar(100) NOT NULL,
+PRIMARY KEY (`id`),
+FOREIGN KEY (domain_id) REFERENCES virtual_domains(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+
+Add your domains:
+```sql
+INSERT INTO `mail`.`virtual_domains` (`id` ,`name`) VALUES ('1', 'team01-20.studenti.fiit.stuba.sk'), ('2', 'asicde.org');
+```
+
+Add a mailbox for team mail and one for the backend:
+```sql
+INSERT INTO `mail`.`virtual_users` (`id`, `domain_id`, `password` , `email`) VALUES
+('1', '1', ENCRYPT('firstpassword', CONCAT('$6$', SUBSTRING(SHA(RAND()), -16))), 'contact@team01-20.studenti.fiit.stuba.sk'),
+('2', '2', ENCRYPT('secondpassword', CONCAT('$6$', SUBSTRING(SHA(RAND()), -16))), 'no-reply@asicde.org');
+```
+
+### Configure Postfix
+
+Before we continue, let's back up the old configuration files:
+```bash
+mv /etc/postfix/main.cf /etc/postfix/main.cf.bak
+cp /etc/postfix/master.cf /etc/postfix/master.cf.bak
+```
+
+We are also going to create a separate user that will be the owner of all mail on the server:
+```bash
+groupadd -g 5000 vmail
+useradd -g vmail -u 5000 vmail -d /var/mail/
+```
+
+Create a new configuration file for the basic configuration `main.cf`:
+```ini
+mydomain = [YOUR DOMAIN]
+myhostname = $mydomain
+myorigin = $mydomain
+mydestination = localhost
+relay_domains = *
+append_dot_mydomain = no
+inet_protocols = ipv4
+inet_interfaces = all
+
+smtpd_banner = $myhostname
+biff = no
+
+mailbox_command = /usr/lib/dovecot/deliver -f "$SENDER" -a "$RECIPIENT"
+
+default_privs = nobody
+mail_owner = postfix
+setgid_group = vmail
+
+smtp_tls_security_level = may
+smtp_tls_loglevel = 1
+smtpd_tls_security_level = may
+smtpd_use_tls = yes
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/auth
+smtpd_sasl_auth_enable = yes
+smtpd_tls_chain_files = [SSL BUNDLE 1], [SSL BUNDLE 2], ...
+smtpd_relay_restrictions = permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination, reject_unknown_reverse_client_hostname
+
+# 100M
+message_size_limit = 104857600
+# 1G
+mailbox_size_limit = 1073741824
+virtual_mailbox_limit = 1073741824
+
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+
+virtual_mailbox_domains = mysql:/etc/postfix/mysql/virtual-mailbox-domains.cf
+virtual_mailbox_maps = mysql:/etc/postfix/mysql/virtual-mailbox-maps.cf
+virtual_alias_maps = mysql:/etc/postfix/mysql/virtual-alias-maps.cf,
+                     mysql:/etc/postfix/mysql/virtual-email2email.cf
+virtual_transport = lmtp:unix:private/dovecot-lmtp
+```
+
+Do not forget to replace the information in this configuration file with your domain name and SSL certificate. The SSL cetificate bundles consist of private key followed by the certificate and any intermediate issuer certificates.
+
+Create MySQL query files:
+```bash
+mkdir -p /etc/postfix/mysql
+touch /etc/postfix/mysql/virtual-alias-maps.cf
+touch /etc/postfix/mysql/virtual-email2email.cf
+touch /etc/postfix/mysql/virtual-mailbox-domains.cf
+touch /etc/postfix/mysql/virtual-mailbox-maps.cf
+```
+
+At the top of each of these files, place your MySQL connection details:
+```ini
+user = [DB USER]
+password = [DB PASSWORD]
+hosts = [DB HOST]
+dbname = [DB DATABASE]
+```
+
+Then add each query:
+
+- `virtual-alias-maps.cf`:
+  ```ini
+  query = SELECT destination FROM virtual_aliases WHERE source='%s'
+  ```
+- `virtual-email2email.cf`:
+  ```ini
+  query = SELECT email FROM virtual_users WHERE email='%s'
+  ```
+- `virtual-mailbox-domains.cf`:
+  ```ini
+  query = SELECT destination FROM virtual_aliases WHERE source='%s'
+  ```
+- `virtual-mailbox-maps.cf`:
+  ```ini
+  query = SELECT 1 FROM virtual_users WHERE email='%s'
+  ```
+
+Change the `master.cf` configuration to look like this:
+
+```ini
+smtp       inet  n       -       y       -       -       smtpd
+#smtp      inet  n       -       y       -       1       postscreen
+#smtpd     pass  -       -       y       -       -       smtpd
+#dnsblog   unix  -       -       y       -       0       dnsblog
+#tlsproxy  unix  -       -       y       -       0       tlsproxy
+submission inet  n       -       y       -       -       smtpd
+  -o syslog_name=postfix/submission
+  -o smtpd_tls_security_level=encrypt
+  -o smtpd_sasl_auth_enable=yes
+  -o smtpd_reject_unlisted_recipient=no
+  -o smtpd_client_restrictions=$mua_client_restrictions
+  -o smtpd_helo_restrictions=$mua_helo_restrictions
+  -o smtpd_sender_restrictions=$mua_sender_restrictions
+  -o smtpd_recipient_restrictions=
+  -o smtpd_relay_restrictions=permit_sasl_authenticated,reject
+  -o milter_macro_daemon_name=ORIGINATING
+smtps     inet  n       -       y       -       -       smtpd
+  -o syslog_name=postfix/smtps
+  -o smtpd_tls_wrappermode=yes
+  -o smtpd_sasl_auth_enable=yes
+  -o smtpd_reject_unlisted_recipient=no
+  -o smtpd_client_restrictions=$mua_client_restrictions
+  -o smtpd_helo_restrictions=$mua_helo_restrictions
+  -o smtpd_sender_restrictions=$mua_sender_restrictions
+  -o smtpd_recipient_restrictions=
+  -o smtpd_relay_restrictions=permit_sasl_authenticated,reject
+  -o milter_macro_daemon_name=ORIGINATING
+...
+```
+
+### Configure Dovecot
+
+Before we continue, let's back up the old configuration files:
+```bash
+cp /etc/dovecot/dovecot.conf /etc/dovecot/dovecot.conf.bak
+cp /etc/dovecot/conf.d/10-logging.conf /etc/dovecot/conf.d/10-logging.conf.bak
+cp /etc/dovecot/conf.d/10-mail.conf /etc/dovecot/conf.d/10-mail.conf.bak
+cp /etc/dovecot/conf.d/10-auth.conf /etc/dovecot/conf.d/10-auth.conf.bak
+cp /etc/dovecot/conf.d/10-master.conf /etc/dovecot/conf.d/10-master.conf.bak
+cp /etc/dovecot/conf.d/10-ssl.conf /etc/dovecot/conf.d/10-ssl.conf.bak
+cp /etc/dovecot/conf.d/auth-sql.conf.ext /etc/dovecot/conf.d/auth-sql.conf.ext.bak
+```
+
+Enable IMAP and LMTP protocols in the Dovecot configuration `/etc/dovecot/dovecot.conf`:
+```ini
+# Enable installed protocols
+#!include_try /usr/share/dovecot/protocols.d/*.protocol
+protocols = imap lmtp
+```
+
+In the mail configuration `/etc/dovecot/conf.d/10-mail.conf`, set the location and mail group:
+```ini
+...
+mail_location = maildir:/var/mail/vhosts/%d/%n
+...
+mail_privileged_group = vmail
+...
+```
+
+Enable authentication mechanisms in `/etc/dovecot/conf.d/10-auth.conf`:
+```ini
+...
+auth_mechanisms = plain login
+...
+!include auth-sql.conf.ext
+...
+```
+
+Configure how the users are authenticated in `/etc/dovecot/conf.d/auth-sql.conf.ext`:
+```ini
+...
+passdb {
+  driver = sql
+  args = /etc/dovecot/dovecot-sql.conf.ext
+}
+...
+userdb {
+  driver = static
+  args = uid=vmail gid=vmail home=/var/mail/vhosts/%d/%n
+}
+...
+```
+
+Create the SQL connection configuration file `/etc/dovecot/dovecot-sql.conf.ext`:
+```ini
+driver = mysql
+connect = host=[DB HOST] dbname=[DB DATABASE] user=[DB USER] password=[DB PASSWORD]
+default_pass_scheme = SHA512-CRYPT
+password_query = SELECT email as user, password FROM virtual_users WHERE email='%u';
+```
+
+Edit the master configuration file `/etc/dovecot/conf.d/10-master.conf`:
+```ini
+...
+service imap-login {
+  inet_listener imap {
+    port = 0
+  }
+  inet_listener imaps {
+    port = 993
+    ssl = yes
+  }
+  ...
+}
+...
+service lmtp {
+  unix_listener /var/spool/postfix/private/dovecot-lmtp {
+    mode = 0600
+    user = postfix
+    group = postfix
+  }
+...
+}
+...
+service auth {
+  ...
+  unix_listener /var/spool/postfix/private/auth {
+    mode = 0660
+    user = postfix
+    group = postfix
+  }
+
+  unix_listener auth-userdb {
+    mode = 0600
+    user = vmail
+  }
+...
+  user = dovecot
+}
+...
+service auth-worker {
+  ...
+  user = vmail
+}
+...
+```
+
+Enable and configure SSL support `/etc/dovecot/conf.d/10-ssl.conf`:
+```ini
+...
+# SSL/TLS support: yes, no, required. <doc/wiki/SSL.txt>
+ssl = yes
+...
+ssl_cert = <[SSL CERTIFICATE PATH]
+ssl_key = <[SSL CERTIFICATE KEY PATH]
+
+# team01-20.studenti.fiit.stuba.sk
+local_name team01-20.studenti.fiit.stuba.sk {
+  ssl_cert = <[SSL CERTIFICATE PATH]
+  ssl_key = <[SSL CERTIFICATE KEY PATH]
+}
+...
+# SSL protocols to use
+ssl_protocols = !SSLv2 !SSLv3
+
+# SSL ciphers to use
+ssl_cipher_list = ALL:!LOW:!SSLv2:!SSLv3:!EXP:!aNULL
+```
+
+### Finish
+
+At last, update directory permissions:
+```bash
+chmod -R o-rwx /etc/postfix
+chown -R vmail:dovecot /etc/dovecot
+chmod -R o-rwx /etc/dovecot
+chown -R vmail:vmail /var/mail/
+chown postfix:vmail /usr/sbin/postqueue
+chown postfix:vmail /usr/sbin/postdrop
+chown -R postfix:vmail /var/spool/postfix/public
+chown -R postfix:vmail /var/spool/postfix/maildrop
+chmod g+s /usr/sbin/postqueue
+chmod g+s /usr/sbin/postdrop
+```
+
+Enable and restart all of the services:
+```bash
+systemctl enable mariadb
+systemctl enable postfix
+systemctl enable dovecot
+systemctl restart postfix
+systemctl restart dovecot
+```

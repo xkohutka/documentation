@@ -6,10 +6,10 @@ This repository holds Docker compose files for the ASICDE software stack. With t
 
 ## Contents
 
-- [docker-compose.yml](docker-compose.yml) - Deployment configuration for the production-ready backend
-- [docker-compose.frontend.yml](docker-compose.frontend.yml) - Deployment configuration for the production-ready frontend
-- [docker-compose.dev.yml](docker-compose.dev.yml) - Deployment configuration for the development version of backend
-- [docker-compose.frontend.dev.yml](docker-compose.frontend.dev.yml) - Deployment configuration for the development version of frontend
+- [docker-compose.yml](https://github.com/ASICDE/asicde-docker/blob/master/docker-compose.yml) - Deployment configuration for the production-ready backend
+- [docker-compose.frontend.yml](https://github.com/ASICDE/asicde-docker/blob/master/docker-compose.frontend.yml) - Deployment configuration for the production-ready frontend
+- [docker-compose.dev.yml](https://github.com/ASICDE/asicde-docker/blob/master/docker-compose.dev.yml) - Deployment configuration for the development version of backend
+- [docker-compose.frontend.dev.yml](https://github.com/ASICDE/asicde-docker/blob/master/docker-compose.frontend.dev.yml) - Deployment configuration for the development version of frontend
 
 ## Requirements
 
@@ -67,61 +67,62 @@ Set the TCP port that will be exposed on the machine to serve the web applicatio
 
 ### Environment files
 
-Each service has it's own environment variables. These variables are injected into the Java virtual machine on startup. All environment files contain a directive to disable debugging messages during runtime (`spring.jpa.properties.hibernate.generate_statistics=false`).
+Each service has it's own environment variables. These variables are injected into the Java virtual machine on startup.
 
-#### Authentication API - `auth.env`
+#### Spring Configuration - `spring.metrics.env`
 
-The authentication service needs definitions for the database connection which is used both in Spring for data persistance and Flyway to boot-up the database structure when the application runs for the first time.
+The sprint metrics environment file contains a directive to disable debugging messages during runtime. These environment variables common for all services.
 
 ```ini
-# Metrics
 spring.jpa.properties.hibernate.generate_statistics=false
+```
 
-# Persistence
-spring.datasource.url=jdbc:postgresql://db:5432/asicde?currentSchema=${repo.datasource.schema}
+#### Database configuration - `database.env`
+
+This configuration file is common for the auth and repo modules, which need access to the database. You may change the database connection settings here:
+
+```ini
 spring.datasource.driverclassname=org.postgresql.Driver
 spring.datasource.username=asicde
 spring.datasource.password=password
 spring.jpa.show-sql=true
+```
 
-# Flyway
-spring.flyway.url=jdbc:postgresql://db:5432/asicde
-spring.flyway.user=asicde
-spring.flyway.password=password
+#### Authentication API - `auth.env`
+
+The authentication service needs definitions for the JWT settings. JWT is the authentication of choice that is used in the service. You may define the secret key that is used for encrypting data and the token expiration time.
+
+```ini
+# Persistence
+spring.datasource.url=jdbc:postgresql://db:5432/asicde?currentSchema=${auth.datasource.schema}
+
+# JWT
+app.jwt.authorization.header=Authorization
+app.jwt.prefix=Bearer 
+app.jwt.secret=JWTSuperSecretKey
+app.jwt.expiration.time=86400
 ```
 
 #### Parser API - `parser.env`
 
-```ini
-# Metrics
-spring.jpa.properties.hibernate.generate_statistics=false
-```
+Parser does not require any special configuration, but the environment file is ready.
 
 #### Repo API - `repo.env`
 
-The repo service needs definitions for the database connection which is used both in Spring for data persistance and Flyway to boot-up the database structure when the application runs for the first time.
-
-A definition for the API auth endpoint also needs to be provided together with storage location path (where repository files are stored on the backend).
+The repo service needs a definition for the API auth endpoint together with storage location path (where repository files are stored on the backend). There are also settings for configuring the maximum file size that can be transfered by the service.
 
 ```ini
-# Metrics
-spring.jpa.properties.hibernate.generate_statistics=false
-
 # Persistence
 spring.datasource.url=jdbc:postgresql://db:5432/asicde?currentSchema=${repo.datasource.schema}
-spring.datasource.driverclassname=org.postgresql.Driver
-spring.datasource.username=asicde
-spring.datasource.password=password
-spring.jpa.show-sql=true
-
-# Flyway
-spring.flyway.url=jdbc:postgresql://db:5432/asicde
-spring.flyway.user=asicde
-spring.flyway.password=password
 
 # Auth
 auth.url=http://auth:8080/api/auth
 
 # Storage
 app.storage.location=/data
+
+# File upload
+spring.servlet.multipart.enabled=true
+spring.servlet.multipart.max-file-size=500MB
+spring.servlet.multipart.max-request-size=500MB
 ```

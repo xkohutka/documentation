@@ -90,7 +90,7 @@ We need to install some packages in order to be able to configure the developmen
 
 ### Desired architecture
 
-![System architecture](./resources/dev-stack-architecture.png)
+![System architecture](resources/dev-stack-architecture.png)
 
 ## 2. Setup your data disk
 

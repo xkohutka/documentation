@@ -8,11 +8,11 @@ A PostgreSQL database will be started on port `5432`, development router service
 
 ## Contents
 
-- [docker-compose.yml](docker-compose.yml) - Deployment configuration for the local development
-- [Dockerfile](Dockerfile) - Docker image configuration for the custom API orchestrator (router)
-- [nginx-default.conf](nginx-default.conf) - NginX common configuration for all endpoints
-- [nginx.conf](nginx.conf) - NginX configuration for the HTTP proxy service
-- [run.sh](run.sh) - Custom script for injecting environment variables into NginX configuration files
+- [docker-compose.yml](https://github.com/ASICDE/asicde-docker-dev/blob/master/docker-compose.yml) - Deployment configuration for the local development
+- [Dockerfile](https://github.com/ASICDE/asicde-docker-dev/blob/master/Dockerfile) - Docker image configuration for the custom API orchestrator (router)
+- [nginx-default.conf](https://github.com/ASICDE/asicde-docker-dev/blob/master/nginx-default.conf) - NginX common configuration for all endpoints
+- [nginx.conf](https://github.com/ASICDE/asicde-docker-dev/blob/master/nginx.conf) - NginX configuration for the HTTP proxy service
+- [run.sh](https://github.com/ASICDE/asicde-docker-dev/blob/master/run.sh) - Custom script for injecting environment variables into NginX configuration files
 
 ## Requirements
 

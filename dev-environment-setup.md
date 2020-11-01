@@ -99,7 +99,7 @@ All repositories have been cloned by using the `dev` branch which is dedicated f
   - Run the selected goals using `Run Maven Build` button.
   - The IDE should automatically open a console window, indicating the build status and results.
   
-For an overview of the project module structure and detailed documentation, please refer to each repository's Readme file ([parent](https://github.com/ASICDE/asicde-parent/blob/master/README.md), [api](https://github.com/ASICDE/asicde-api/blob/master/README.md), [backend](https://github.com/ASICDE/asicde-backend/blob/master/README.md)).
+For an overview of the project module structure and detailed documentation, please refer to each repository's Readme file ([parent](asicde-parent.md), [api](asicde-api.md), [backend](asicde-backend.md)).
 
 ### Setup local database, frontend and service orchestrator
 
@@ -168,7 +168,7 @@ docker-compose up -d
 
 ### Using Visual Studio Code
 
-As a reference for the project structure, please refer to the repository's [Readme file](https://github.com/ASICDE/asicde-frontend/blob/master/README.md).
+As a reference for the project structure, please refer to the repository's [Readme file](asicde-frontend.md).
 
 ### Using IntelliJ IDEA for frontend project execution
 

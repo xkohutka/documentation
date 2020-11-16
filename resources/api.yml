@@ -81,7 +81,7 @@ paths:
         $ref: "#/components/requestBodies/AuthCreateUserRequest"
       responses:
         200:
-          $ref: "#/components/responses/AuthCreateUser200Response"
+          $ref: "#/components/responses/Empty200Response"
         400:
           $ref: "#/components/responses/AuthCreateUser400Response"
         429:
@@ -1225,12 +1225,6 @@ components:
       allOf:
         - $ref: "#/components/schemas/TokenSchema"
 
-    AuthCreateUserSuccessSchema:
-      type: object
-      allOf:
-        - $ref: "#/components/schemas/TokenSchema"
-        - $ref: "#/components/schemas/UsersSchema"
-
     AuthUserDetailsSuccessSchema:
       type: object
       allOf:
@@ -1546,13 +1540,6 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/AuthRefreshTokenSuccessSchema"
-
-    AuthCreateUser200Response:
-      description: User creation successful
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/AuthCreateUserSuccessSchema"
 
     AuthUserDetails200Response:
       description: User found

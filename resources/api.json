@@ -843,6 +843,34 @@
             "$ref": "#/components/responses/OrgGet404Response"
           }
         }
+      },
+      "put": {
+        "tags": [
+          "Organization team management"
+        ],
+        "summary": "Update team name",
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/OrgTeamUpdateRequest"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Empty200Response"
+          },
+          "400": {
+            "$ref": "#/components/responses/OrgTeamUpdate400Response"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/OrgGet404Response"
+          }
+        }
       }
     },
     "/org/teams/{team_uuid}": {
@@ -1738,6 +1766,22 @@
           }
         ]
       },
+      "OrgTeamUpdateRequestSchema": {
+        "type": "object",
+        "allOf": [
+          {
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "role": {
+                "type": "string",
+                "example": "Team1"
+              }
+            }
+          }
+        ]
+      },
       "OrgTeamMemberAddRequestSchema": {
         "type": "object",
         "allOf": [
@@ -2268,6 +2312,20 @@
           }
         }
       },
+      "OrgTeamUpdateRequest": {
+        "required": true,
+        "description": "Organization team update request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/OrgTeamUpdateRequestSchema"
+            },
+            "example": {
+              "name": "Team2"
+            }
+          }
+        }
+      },
       "OrgTeamMemberAddRequest": {
         "required": true,
         "description": "Organization team member add request",
@@ -2668,6 +2726,20 @@
       },
       "OrgCreateTeam400Response": {
         "description": "Bad team create request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponseSchema"
+            },
+            "example": {
+              "errorCode": 0,
+              "message": "Invalid team name"
+            }
+          }
+        }
+      },
+      "OrgTeamUpdate400Response": {
+        "description": "Bad organization team update request",
         "content": {
           "application/json": {
             "schema": {

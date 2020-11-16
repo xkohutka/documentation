@@ -1,0 +1,2067 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "version": "1.0.0",
+        "title": "ASICDE API",
+        "description": "Cloud Based IDE for SystemVerilog",
+        "contact": {
+            "name": "ASICDE Team",
+            "email": "support@asicde.org",
+            "url": "https://www.asicde.com"
+        }
+    },
+    "servers": [{
+        "url": "https://{environment}.asicde.org/{version}",
+        "description": "Public API endpoint",
+        "variables": {
+            "environment": {
+                "description": "Application environment - select either production or development API endpoint",
+                "enum": [
+                    "api",
+                    "api-dev"
+                ],
+                "default": "api"
+            },
+            "version": {
+                "description": "API version",
+                "enum": [
+                    "v1"
+                ],
+                "default": "v1"
+            }
+        }
+    }],
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Authenticate with the API",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/AuthLoginRequest"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/AuthLogin200Response"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/AuthLogin400Response"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/AuthLogin401Response"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequestsResponse"
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "De-authenticate current session",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/Empty200Response"
+                    }
+                }
+            }
+        },
+        "/auth/refreshToken": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Refresh JWT token",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/AuthRefreshToken200Response"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequestsResponse"
+                    }
+                }
+            }
+        },
+        "/auth/users": {
+            "post": {
+                "tags": [
+                    "User management"
+                ],
+                "summary": "Create a new user account",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/AuthCreateUserRequest"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/AuthCreateUser200Response"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/AuthCreateUser400Response"
+                    },
+                    "429": {
+                        "$ref": "#/components/responses/TooManyRequestsResponse"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "User management"
+                ],
+                "summary": "Update user information",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/AuthUpdateUserRequest"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/Empty200Response"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/AuthUpdateUser400Response"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "User management"
+                ],
+                "summary": "Delete user account",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/Empty200Response"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            }
+        },
+        "/auth/users/activate/{token}": {
+            "get": {
+                "tags": [
+                    "User management"
+                ],
+                "summary": "Activate user account",
+                "parameters": [{
+                    "in": "path",
+                    "name": "token",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "required": true,
+                    "description": "Activation token"
+                }],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/Empty200Response"
+                    }
+                }
+            }
+        },
+        "/repos": {
+            "post": {
+                "tags": [
+                    "Repository management"
+                ],
+                "summary": "Create new repository",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/ReposCreateRequest"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/ReposCreate200Response"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ReposCreate400Response"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Repository management"
+                ],
+                "summary": "Get all user repositories",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "parameters": [{
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "required": false,
+                        "description": "Pagination page"
+                    },
+                    {
+                        "in": "query",
+                        "name": "size",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        },
+                        "required": false,
+                        "description": "Pagination batch size"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/ReposGetAll200Response"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/PagingError"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            }
+        },
+        "/repos/{uuid}": {
+            "get": {
+                "tags": [
+                    "Repository management"
+                ],
+                "summary": "Get repository",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "parameters": [{
+                    "in": "path",
+                    "name": "uuid",
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "required": true,
+                    "description": "Repository identifier string"
+                }],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/ReposGetOne200Response"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/Repos404Response"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Repository management"
+                ],
+                "summary": "Update repository",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "parameters": [{
+                    "in": "path",
+                    "name": "uuid",
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "required": true,
+                    "description": "Repository identifier string"
+                }],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/ReposUpdateRequest"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/Empty200Response"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/ReposUpdate400Response"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/Repos404Response"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Repository management"
+                ],
+                "summary": "Delete repository",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "parameters": [{
+                    "in": "path",
+                    "name": "uuid",
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "required": true,
+                    "description": "Repository identifier string"
+                }],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/Empty200Response"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            }
+        },
+        "/repos/org/{uuid}": {
+            "get": {
+                "tags": [
+                    "Repository management"
+                ],
+                "summary": "Get all organization repositories",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "parameters": [{
+                        "in": "path",
+                        "name": "uuid",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true,
+                        "description": "Organization identifier string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "required": false,
+                        "description": "Pagination page"
+                    },
+                    {
+                        "in": "query",
+                        "name": "size",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        },
+                        "required": false,
+                        "description": "Pagination batch size"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/ReposGetAll200Response"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/PagingError"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/Org404"
+                    }
+                }
+            }
+        },
+        "/repos/team/{uuid}": {
+            "get": {
+                "tags": [
+                    "Repository management"
+                ],
+                "summary": "Get all team repositories",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "parameters": [{
+                        "in": "path",
+                        "name": "uuid",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "required": true,
+                        "description": "Team identifier string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "required": false,
+                        "description": "Pagination page"
+                    },
+                    {
+                        "in": "query",
+                        "name": "size",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        },
+                        "required": false,
+                        "description": "Pagination batch size"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/ReposGetAll200Response"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/PagingError"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/Team404"
+                    }
+                }
+            }
+        },
+        "/org": {
+            "post": {
+                "tags": [
+                    "Organization management"
+                ],
+                "summary": "Create a new organization",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/OrgCreateRequest"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/OrgCreate200Response"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/OrgCreate400Response"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Organization management"
+                ],
+                "summary": "Get organization information",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/OrgGet200Response"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/OrgGet404Response"
+                    }
+                }
+            }
+        },
+        "/org/members": {
+            "get": {
+                "tags": [
+                    "Organization management"
+                ],
+                "summary": "Get organization members",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "parameters": [{
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "required": false,
+                        "description": "Pagination page"
+                    },
+                    {
+                        "in": "query",
+                        "name": "size",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        },
+                        "required": false,
+                        "description": "Pagination batch size"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/OrgGetMembers200Response"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/PagingError"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/OrgGet404Response"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Organization management"
+                ],
+                "summary": "Invite organization member",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/OrgInviteRequest"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/Empty200Response"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/OrgInvite400Response"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/OrgGet404Response"
+                    }
+                }
+            }
+        },
+        "/org/members/{uuid}": {
+            "delete": {
+                "tags": [
+                    "Organization management"
+                ],
+                "summary": "Remove organization member",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "parameters": [{
+                    "in": "path",
+                    "name": "uuid",
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "required": true,
+                    "description": "User identifier string"
+                }],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/Empty200Response"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/OrgGet404Response"
+                    }
+                }
+            }
+        },
+        "/org/teams": {
+            "get": {
+                "tags": [
+                    "Organization management"
+                ],
+                "summary": "Get all teams in organization",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "parameters": [{
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "required": false,
+                        "description": "Pagination page"
+                    },
+                    {
+                        "in": "query",
+                        "name": "size",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        },
+                        "required": false,
+                        "description": "Pagination batch size"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/OrgGetTeams200Response"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/PagingError"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/OrgGet404Response"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Organization management"
+                ],
+                "summary": "Create a new team",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/OrgCreateTeamRequest"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/OrgCreateTeam200Response"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/OrgCreateTeam400Response"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/OrgGet404Response"
+                    }
+                }
+            }
+        },
+        "/org/teams/{uuid}": {
+            "delete": {
+                "tags": [
+                    "Organization management"
+                ],
+                "summary": "Remove a team",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "parameters": [{
+                    "in": "path",
+                    "name": "uuid",
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "required": true,
+                    "description": "Team identifier string"
+                }],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/Empty200Response"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/OrgGet404Response"
+                    }
+                }
+            }
+        },
+        "/org/settings": {
+            "get": {
+                "tags": [
+                    "Organization management"
+                ],
+                "summary": "Get organization settings",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/OrgGetSettings200Response"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/OrgGet404Response"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Organization management"
+                ],
+                "summary": "Change organization settings",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/OrgSettingsUpdateRequest"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/Empty200Response"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/OrgGetSettingsUpdate400Response"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/OrgGet404Response"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerToken": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        },
+        "schemas": {
+            "PagingSchema": {
+                "type": "object",
+                "allOf": [{
+                    "required": [
+                        "pageNum",
+                        "totalPages",
+                        "totalItems"
+                    ],
+                    "properties": {
+                        "pageNum": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "totalPages": {
+                            "type": "integer",
+                            "example": 3
+                        },
+                        "totalItems": {
+                            "type": "integer",
+                            "example": 27
+                        }
+                    }
+                }]
+            },
+            "TokenSchema": {
+                "type": "object",
+                "allOf": [{
+                    "required": [
+                        "token",
+                        "tokenType",
+                        "expiration"
+                    ],
+                    "properties": {
+                        "token": {
+                            "type": "string",
+                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                        },
+                        "tokenType": {
+                            "type": "string",
+                            "example": "Bearer"
+                        },
+                        "expiration": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    }
+                }]
+            },
+            "UserSchema": {
+                "type": "object",
+                "allOf": [{
+                    "required": [
+                        "uuid",
+                        "username",
+                        "email",
+                        "firstname",
+                        "lastname"
+                    ],
+                    "properties": {
+                        "uuid": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "username": {
+                            "type": "string",
+                            "example": "john.doe"
+                        },
+                        "email": {
+                            "type": "string",
+                            "format": "email",
+                            "example": "john.doe@mail.com"
+                        },
+                        "firstname": {
+                            "type": "string",
+                            "example": "John"
+                        },
+                        "lastname": {
+                            "type": "string",
+                            "example": "Doe"
+                        }
+                    }
+                }]
+            },
+            "UsersSchema": {
+                "type": "object",
+                "allOf": [{
+                    "required": [
+                        "user"
+                    ],
+                    "properties": {
+                        "user": {
+                            "type": "object",
+                            "allOf": [{
+                                    "$ref": "#/components/schemas/UserSchema"
+                                },
+                                {
+                                    "properties": {
+                                        "orgnaization": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }]
+            },
+            "MemberSchema": {
+                "type": "object",
+                "allOf": [{
+                        "$ref": "#/components/schemas/UserSchema"
+                    },
+                    {
+                        "properties": {
+                            "role": {
+                                "type": "string",
+                                "enum": [
+                                    "invited",
+                                    "member",
+                                    "admin"
+                                ],
+                                "default": "member"
+                            }
+                        }
+                    }
+                ]
+            },
+            "RepoSchema": {
+                "type": "object",
+                "allOf": [{
+                    "required": [
+                        "name"
+                    ],
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "example": "Repository1"
+                        },
+                        "url": {
+                            "type": "string",
+                            "example": "git@github.com:ASICDE/documentation.git"
+                        },
+                        "archived": {
+                            "type": "boolean",
+                            "example": false
+                        },
+                        "team": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "authorization": {
+                            "type": "object",
+                            "allOf": [{
+                                "required": [
+                                    "type"
+                                ],
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "none",
+                                            "plaintext",
+                                            "ssh",
+                                            "organization"
+                                        ],
+                                        "default": "plaintext"
+                                    },
+                                    "username": {
+                                        "type": "string",
+                                        "example": "githubuser"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "supersecret"
+                                    },
+                                    "sshKey": {
+                                        "type": "string"
+                                    }
+                                }
+                            }]
+                        }
+                    }
+                }]
+            },
+            "RepoSchemaLite": {
+                "type": "object",
+                "allOf": [{
+                    "required": [
+                        "uuid",
+                        "name",
+                        "url"
+                    ],
+                    "properties": {
+                        "uuid": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "name": {
+                            "type": "string",
+                            "example": "Repository1"
+                        },
+                        "url": {
+                            "type": "string",
+                            "example": "git@github.com:ASICDE/documentation.git"
+                        },
+                        "archived": {
+                            "type": "boolean",
+                            "example": false
+                        },
+                        "team": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                }]
+            },
+            "TeamSchema": {
+                "type": "object",
+                "allOf": [{
+                    "required": [
+                        "uuid",
+                        "name"
+                    ],
+                    "properties": {
+                        "uuid": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "name": {
+                            "type": "string",
+                            "example": "Team1"
+                        }
+                    }
+                }]
+            },
+            "AuthLoginSchema": {
+                "type": "object",
+                "allOf": [{
+                    "required": [
+                        "username",
+                        "password"
+                    ],
+                    "properties": {
+                        "username": {
+                            "type": "string"
+                        },
+                        "password": {
+                            "type": "string",
+                            "format": "password"
+                        }
+                    }
+                }]
+            },
+            "AuthCreateUserSchema": {
+                "type": "object",
+                "allOf": [{
+                    "required": [
+                        "username",
+                        "password",
+                        "email",
+                        "firstname",
+                        "lastname"
+                    ],
+                    "properties": {
+                        "username": {
+                            "type": "string"
+                        },
+                        "password": {
+                            "type": "string",
+                            "format": "password"
+                        },
+                        "email": {
+                            "type": "string",
+                            "format": "email"
+                        },
+                        "firstname": {
+                            "type": "string"
+                        },
+                        "lastname": {
+                            "type": "string"
+                        }
+                    }
+                }]
+            },
+            "AuthUpdateUserRequestSchema": {
+                "type": "object",
+                "anyOf": [{
+                        "properties": {
+                            "username": {
+                                "type": "string",
+                                "example": "john.doe"
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "password": {
+                                "type": "string",
+                                "format": "password"
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "email": {
+                                "type": "string",
+                                "format": "email"
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "firstname": {
+                                "type": "string",
+                                "example": "John"
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "lastname": {
+                                "type": "string",
+                                "example": "Doe"
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "organization": {
+                                "type": "string",
+                                "format": "uuid"
+                            }
+                        }
+                    }
+                ]
+            },
+            "ReposCreateRequestSchema": {
+                "type": "object",
+                "allOf": [{
+                    "$ref": "#/components/schemas/RepoSchema"
+                }]
+            },
+            "RepoUpdateRequestSchema": {
+                "type": "object",
+                "anyOf": [{
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "example": "Repository2"
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "url": {
+                                "type": "string",
+                                "example": "git@github.com:ASICDE/documentation.git"
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "team": {
+                                "type": "string",
+                                "format": "uuid"
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "authorization": {
+                                "type": "object",
+                                "allOf": [{
+                                    "required": [
+                                        "type"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "type": "string",
+                                            "enum": [
+                                                "none",
+                                                "plaintext",
+                                                "ssh",
+                                                "organization"
+                                            ],
+                                            "default": "plaintext"
+                                        },
+                                        "username": {
+                                            "type": "string",
+                                            "example": "githubuser"
+                                        },
+                                        "password": {
+                                            "type": "string",
+                                            "example": "supersecret"
+                                        },
+                                        "sshKey": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }]
+                            }
+                        }
+                    }
+                ]
+            },
+            "OrgCreateRequestSchema": {
+                "type": "object",
+                "allOf": [{
+                    "required": [
+                        "name"
+                    ],
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "example": "Acme"
+                        }
+                    }
+                }]
+            },
+            "OrgInviteRequestSchema": {
+                "type": "object",
+                "allOf": [{
+                    "required": [
+                        "invite"
+                    ],
+                    "properties": {
+                        "invite": {
+                            "type": "string",
+                            "example": "alice.gordon@mail.com"
+                        }
+                    }
+                }]
+            },
+            "OrgCreateTeamRequestSchema": {
+                "type": "object",
+                "allOf": [{
+                    "required": [
+                        "name"
+                    ],
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "example": "Team1"
+                        }
+                    }
+                }]
+            },
+            "OrgSettingsUpdateRequestSchema": {
+                "type": "object",
+                "anyOf": [{
+                        "properties": {
+                            "name_policy": {
+                                "type": "string",
+                                "enum": [
+                                    "username",
+                                    "fullname",
+                                    "email"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "reader_by_default": {
+                                "type": "boolean",
+                                "example": true
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "authorization": {
+                                "type": "object",
+                                "allOf": [{
+                                    "required": [
+                                        "type"
+                                    ],
+                                    "properties": {
+                                        "type": {
+                                            "type": "string",
+                                            "enum": [
+                                                "none",
+                                                "plaintext",
+                                                "ssh",
+                                                "organization"
+                                            ],
+                                            "default": "plaintext"
+                                        },
+                                        "username": {
+                                            "type": "string",
+                                            "example": "githubuser"
+                                        },
+                                        "password": {
+                                            "type": "string",
+                                            "example": "supersecret"
+                                        },
+                                        "sshKey": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }]
+                            }
+                        }
+                    }
+                ]
+            },
+            "ErrorResponseSchema": {
+                "type": "object",
+                "allOf": [{
+                    "required": [
+                        "errorCode",
+                        "message"
+                    ],
+                    "properties": {
+                        "errorCode": {
+                            "type": "integer"
+                        },
+                        "message": {
+                            "type": "string"
+                        }
+                    }
+                }]
+            },
+            "AuthLoginSuccessSchema": {
+                "type": "object",
+                "allOf": [{
+                        "$ref": "#/components/schemas/TokenSchema"
+                    },
+                    {
+                        "$ref": "#/components/schemas/UsersSchema"
+                    }
+                ]
+            },
+            "AuthRefreshTokenSuccessSchema": {
+                "type": "object",
+                "allOf": [{
+                    "$ref": "#/components/schemas/TokenSchema"
+                }]
+            },
+            "AuthCreateUserSuccessSchema": {
+                "type": "object",
+                "allOf": [{
+                        "$ref": "#/components/schemas/TokenSchema"
+                    },
+                    {
+                        "$ref": "#/components/schemas/UsersSchema"
+                    }
+                ]
+            },
+            "RepoCreateSuccessSchema": {
+                "type": "object",
+                "allOf": [{
+                    "required": [
+                        "uuid"
+                    ],
+                    "properties": {
+                        "uuid": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                }]
+            },
+            "RepoGetAllSuccessSchema": {
+                "type": "object",
+                "allOf": [{
+                        "$ref": "#/components/schemas/PagingSchema"
+                    },
+                    {
+                        "required": [
+                            "data"
+                        ],
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/RepoSchemaLite"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "RepoGetOneSuccessSchema": {
+                "type": "object",
+                "allOf": [{
+                    "$ref": "#/components/schemas/RepoSchema"
+                }]
+            },
+            "OrgCreateSuccessSchema": {
+                "type": "object",
+                "allOf": [{
+                    "required": [
+                        "uuid"
+                    ],
+                    "properties": {
+                        "uuid": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                }]
+            },
+            "OrgGetSuccessSchema": {
+                "type": "object",
+                "allOf": [{
+                    "required": [
+                        "uuid",
+                        "name",
+                        "owner"
+                    ],
+                    "properties": {
+                        "uuid": {
+                            "type": "string",
+                            "format": "uuid"
+                        },
+                        "name": {
+                            "type": "string",
+                            "example": "Acme"
+                        },
+                        "owner": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                }]
+            },
+            "OrgGetMembersSuccessSchema": {
+                "type": "object",
+                "allOf": [{
+                        "$ref": "#/components/schemas/PagingSchema"
+                    },
+                    {
+                        "required": [
+                            "data"
+                        ],
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/MemberSchema"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "OrgGetTeamsSuccessSchema": {
+                "type": "object",
+                "allOf": [{
+                        "$ref": "#/components/schemas/PagingSchema"
+                    },
+                    {
+                        "required": [
+                            "data"
+                        ],
+                        "properties": {
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/TeamSchema"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "OrgCreateTeamSuccessSchema": {
+                "type": "object",
+                "allOf": [{
+                    "required": [
+                        "uuid"
+                    ],
+                    "properties": {
+                        "uuid": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                }]
+            },
+            "OrgGetSettingsSuccessSchema": {
+                "type": "object",
+                "allOf": [{
+                    "required": [
+                        "name_policy"
+                    ],
+                    "properties": {
+                        "name_policy": {
+                            "type": "string",
+                            "enum": [
+                                "username",
+                                "fullname",
+                                "email"
+                            ]
+                        },
+                        "reader_by_default": {
+                            "type": "boolean",
+                            "example": true
+                        },
+                        "authorization": {
+                            "type": "object",
+                            "allOf": [{
+                                "required": [
+                                    "type"
+                                ],
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "none",
+                                            "plaintext",
+                                            "ssh"
+                                        ],
+                                        "default": "plaintext"
+                                    },
+                                    "username": {
+                                        "type": "string",
+                                        "example": "githubuser"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "supersecret"
+                                    },
+                                    "sshKey": {
+                                        "type": "string"
+                                    }
+                                }
+                            }]
+                        }
+                    }
+                }]
+            }
+        },
+        "requestBodies": {
+            "AuthLoginRequest": {
+                "required": true,
+                "description": "Authentication request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/AuthLoginSchema"
+                        },
+                        "example": {
+                            "username": "john.doe",
+                            "password": "supersecret"
+                        }
+                    }
+                }
+            },
+            "AuthCreateUserRequest": {
+                "required": true,
+                "description": "User creation request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/AuthCreateUserSchema"
+                        },
+                        "example": {
+                            "username": "john.doe",
+                            "password": "supersecret",
+                            "email": "john.doe@mail.com",
+                            "firstname": "John",
+                            "lastname": "Doe"
+                        }
+                    }
+                }
+            },
+            "AuthUpdateUserRequest": {
+                "required": true,
+                "description": "User creation request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/AuthUpdateUserRequestSchema"
+                        },
+                        "example": {
+                            "password": "betterpassword"
+                        }
+                    }
+                }
+            },
+            "ReposCreateRequest": {
+                "required": true,
+                "description": "Create a new repository",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ReposCreateRequestSchema"
+                        }
+                    }
+                }
+            },
+            "ReposUpdateRequest": {
+                "required": true,
+                "description": "Repo update request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/RepoUpdateRequestSchema"
+                        },
+                        "example": {
+                            "url": "git@github.com:ASICDE/documentation-new.git"
+                        }
+                    }
+                }
+            },
+            "OrgCreateRequest": {
+                "required": true,
+                "description": "Organization creation request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/OrgCreateRequestSchema"
+                        }
+                    }
+                }
+            },
+            "OrgInviteRequest": {
+                "required": true,
+                "description": "Organization invitation request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/OrgInviteRequestSchema"
+                        }
+                    }
+                }
+            },
+            "OrgCreateTeamRequest": {
+                "required": true,
+                "description": "Team creation request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/OrgCreateTeamRequestSchema"
+                        }
+                    }
+                }
+            },
+            "OrgSettingsUpdateRequest": {
+                "required": true,
+                "description": "Organization settings update request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/OrgSettingsUpdateRequestSchema"
+                        },
+                        "example": {
+                            "name_policy": "fullname"
+                        }
+                    }
+                }
+            }
+        },
+        "responses": {
+            "Empty200Response": {
+                "description": "OK"
+            },
+            "AuthLogin200Response": {
+                "description": "Authentication successful",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/AuthLoginSuccessSchema"
+                        }
+                    }
+                }
+            },
+            "AuthRefreshToken200Response": {
+                "description": "Authentication token refresh successful",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/AuthRefreshTokenSuccessSchema"
+                        }
+                    }
+                }
+            },
+            "AuthCreateUser200Response": {
+                "description": "User creation successful",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/AuthCreateUserSuccessSchema"
+                        }
+                    }
+                }
+            },
+            "ReposCreate200Response": {
+                "description": "Repository created successfully",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/RepoCreateSuccessSchema"
+                        }
+                    }
+                }
+            },
+            "ReposGetAll200Response": {
+                "description": "Repositories available",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/RepoGetAllSuccessSchema"
+                        }
+                    }
+                }
+            },
+            "ReposGetOne200Response": {
+                "description": "Repository exists",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/RepoGetOneSuccessSchema"
+                        }
+                    }
+                }
+            },
+            "OrgCreate200Response": {
+                "description": "Organization created successfully",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/OrgCreateSuccessSchema"
+                        }
+                    }
+                }
+            },
+            "OrgGet200Response": {
+                "description": "Organization exists",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/OrgGetSuccessSchema"
+                        }
+                    }
+                }
+            },
+            "OrgGetMembers200Response": {
+                "description": "Organization exists",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/OrgGetMembersSuccessSchema"
+                        }
+                    }
+                }
+            },
+            "OrgGetTeams200Response": {
+                "description": "Organization exists",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/OrgGetTeamsSuccessSchema"
+                        }
+                    }
+                }
+            },
+            "OrgCreateTeam200Response": {
+                "description": "Team created successfully",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/OrgCreateTeamSuccessSchema"
+                        }
+                    }
+                }
+            },
+            "OrgGetSettings200Response": {
+                "description": "Organization exists",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/OrgGetSettingsSuccessSchema"
+                        }
+                    }
+                }
+            },
+            "AuthLogin400Response": {
+                "description": "Missing parameters in authentication request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponseSchema"
+                        },
+                        "example": {
+                            "errorCode": 0,
+                            "message": "Password cannot be empty"
+                        }
+                    }
+                },
+                "headers": {
+                    "X-Rate-Limit-Limit": {
+                        "description": "The number of allowed requests in the current period",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    "X-Rate-Limit-Remaining": {
+                        "description": "The number of remaining requests in the current period",
+                        "schema": {
+                            "type": "integer",
+                            "example": 9
+                        }
+                    },
+                    "X-Rate-Limit-Reset": {
+                        "description": "The number of seconds left in the current period",
+                        "schema": {
+                            "type": "integer",
+                            "example": 59
+                        }
+                    }
+                }
+            },
+            "AuthCreateUser400Response": {
+                "description": "Bad user creation request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponseSchema"
+                        },
+                        "example": {
+                            "errorCode": 0,
+                            "message": "Password cannot be empty"
+                        }
+                    }
+                },
+                "headers": {
+                    "X-Rate-Limit-Limit": {
+                        "description": "The number of allowed requests in the current period",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    "X-Rate-Limit-Remaining": {
+                        "description": "The number of remaining requests in the current period",
+                        "schema": {
+                            "type": "integer",
+                            "example": 9
+                        }
+                    },
+                    "X-Rate-Limit-Reset": {
+                        "description": "The number of seconds left in the current period",
+                        "schema": {
+                            "type": "integer",
+                            "example": 59
+                        }
+                    }
+                }
+            },
+            "AuthUpdateUser400Response": {
+                "description": "Bad user update request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponseSchema"
+                        },
+                        "example": {
+                            "errorCode": 0,
+                            "message": "Password is weak"
+                        }
+                    }
+                }
+            },
+            "ReposCreate400Response": {
+                "description": "Bad repository create request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponseSchema"
+                        },
+                        "example": {
+                            "errorCode": 0,
+                            "message": "Repository already exists with chosen name"
+                        }
+                    }
+                }
+            },
+            "PagingError": {
+                "description": "Paging parameters are invalid",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponseSchema"
+                        },
+                        "example": {
+                            "errorCode": 0,
+                            "message": "Page index 10 is beyond scale"
+                        }
+                    }
+                }
+            },
+            "ReposUpdate400Response": {
+                "description": "Bad repository update request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponseSchema"
+                        },
+                        "example": {
+                            "errorCode": 0,
+                            "message": "Git URL does not exist"
+                        }
+                    }
+                }
+            },
+            "OrgCreate400Response": {
+                "description": "Bad organization create request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponseSchema"
+                        },
+                        "example": {
+                            "errorCode": 0,
+                            "message": "Invalid organization name"
+                        }
+                    }
+                }
+            },
+            "OrgInvite400Response": {
+                "description": "Bad organization invite request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponseSchema"
+                        },
+                        "example": {
+                            "errorCode": 0,
+                            "message": "Invalid email address"
+                        }
+                    }
+                }
+            },
+            "OrgCreateTeam400Response": {
+                "description": "Bad team create request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponseSchema"
+                        },
+                        "example": {
+                            "errorCode": 0,
+                            "message": "Invalid team name"
+                        }
+                    }
+                }
+            },
+            "OrgGetSettingsUpdate400Response": {
+                "description": "Bad organization settings update request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponseSchema"
+                        },
+                        "example": {
+                            "errorCode": 0,
+                            "message": "Invalid name policy value"
+                        }
+                    }
+                }
+            },
+            "AuthLogin401Response": {
+                "description": "Authentication unsuccessful",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponseSchema"
+                        },
+                        "example": {
+                            "errorCode": 1,
+                            "message": "Invalid username or password"
+                        }
+                    }
+                },
+                "headers": {
+                    "X-Rate-Limit-Limit": {
+                        "description": "The number of allowed requests in the current period",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    "X-Rate-Limit-Remaining": {
+                        "description": "The number of remaining requests in the current period",
+                        "schema": {
+                            "type": "integer",
+                            "example": 9
+                        }
+                    },
+                    "X-Rate-Limit-Reset": {
+                        "description": "The number of seconds left in the current period",
+                        "schema": {
+                            "type": "integer",
+                            "example": 59
+                        }
+                    }
+                }
+            },
+            "Unauthorized": {
+                "description": "Unauthorized request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponseSchema"
+                        },
+                        "example": {
+                            "errorCode": 1,
+                            "message": "Session already expired"
+                        }
+                    }
+                }
+            },
+            "Repos404Response": {
+                "description": "Repository does not exist"
+            },
+            "OrgGet404Response": {
+                "description": "Not part of organization response",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponseSchema"
+                        },
+                        "example": {
+                            "errorCode": 2,
+                            "message": "You are not part of any organization"
+                        }
+                    }
+                }
+            },
+            "Org404": {
+                "description": "Organizaton does not exist",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponseSchema"
+                        },
+                        "example": {
+                            "errorCode": 2,
+                            "message": "Organization does not exist"
+                        }
+                    }
+                }
+            },
+            "Team404": {
+                "description": "Team does not exist",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponseSchema"
+                        },
+                        "example": {
+                            "errorCode": 2,
+                            "message": "Team does not exist"
+                        }
+                    }
+                }
+            },
+            "TooManyRequestsResponse": {
+                "description": "Too many requests",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ErrorResponseSchema"
+                        },
+                        "example": {
+                            "errorCode": 2,
+                            "message": "Too many requests!"
+                        }
+                    }
+                },
+                "headers": {
+                    "X-Rate-Limit-Limit": {
+                        "description": "The number of allowed requests in the current period",
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    "X-Rate-Limit-Remaining": {
+                        "description": "The number of remaining requests in the current period",
+                        "schema": {
+                            "type": "integer",
+                            "example": "0"
+                        }
+                    },
+                    "X-Rate-Limit-Reset": {
+                        "description": "The number of seconds left in the current period",
+                        "schema": {
+                            "type": "integer",
+                            "example": 37
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

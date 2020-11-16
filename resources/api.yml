@@ -111,6 +111,30 @@ paths:
         401:
           $ref: "#/components/responses/Unauthorized"
 
+  /auth/users/{user_uuid}:
+    get:
+      tags: [User management]
+      summary: Get user details
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: user_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: User identifier string
+      responses:
+        200:
+          $ref: "#/components/responses/AuthUserDetails200Response"
+        400:
+          $ref: "#/components/responses/AuthUserDetails400Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NonExistentUser"
+
   /auth/users/activate/{token}:
     get:
       tags: [User management]
@@ -171,7 +195,7 @@ paths:
         401:
           $ref: "#/components/responses/Unauthorized"
 
-  /repos/{uuid}:
+  /repos/{repo_uuid}:
     get:
       tags: [Repository management]
       summary: Get repository
@@ -179,7 +203,7 @@ paths:
         - bearerToken: []
       parameters:
         - in: path
-          name: uuid
+          name: repo_uuid
           schema:
             type: string
             format: uuid
@@ -199,7 +223,7 @@ paths:
         - bearerToken: []
       parameters:
         - in: path
-          name: uuid
+          name: repo_uuid
           schema:
             type: string
             format: uuid
@@ -223,7 +247,7 @@ paths:
         - bearerToken: []
       parameters:
         - in: path
-          name: uuid
+          name: repo_uuid
           schema:
             type: string
             format: uuid
@@ -235,20 +259,13 @@ paths:
         401:
           $ref: "#/components/responses/Unauthorized"
 
-  /repos/org/{uuid}:
+  /repos/org/:
     get:
       tags: [Repository management]
       summary: Get all organization repositories
       security:
         - bearerToken: []
       parameters:
-        - in: path
-          name: uuid
-          schema:
-            type: string
-            format: uuid
-          required: true
-          description: Organization identifier string
         - in: query
           name: page
           schema:
@@ -271,9 +288,9 @@ paths:
         401:
           $ref: "#/components/responses/Unauthorized"
         404:
-          $ref: "#/components/responses/Org404"
+          $ref: "#/components/responses/OrgGet404Response"
 
-  /repos/team/{uuid}:
+  /repos/team/{team_uuid}:
     get:
       tags: [Repository management]
       summary: Get all team repositories
@@ -281,7 +298,7 @@ paths:
         - bearerToken: []
       parameters:
         - in: path
-          name: uuid
+          name: team_uuid
           schema:
             type: string
             format: uuid
@@ -336,10 +353,22 @@ paths:
       responses:
         200:
           $ref: "#/components/responses/OrgGet200Response"
-        404:
-          $ref: "#/components/responses/OrgGet404Response"
         401:
           $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/OrgGet404Response"
+    delete:
+      tags: [Organization management]
+      summary: Delete organization
+      security:
+        - bearerToken: []
+      responses:
+        200:
+          $ref: "#/components/responses/Empty200Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/OrgGet404Response"
 
   /org/members:
     get:
@@ -388,7 +417,7 @@ paths:
         404:
           $ref: "#/components/responses/OrgGet404Response"
 
-  /org/members/{uuid}:
+  /org/members/{member_uuid}:
     delete:
       tags: [Organization management]
       summary: Remove organization member
@@ -396,7 +425,7 @@ paths:
         - bearerToken: []
       parameters:
         - in: path
-          name: uuid
+          name: member_uuid
           schema:
             type: string
             format: uuid
@@ -457,7 +486,27 @@ paths:
         404:
           $ref: "#/components/responses/OrgGet404Response"
 
-  /org/teams/{uuid}:
+  /org/teams/{team_uuid}:
+    get:
+      tags: [Organization management]
+      summary: Get team details
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: team_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Team identifier string
+      responses:
+        200:
+          $ref: "#/components/responses/OrgGetTeamDetails200Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/OrgGet404Response"
     delete:
       tags: [Organization management]
       summary: Remove a team
@@ -465,12 +514,103 @@ paths:
         - bearerToken: []
       parameters:
         - in: path
-          name: uuid
+          name: team_uuid
           schema:
             type: string
             format: uuid
           required: true
           description: Team identifier string
+      responses:
+        200:
+          $ref: "#/components/responses/Empty200Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/OrgGet404Response"
+
+  /org/teams/{team_uuid}/members:
+    get:
+      tags: [Organization management]
+      summary: Get all team members
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: team_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Team identifier string
+        - in: query
+          name: page
+          schema:
+            type: integer
+            example: 1
+          required: false
+          description: Pagination page
+        - in: query
+          name: size
+          schema:
+            type: integer
+            example: 10
+          required: false
+          description: Pagination batch size
+      responses:
+        200:
+          $ref: "#/components/responses/OrgTeamGetMembers200Response"
+        400:
+          $ref: "#/components/responses/PagingError"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/OrgGet404Response"
+    post:
+      tags: [Organization management]
+      summary: Add new team member
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: team_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Team identifier string
+      requestBody:
+        $ref: "#/components/requestBodies/OrgTeamMemberAddRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/Empty200Response"
+        400:
+          $ref: "#/components/responses/OrgTeamMemberAdd400Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/OrgGet404Response"
+
+  /org/teams/{team_uuid}/members/{member_uuid}:
+    delete:
+      tags: [Organization management]
+      summary: Remove a team member
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: team_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Team identifier string
+        - in: path
+          name: member_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: User identifier string
       responses:
         200:
           $ref: "#/components/responses/Empty200Response"
@@ -615,6 +755,20 @@ components:
                 - admin
               default: member
 
+    TeamMemberSchema:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/UserSchema"
+        - properties:
+            role:
+              type: string
+              default: null
+              enum:
+                - null
+                - viewer
+                - contributor
+                - admin
+
     RepoSchema:
       type: object
       allOf:
@@ -630,6 +784,12 @@ components:
             archived:
               type: boolean
               example: false
+            created:
+              type: string
+              format: date-time
+            lastModification:
+              type: string
+              format: date-time
             team:
               type: string
               format: uuid
@@ -676,6 +836,12 @@ components:
             archived:
               type: boolean
               example: false
+            created:
+              type: string
+              format: date-time
+            lastModification:
+              type: string
+              format: date-time
             team:
               type: string
               format: uuid
@@ -686,6 +852,8 @@ components:
         - required:
             - uuid
             - name
+            - owner
+            - member
           properties:
             uuid:
               type: string
@@ -693,6 +861,12 @@ components:
             name:
               type: string
               example: Team1
+            owner:
+              type: string
+              format: uuid
+            member:
+              type: boolean
+              example: true
 
     # Request schemas
 
@@ -834,6 +1008,25 @@ components:
               type: string
               example: Team1
 
+    OrgTeamMemberAddRequestSchema:
+      type: object
+      allOf:
+        - required:
+            - uuid
+            - role
+          properties:
+            uuid:
+              type: string
+              format: uuid
+            role:
+              type: string
+              default: null
+              enum:
+                - null
+                - viewer
+                - contributor
+                - admin
+
     OrgSettingsUpdateRequestSchema:
       type: object
       anyOf:
@@ -901,6 +1094,11 @@ components:
       type: object
       allOf:
         - $ref: "#/components/schemas/TokenSchema"
+        - $ref: "#/components/schemas/UsersSchema"
+
+    AuthUserDetailsSuccessSchema:
+      type: object
+      allOf:
         - $ref: "#/components/schemas/UsersSchema"
 
     RepoCreateSuccessSchema:
@@ -991,6 +1189,23 @@ components:
             uuid:
               type: string
               format: uuid
+
+    OrgGetTeamDetailsSuccessSchema:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/TeamSchema"
+
+    OrgTeamGetMembersSuccessSchema:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/PagingSchema"
+        - required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/TeamMemberSchema"
 
     OrgGetSettingsSuccessSchema:
       type: object
@@ -1127,6 +1342,17 @@ components:
           example:
             name_policy: fullname
 
+    OrgTeamMemberAddRequest:
+      required: true
+      description: Organization team member add request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/OrgTeamMemberAddRequestSchema"
+          example:
+            uuid: ad54a995-b35b-4a42-9353-629cb205d12b
+            role: admin
+
   # Responses
   responses:
     # 200 OK
@@ -1154,6 +1380,13 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/AuthCreateUserSuccessSchema"
+
+    AuthUserDetails200Response:
+      description: User found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/AuthUserDetailsSuccessSchema"
 
     ReposCreate200Response:
       description: Repository created successfully
@@ -1210,6 +1443,20 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/OrgCreateTeamSuccessSchema"
+
+    OrgGetTeamDetails200Response:
+      description: Organization exists
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/OrgGetTeamDetailsSuccessSchema"
+
+    OrgTeamGetMembers200Response:
+      description: Organization exists
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/OrgTeamGetMembersSuccessSchema"
 
     OrgGetSettings200Response:
       description: Organization exists
@@ -1282,6 +1529,16 @@ components:
             errorCode: 0
             message: Password is weak
 
+    AuthUserDetails400Response:
+      description: Bad user details request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            errorCode: 0
+            message: Invalid user identifier
+
     ReposCreate400Response:
       description: Bad repository create request
       content:
@@ -1342,6 +1599,16 @@ components:
             errorCode: 0
             message: Invalid team name
 
+    OrgTeamMemberAdd400Response:
+      description: Bad organization team member add request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            errorCode: 0
+            message: Invalid user identifier
+
     OrgGetSettingsUpdate400Response:
       description: Bad organization settings update request
       content:
@@ -1392,8 +1659,25 @@ components:
 
     # 404 Not found
 
+    NonExistentUser:
+      description: User does not exist
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            errorCode: 2
+            message: User does not exist
+
     Repos404Response:
       description: Repository does not exist
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            errorCode: 2
+            message: Repository does not exist
 
     OrgGet404Response:
       description: Not part of organization response

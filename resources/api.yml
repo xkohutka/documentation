@@ -153,20 +153,6 @@ paths:
   # Repository management
 
   /repos:
-    post:
-      tags: [Repository management]
-      summary: Create new repository
-      security:
-        - bearerToken: []
-      requestBody:
-        $ref: "#/components/requestBodies/ReposCreateRequest"
-      responses:
-        200:
-          $ref: "#/components/responses/ReposCreate200Response"
-        400:
-          $ref: "#/components/responses/ReposCreate400Response"
-        401:
-          $ref: "#/components/responses/Unauthorized"
     get:
       tags: [Repository management]
       summary: Get all user repositories
@@ -192,6 +178,20 @@ paths:
           $ref: "#/components/responses/ReposGetAll200Response"
         400:
           $ref: "#/components/responses/PagingError"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+    post:
+      tags: [Repository management]
+      summary: Create new repository
+      security:
+        - bearerToken: []
+      requestBody:
+        $ref: "#/components/requestBodies/ReposCreateRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/ReposCreate200Response"
+        400:
+          $ref: "#/components/responses/ReposCreate400Response"
         401:
           $ref: "#/components/responses/Unauthorized"
 
@@ -331,6 +331,18 @@ paths:
   # Organization management
 
   /org:
+    get:
+      tags: [Organization management]
+      summary: Get organization information
+      security:
+        - bearerToken: []
+      responses:
+        200:
+          $ref: "#/components/responses/OrgGet200Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/OrgGet404Response"
     post:
       tags: [Organization management]
       summary: Create a new organization
@@ -345,14 +357,18 @@ paths:
           $ref: "#/components/responses/OrgCreate400Response"
         401:
           $ref: "#/components/responses/Unauthorized"
-    get:
+    put:
       tags: [Organization management]
-      summary: Get organization information
+      summary: Update organization owner
       security:
         - bearerToken: []
+      requestBody:
+        $ref: "#/components/requestBodies/OrgUpdateRequest"
       responses:
         200:
-          $ref: "#/components/responses/OrgGet200Response"
+          $ref: "#/components/responses/Empty200Response"
+        400:
+          $ref: "#/components/responses/OrgUpdate400Response"
         401:
           $ref: "#/components/responses/Unauthorized"
         404:
@@ -372,7 +388,7 @@ paths:
 
   /org/members:
     get:
-      tags: [Organization management]
+      tags: [Organization member management]
       summary: Get organization members
       security:
         - bearerToken: []
@@ -401,7 +417,7 @@ paths:
         404:
           $ref: "#/components/responses/OrgGet404Response"
     post:
-      tags: [Organization management]
+      tags: [Organization member management]
       summary: Invite organization member
       security:
         - bearerToken: []
@@ -418,8 +434,32 @@ paths:
           $ref: "#/components/responses/OrgGet404Response"
 
   /org/members/{member_uuid}:
+    put:
+      tags: [Organization member management]
+      summary: Update organization member role
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: member_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: User identifier string
+      requestBody:
+        $ref: "#/components/requestBodies/OrgMemberUpdateRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/Empty200Response"
+        400:
+          $ref: "#/components/responses/OrgMemberUpdate400Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/OrgGet404Response"
     delete:
-      tags: [Organization management]
+      tags: [Organization member management]
       summary: Remove organization member
       security:
         - bearerToken: []
@@ -441,7 +481,7 @@ paths:
 
   /org/teams:
     get:
-      tags: [Organization management]
+      tags: [Organization team management]
       summary: Get all teams in organization
       security:
         - bearerToken: []
@@ -470,7 +510,7 @@ paths:
         404:
           $ref: "#/components/responses/OrgGet404Response"
     post:
-      tags: [Organization management]
+      tags: [Organization team management]
       summary: Create a new team
       security:
         - bearerToken: []
@@ -488,7 +528,7 @@ paths:
 
   /org/teams/{team_uuid}:
     get:
-      tags: [Organization management]
+      tags: [Organization team management]
       summary: Get team details
       security:
         - bearerToken: []
@@ -508,7 +548,7 @@ paths:
         404:
           $ref: "#/components/responses/OrgGet404Response"
     delete:
-      tags: [Organization management]
+      tags: [Organization team management]
       summary: Remove a team
       security:
         - bearerToken: []
@@ -530,7 +570,7 @@ paths:
 
   /org/teams/{team_uuid}/members:
     get:
-      tags: [Organization management]
+      tags: [Organization team management]
       summary: Get all team members
       security:
         - bearerToken: []
@@ -566,7 +606,7 @@ paths:
         404:
           $ref: "#/components/responses/OrgGet404Response"
     post:
-      tags: [Organization management]
+      tags: [Organization team management]
       summary: Add new team member
       security:
         - bearerToken: []
@@ -591,8 +631,39 @@ paths:
           $ref: "#/components/responses/OrgGet404Response"
 
   /org/teams/{team_uuid}/members/{member_uuid}:
+    put:
+      tags: [Organization team management]
+      summary: Update team member role
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: team_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Team identifier string
+        - in: path
+          name: member_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: User identifier string
+      requestBody:
+        $ref: "#/components/requestBodies/OrgTeamMemberUpdateRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/Empty200Response"
+        400:
+          $ref: "#/components/responses/OrgTeamMemberUpdate400Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/OrgGet404Response"
     delete:
-      tags: [Organization management]
+      tags: [Organization team management]
       summary: Remove a team member
       security:
         - bearerToken: []
@@ -988,6 +1059,16 @@ components:
               type: string
               example: Acme
 
+    OrgUpdateRequestSchema:
+      type: object
+      allOf:
+        - required:
+            - owner
+          properties:
+            owner:
+              type: string
+              format: uuid
+
     OrgInviteRequestSchema:
       type: object
       allOf:
@@ -997,6 +1078,19 @@ components:
             invite:
               type: string
               example: alice.gordon@mail.com
+
+    OrgMemberUpdateRequestSchema:
+      type: object
+      allOf:
+        - required:
+            - role
+          properties:
+            role:
+              type: string
+              default: null
+              enum:
+                - member
+                - admin
 
     OrgCreateTeamRequestSchema:
       type: object
@@ -1018,6 +1112,21 @@ components:
             uuid:
               type: string
               format: uuid
+            role:
+              type: string
+              default: null
+              enum:
+                - null
+                - viewer
+                - contributor
+                - admin
+
+    OrgTeamMemberUpdateRequestSchema:
+      type: object
+      allOf:
+        - required:
+            - role
+          properties:
             role:
               type: string
               default: null
@@ -1316,6 +1425,14 @@ components:
           schema:
             $ref: "#/components/schemas/OrgCreateRequestSchema"
 
+    OrgUpdateRequest:
+      required: true
+      description: Organization team member update request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/OrgUpdateRequestSchema"
+
     OrgInviteRequest:
       required: true
       description: Organization invitation request
@@ -1324,6 +1441,16 @@ components:
           schema:
             $ref: "#/components/schemas/OrgInviteRequestSchema"
 
+    OrgMemberUpdateRequest:
+      required: true
+      description: Organization team member update request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/OrgMemberUpdateRequestSchema"
+          example:
+            role: admin
+
     OrgCreateTeamRequest:
       required: true
       description: Team creation request
@@ -1331,16 +1458,6 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/OrgCreateTeamRequestSchema"
-
-    OrgSettingsUpdateRequest:
-      required: true
-      description: Organization settings update request
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/OrgSettingsUpdateRequestSchema"
-          example:
-            name_policy: fullname
 
     OrgTeamMemberAddRequest:
       required: true
@@ -1352,6 +1469,26 @@ components:
           example:
             uuid: ad54a995-b35b-4a42-9353-629cb205d12b
             role: admin
+
+    OrgTeamMemberUpdateRequest:
+      required: true
+      description: Organization team member update request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/OrgTeamMemberUpdateRequestSchema"
+          example:
+            role: contributor
+    
+    OrgSettingsUpdateRequest:
+      required: true
+      description: Organization settings update request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/OrgSettingsUpdateRequestSchema"
+          example:
+            name_policy: fullname
 
   # Responses
   responses:
@@ -1579,6 +1716,16 @@ components:
             errorCode: 0
             message: Invalid organization name
 
+    OrgUpdate400Response:
+      description: Bad organization update request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            errorCode: 0
+            message: User does not exist
+
     OrgInvite400Response:
       description: Bad organization invite request
       content:
@@ -1588,6 +1735,16 @@ components:
           example:
             errorCode: 0
             message: Invalid email address
+
+    OrgMemberUpdate400Response:
+      description: Bad organization member update request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            errorCode: 0
+            message: Invalid role
 
     OrgCreateTeam400Response:
       description: Bad team create request
@@ -1608,6 +1765,16 @@ components:
           example:
             errorCode: 0
             message: Invalid user identifier
+
+    OrgTeamMemberUpdate400Response:
+      description: Bad organization team member update request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            errorCode: 0
+            message: Invalid role
 
     OrgGetSettingsUpdate400Response:
       description: Bad organization settings update request

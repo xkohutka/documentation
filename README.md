@@ -7,7 +7,6 @@ This repository holds the documentation for various dependencies of this project
 - [API `asicde-api`](asicde-api.md)
 - [Backend `asicde-backend`](asicde-backend.md)
 - [Docker deployment `asicde-docker`](asicde-docker.md)
-- [Docker local development stack `asicde-docker-dev`](asicde-docker-dev.md)
 - [Frontend `asicde-frontend`](asicde-frontend.md)
 - [Project parent `asicde-parent`](asicde-parent.md)
 - [Request router `asicde-router`](asicde-router.md)

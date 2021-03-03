@@ -125,6 +125,16 @@ This stack will contain PostgreSQL database that is required by the backend, tog
 
 Each module has the option to be configured for individual IP addresses and ports. You can find more information about the local development stack in the [asicde-docker-dev repository](https://github.com/ASICDE/asicde-docker-dev).
 
+### Setting up local database without Docker
+- Make sure you have installed everything needed for PostgreSQL databases on your machine, including drivers and utility tools.
+
+  1. Create user 'asicde' with password 'password'
+  2. Create database 'asicde' with user 'asicde' as an owner.
+  3. If database does not contain 'public' schema by default, create it.
+ 
+- After completing these steps, upon execution of Core application it should generate needed database artefacts automatically using database versioning. 
+
+
 ## Setting up development environment for frontend 
 
 ### Prerequisites

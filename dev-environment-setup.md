@@ -76,7 +76,7 @@ All repositories have been cloned by using the `dev` branch which is dedicated f
 ### Using IntelliJ IDEA for backend projects
 
 - We strongly recommend using IntelliJ IDEA for further project development, as it integrates every important technology used in the project, namely Maven, Spring Boot, Angular and more.
-  - Ideally, you should have the latest IDEA (2020.2.3) Ultimate installed.
+  - Ideally, you should have the latest [IntelliJ IDEA Ultimate](https://www.jetbrains.com/idea/) installed.
 - In order to run the Spring Boot projects, you first need to install projects using Maven in the following order:
   1. [parent](https://github.com/ASICDE/asicde-parent/)
   2. [api](https://github.com/ASICDE/asicde-api)
@@ -84,10 +84,12 @@ All repositories have been cloned by using the `dev` branch which is dedicated f
   See guide for installing project with Maven below.
   
 - After installing each project, you should be able to run Spring Boot application as follows:
-  1. Locate the executable application file for each of the services (`AuthApplication`, `ParserApplication` and `RepoApplication`) and create a Run configuration as shown in the picture.
-     ![Spring Boot run configuration](resources/idea-locate-runnable.png)
-     ![Spring Boot run configuration](resources/idea-run-config-spring.png)
+  1. Locate the executable application file for each of the services (`AsicdeCoreApplication`, `ParserApplication` and `RepoApplication`) and create a Run configuration as shown in the picture.
+     ![Spring Boot (Java Application) run configuration](resources/idea-locate-runnable.png)
+     ![Spring Boot (Java Application) run configuration](resources/idea-run-config-spring.png)
     - set this as your VM variable: `-Dspring.profiles.active=local`. This command sets the Spring Boot profile of the whole configuration (in this case, we use `local` profile which is located in: `/<module>/src/main/resources/application-local.properties`).
+    - alternative method for `AsicdeCoreApplication` is to create Spring Boot Run configuration, which was not possible in the previous versions of this application.
+     ![Spring Boot run configuration](resources/idea-run-config-spring2.png)
     
   2. Execute the created run configuration.
 

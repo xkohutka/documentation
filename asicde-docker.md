@@ -204,7 +204,7 @@ The `docker-compose.frontend.dev.yml` file consists of the following frontend se
    - Here you can change the port on which the frontend will be served. The default is `10001`.
    - You may also specify the target URL for the backend API endpoint. This URL must point to the deployed router from the backend service stack.
 
-The `env/auth.env` file contains configuration of the Authentication API module:
+The `env-dev/core.env` file contains configuration of the ASICDE Core API module:
 
 ```ini
 # Set the JWT authorization header:
@@ -218,9 +218,24 @@ app.jwt.secret=JWTSuperSecretKey
 
 # Set the JWT token expiration time in milliseconds
 app.jwt.expiration.time=86400000
+
+# Set the URL for the Authentication API module
+auth.url=http://auth:8080/api/auth
+
+# Set the storage location for repository data inside of the container
+app.storage.location=/data
+
+# Enable file upload
+spring.servlet.multipart.enabled=true
+
+# Set the maximum file size to be accepted by the server
+spring.servlet.multipart.max-file-size=500MB
+
+# Set the maximum request size to be accepted by the server
+spring.servlet.multipart.max-request-size=500MB
 ```
 
-The `env/database.env` file contains configuration for the backend database:
+The `env-dev/database.env` file contains configuration for the backend database:
 
 ```ini
 # Set the PostgreSQL database connection URL
@@ -240,26 +255,7 @@ spring.datasource.password=password
 spring.jpa.show-sql=true
 ```
 
-The `env/repo.env` file contains configuration of the Repository management API module:
-
-```ini
-# Set the URL for the Authentication API module
-auth.url=http://auth:8080/api/auth
-
-# Set the storage location for repository data inside of the container
-app.storage.location=/data
-
-# Enable file upload
-spring.servlet.multipart.enabled=true
-
-# Set the maximum file size to be accepted by the server
-spring.servlet.multipart.max-file-size=500MB
-
-# Set the maximum request size to be accepted by the server
-spring.servlet.multipart.max-request-size=500MB
-```
-
-The `env/spring.metrics.env` file contains configuration for miscellaneous features:
+The `env-dev/spring.metrics.env` file contains configuration for miscellaneous features:
 
 ```ini
 # Enable or disable statistics and metrics

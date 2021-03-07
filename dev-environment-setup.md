@@ -73,6 +73,8 @@ git clone -b dev git@github.com:ASICDE/asicde-backend.git
 
 All repositories have been cloned by using the `dev` branch which is dedicated for project development and holds the latest versions of the code.
 
+__NOTE: You don't need to download and build all of these repositories manually. The backend can fetch all of the maven artifacts automatically from the build server.__
+
 ### Using IntelliJ IDEA for backend projects
 
 - We strongly recommend using IntelliJ IDEA for further project development, as it integrates every important technology used in the project, namely Maven, Spring Boot, Angular and more.
@@ -81,7 +83,10 @@ All repositories have been cloned by using the `dev` branch which is dedicated f
   1. [parent](https://github.com/ASICDE/asicde-parent/)
   2. [api](https://github.com/ASICDE/asicde-api)
   3. [backend](https://github.com/ASICDE/asicde-backend)
+  
   See guide for installing project with Maven below.
+
+  This is not really needed, as the build server can provide you with all of the maven artifacts for the Parent and API modules. Hovewer if you need to make changes in the code of those modules, you still need to build them manually.
   
 - After installing each project, you should be able to run Spring Boot application as follows:
   1. Locate the executable application file for each of the services (`AsicdeCoreApplication`, `ParserApplication` and `RepoApplication`) and create a Run configuration as shown in the picture.

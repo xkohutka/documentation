@@ -1,8 +1,12 @@
 [<< Return to documentation overview](README.md)
 
+[>> Go to repository](https://github.com/ASICDE/asicde-api)
+
 # ASICDE - API documentation
 
 This repository holds API interface definitions. The full API specification is listed below. Each separate API module has it's own definition formatted in [Swagger](https://swagger.io/). These definitions are then compiled using Maven into data models which are then used in the backend modules. 
+
+__\*\*\* NOTE: The latest documentation for the API interface can be found here: [https://api.asicde.org/docs](https://api.asicde.org/docs).__
 
 Table of Contents
 =================

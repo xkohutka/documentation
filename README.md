@@ -9,7 +9,7 @@ This repository holds the documentation for various dependencies of this project
 - [Docker deployment `asicde-docker`](asicde-docker.md)
 - [Frontend `asicde-frontend`](asicde-frontend.md)
 - [Project parent `asicde-parent`](asicde-parent.md)
-- [Request router `asicde-router`](asicde-router.md)
+- [Orchestrator / router `asicde-router`](asicde-router.md)
 - [ASICDE.org website `website`](website.md)
 
 ## Installation guides

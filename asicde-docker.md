@@ -106,7 +106,7 @@ This software stack will serve the development/staging version of frontend (port
 
 Configuration for the production software stack. [https://github.com/ASICDE/asicde-docker](https://github.com/ASICDE/asicde-docker)
 
-#### Produciton-ready code (`master` branch)
+#### \# Produciton-ready code (`master` branch)
 
 The `docker-compose.yml` file consists of the following backend services:
 - `db` - PostgreSQL database server for the backend
@@ -186,7 +186,7 @@ The `env/spring.metrics.env` file contains configuration for miscellaneous featu
 spring.jpa.properties.hibernate.generate_statistics=false
 ```
 
-#### Development/staging code (`dev` branch)
+#### \# Development/staging code (`dev` branch)
 
 The `docker-compose.dev.yml` file consists of the following backend services:
 - `db` - PostgreSQL database server for the backend
@@ -287,6 +287,13 @@ The `docker-compose.yml` file consists of the following backend services:
       - Core API: localhost:8080
       - Parser API: localhost:8081
       - Collab API: localhost:7070
+
+      ```ini
+      AUTH_HOST: "http\\:\\/\\/host.docker.internal\\:8080"
+      PARSER_HOST: "http\\:\\/\\/host.docker.internal\\:8081"
+      REPO_HOST: "http\\:\\/\\/host.docker.internal\\:8082"
+      ```
+
    - The `host.docker.internal` hostname represents `localhost` on the host machine where Docker is running. This means that Docker can connect to services running in Intellij IDEA.
    - You may also change the port on which NginX will listen. By default the port `10000` is used.
 - `frontend` - The frontend static application.

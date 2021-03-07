@@ -1163,7 +1163,7 @@ chmod g+s /usr/sbin/postdrop
 
 Enable and restart all of the services:
 ```bash
-systemctl enable mariadb
+systemctl enable --now mariadb
 systemctl enable postfix
 systemctl enable dovecot
 systemctl restart postfix

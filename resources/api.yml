@@ -2,7 +2,7 @@ openapi: "3.0.2"
 
 # basic information about the API
 info:
-  version: 1.0.0
+  version: 2.0.0
   title: ASICDE API
   description: Cloud Based IDE for SystemVerilog
   contact:
@@ -24,8 +24,8 @@ servers:
       version:
         description: API version
         enum:
-          - v1
-        default: v1
+          - v2
+        default: v2
 
 # API paths
 paths:
@@ -135,7 +135,7 @@ paths:
         404:
           $ref: "#/components/responses/NonExistentUser"
 
-  /auth/users/activate/{token}:
+  /auth/activate_user/{token}:
     get:
       tags: [User management]
       summary: Activate user account
@@ -1248,8 +1248,10 @@ components:
       type: object
       allOf:
         - required:
-            - message
+            - code
           properties:
+            code:
+              type: string
             message:
               type: string
 
@@ -1673,6 +1675,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: EMPTY_PASSWORD
             message: Password cannot be empty
       headers:
         X-Rate-Limit-Limit:
@@ -1698,6 +1701,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: EMPTY_PASSWORD
             message: Password cannot be empty
       headers:
         X-Rate-Limit-Limit:
@@ -1723,6 +1727,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: WEAK_PASSWORD
             message: Password is weak
 
     AuthUserDetails400Response:
@@ -1732,6 +1737,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: INVALID_UUID
             message: Invalid user identifier
 
     ReposCreate400Response:
@@ -1741,6 +1747,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: NAME_EXISTS
             message: Repository already exists with chosen name
 
     PagingError:
@@ -1750,6 +1757,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: PAGE_ERROR
             message: Page index 10 is beyond scale
 
     ReposUpdate400Response:
@@ -1759,6 +1767,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: REPOSITORY_NOT_EXISTS
             message: Git URL does not exist
 
     OrgCreate400Response:
@@ -1768,6 +1777,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: INVALID_NAME
             message: Invalid organization name
 
     OrgUpdate400Response:
@@ -1777,6 +1787,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: USER_NOT_EXISTS
             message: User does not exist
 
     OrgInvite400Response:
@@ -1786,6 +1797,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: INVALID_EMAIL
             message: Invalid email address
 
     OrgMemberUpdate400Response:
@@ -1795,6 +1807,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: INVALID_ROLE
             message: Invalid role
 
     OrgCreateTeam400Response:
@@ -1804,6 +1817,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: INVALID_TEAM_NAME
             message: Invalid team name
 
     OrgTeamUpdate400Response:
@@ -1813,6 +1827,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: INVALID_TEAM_NAME
             message: Invalid team name
 
     OrgTeamMemberAdd400Response:
@@ -1822,6 +1837,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: INVALID_UUID
             message: Invalid user identifier
 
     OrgTeamMemberUpdate400Response:
@@ -1831,6 +1847,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: INVALID_ROLE
             message: Invalid role
 
     OrgGetSettingsUpdate400Response:
@@ -1840,6 +1857,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: INVALID_NAME_POLICY
             message: Invalid name policy value
 
     # 401 Unauthorized
@@ -1851,6 +1869,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: INVALID_USERNAME
             message: Invalid username or password
       headers:
         X-Rate-Limit-Limit:
@@ -1876,6 +1895,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: INVALID_TOKEN
             message: Session already expired
 
     # 404 Not found
@@ -1887,6 +1907,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: USER_NOT_EXISTS
             message: User does not exist
 
     Repos404Response:
@@ -1896,6 +1917,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: REPOSITORY_NOT_EXISTS
             message: Repository does not exist
 
     OrgGet404Response:
@@ -1905,6 +1927,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: UNAUTHORIZED
             message: You are not part of any organization
 
     Org404:
@@ -1914,6 +1937,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: ORGANIZATION_NOT_EXISTS
             message: Organization does not exist
 
     Team404:
@@ -1923,6 +1947,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: TEAM_NOT_EXISTS
             message: Team does not exist
 
     # 429 Too many requests
@@ -1934,6 +1959,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
+            code: TOO_MANY_REQUESTS
             message: Too many requests!
       headers:
         X-Rate-Limit-Limit:

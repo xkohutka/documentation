@@ -1284,6 +1284,12 @@
               "lastname": {
                 "type": "string",
                 "example": "Doe"
+              },
+              "roles": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -1898,13 +1904,9 @@
         "allOf": [
           {
             "required": [
-              "errorCode",
               "message"
             ],
             "properties": {
-              "errorCode": {
-                "type": "integer"
-              },
               "message": {
                 "type": "string"
               }
@@ -2511,7 +2513,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 0,
               "message": "Password cannot be empty"
             }
           }
@@ -2548,7 +2549,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 0,
               "message": "Password cannot be empty"
             }
           }
@@ -2585,7 +2585,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 0,
               "message": "Password is weak"
             }
           }
@@ -2599,7 +2598,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 0,
               "message": "Invalid user identifier"
             }
           }
@@ -2613,7 +2611,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 0,
               "message": "Repository already exists with chosen name"
             }
           }
@@ -2627,7 +2624,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 0,
               "message": "Page index 10 is beyond scale"
             }
           }
@@ -2641,7 +2637,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 0,
               "message": "Git URL does not exist"
             }
           }
@@ -2655,7 +2650,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 0,
               "message": "Invalid organization name"
             }
           }
@@ -2669,7 +2663,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 0,
               "message": "User does not exist"
             }
           }
@@ -2683,7 +2676,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 0,
               "message": "Invalid email address"
             }
           }
@@ -2697,7 +2689,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 0,
               "message": "Invalid role"
             }
           }
@@ -2711,7 +2702,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 0,
               "message": "Invalid team name"
             }
           }
@@ -2725,7 +2715,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 0,
               "message": "Invalid team name"
             }
           }
@@ -2739,7 +2728,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 0,
               "message": "Invalid user identifier"
             }
           }
@@ -2753,7 +2741,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 0,
               "message": "Invalid role"
             }
           }
@@ -2767,7 +2754,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 0,
               "message": "Invalid name policy value"
             }
           }
@@ -2781,7 +2767,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 1,
               "message": "Invalid username or password"
             }
           }
@@ -2818,7 +2803,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 1,
               "message": "Session already expired"
             }
           }
@@ -2832,7 +2816,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 2,
               "message": "User does not exist"
             }
           }
@@ -2846,7 +2829,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 2,
               "message": "Repository does not exist"
             }
           }
@@ -2860,7 +2842,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 2,
               "message": "You are not part of any organization"
             }
           }
@@ -2874,7 +2855,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 2,
               "message": "Organization does not exist"
             }
           }
@@ -2888,7 +2868,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 2,
               "message": "Team does not exist"
             }
           }
@@ -2902,7 +2881,6 @@
               "$ref": "#/components/schemas/ErrorResponseSchema"
             },
             "example": {
-              "errorCode": 2,
               "message": "Too many requests!"
             }
           }

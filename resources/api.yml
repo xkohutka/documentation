@@ -813,6 +813,10 @@ components:
             lastname:
               type: string
               example: Doe
+            roles:
+              type: array
+              items:
+                type: string
 
     UsersSchema:
       type: object
@@ -1206,11 +1210,8 @@ components:
       type: object
       allOf:
         - required:
-            - errorCode
             - message
           properties:
-            errorCode:
-              type: integer
             message:
               type: string
 
@@ -1634,7 +1635,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 0
             message: Password cannot be empty
       headers:
         X-Rate-Limit-Limit:
@@ -1660,7 +1660,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 0
             message: Password cannot be empty
       headers:
         X-Rate-Limit-Limit:
@@ -1686,7 +1685,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 0
             message: Password is weak
 
     AuthUserDetails400Response:
@@ -1696,7 +1694,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 0
             message: Invalid user identifier
 
     ReposCreate400Response:
@@ -1706,7 +1703,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 0
             message: Repository already exists with chosen name
 
     PagingError:
@@ -1716,7 +1712,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 0
             message: Page index 10 is beyond scale
 
     ReposUpdate400Response:
@@ -1726,7 +1721,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 0
             message: Git URL does not exist
 
     OrgCreate400Response:
@@ -1736,7 +1730,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 0
             message: Invalid organization name
 
     OrgUpdate400Response:
@@ -1746,7 +1739,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 0
             message: User does not exist
 
     OrgInvite400Response:
@@ -1756,7 +1748,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 0
             message: Invalid email address
 
     OrgMemberUpdate400Response:
@@ -1766,7 +1757,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 0
             message: Invalid role
 
     OrgCreateTeam400Response:
@@ -1776,7 +1766,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 0
             message: Invalid team name
 
     OrgTeamUpdate400Response:
@@ -1786,7 +1775,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 0
             message: Invalid team name
 
     OrgTeamMemberAdd400Response:
@@ -1796,7 +1784,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 0
             message: Invalid user identifier
 
     OrgTeamMemberUpdate400Response:
@@ -1806,7 +1793,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 0
             message: Invalid role
 
     OrgGetSettingsUpdate400Response:
@@ -1816,7 +1802,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 0
             message: Invalid name policy value
 
     # 401 Unauthorized
@@ -1828,7 +1813,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 1
             message: Invalid username or password
       headers:
         X-Rate-Limit-Limit:
@@ -1854,7 +1838,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 1
             message: Session already expired
 
     # 404 Not found
@@ -1866,7 +1849,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 2
             message: User does not exist
 
     Repos404Response:
@@ -1876,7 +1858,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 2
             message: Repository does not exist
 
     OrgGet404Response:
@@ -1886,7 +1867,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 2
             message: You are not part of any organization
 
     Org404:
@@ -1896,7 +1876,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 2
             message: Organization does not exist
 
     Team404:
@@ -1906,7 +1885,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 2
             message: Team does not exist
 
     # 429 Too many requests
@@ -1918,7 +1896,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            errorCode: 2
             message: Too many requests!
       headers:
         X-Rate-Limit-Limit:

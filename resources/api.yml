@@ -259,6 +259,44 @@ paths:
         401:
           $ref: "#/components/responses/Unauthorized"
 
+  /repos/userAssociated:
+    get:
+      tags: [Repository management]
+      summary: Get all user-associated repositories (owned and team repositories)
+      security:
+        - bearerToken: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            example: 0
+          required: true
+          description: Pagination page number
+        - in: query
+          name: size
+          schema:
+            type: integer
+            example: 10
+          required: true
+          description: Pagination batch size
+        - in: query
+          name: username
+          schema:
+            type: string
+            example: adminsk
+          required: true
+          description: Username (to be changed with UUID)
+      responses:
+        200:
+          $ref: "#/components/responses/ReposGetAll200Response"
+        400:
+          $ref: "#/components/responses/PagingError"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NonExistentUser" 
+
   /repos/org/:
     get:
       tags: [Repository management]

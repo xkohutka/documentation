@@ -73,21 +73,28 @@ git clone -b dev git@github.com:ASICDE/asicde-backend.git
 
 All repositories have been cloned by using the `dev` branch which is dedicated for project development and holds the latest versions of the code.
 
+__NOTE: You don't need to download and build all of these repositories manually. The backend can fetch all of the maven artifacts automatically from the build server.__
+
 ### Using IntelliJ IDEA for backend projects
 
 - We strongly recommend using IntelliJ IDEA for further project development, as it integrates every important technology used in the project, namely Maven, Spring Boot, Angular and more.
-  - Ideally, you should have the latest IDEA (2020.2.3) Ultimate installed.
+  - Ideally, you should have the latest [IntelliJ IDEA Ultimate](https://www.jetbrains.com/idea/) installed.
 - In order to run the Spring Boot projects, you first need to install projects using Maven in the following order:
   1. [parent](https://github.com/ASICDE/asicde-parent/)
   2. [api](https://github.com/ASICDE/asicde-api)
   3. [backend](https://github.com/ASICDE/asicde-backend)
+  
   See guide for installing project with Maven below.
+
+  This is not really needed, as the build server can provide you with all of the maven artifacts for the Parent and API modules. Hovewer if you need to make changes in the code of those modules, you still need to build them manually.
   
 - After installing each project, you should be able to run Spring Boot application as follows:
-  1. Locate the executable application file for each of the services (`AuthApplication`, `ParserApplication` and `RepoApplication`) and create a Run configuration as shown in the picture.
-     ![Spring Boot run configuration](resources/idea-locate-runnable.png)
-     ![Spring Boot run configuration](resources/idea-run-config-spring.png)
+  1. Locate the executable application file for each of the services (`AsicdeCoreApplication`, `ParserApplication` and `RepoApplication`) and create a Run configuration as shown in the picture.
+     ![Spring Boot (Java Application) run configuration](resources/idea-locate-runnable.png)
+     ![Spring Boot (Java Application) run configuration](resources/idea-run-config-spring.png)
     - set this as your VM variable: `-Dspring.profiles.active=local`. This command sets the Spring Boot profile of the whole configuration (in this case, we use `local` profile which is located in: `/<module>/src/main/resources/application-local.properties`).
+    - alternative method for `AsicdeCoreApplication` is to create Spring Boot Run configuration, which was not possible in the previous versions of this application.
+     ![Spring Boot run configuration](resources/idea-run-config-spring2.png)
     
   2. Execute the created run configuration.
 
@@ -122,6 +129,16 @@ This stack will contain PostgreSQL database that is required by the backend, tog
 ```
 
 Each module has the option to be configured for individual IP addresses and ports. You can find more information about the local development stack in the [asicde-docker-dev repository](https://github.com/ASICDE/asicde-docker-dev).
+
+### Setting up local database without Docker
+- Make sure you have installed everything needed for PostgreSQL databases on your machine, including drivers and utility tools.
+
+  1. Create user 'asicde' with password 'password'
+  2. Create database 'asicde' with user 'asicde' as an owner.
+  3. If database does not contain 'public' schema by default, create it.
+ 
+- After completing these steps, upon execution of Core application it should generate needed database artefacts automatically using database versioning. 
+
 
 ## Setting up development environment for frontend 
 

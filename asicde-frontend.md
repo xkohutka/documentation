@@ -1,8 +1,27 @@
 [<< Return to documentation overview](README.md)
 
+[>> Go to repository](https://github.com/ASICDE/asicde-frontend)
+
 # ASICDE Frontend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.4.
+This repository holds source code for the Frontend interface for ASICDE. It is a fully-fledged application developed in AngularJS.
+
+## Prerequisites for development
+
+In order to successfully install and run the application, the following tools need to be installed:
+
+- [NodeJS](https://nodejs.org/en/)
+- [Angular CLI](https://cli.angular.io/)
+- (Optional) [Docker](https://www.docker.com/) - When a production-ready backend is needed for development and testing - for more information please take a look at [Docker deployment](asicde-docker.md)
+
+## Installation
+
+Before you are able to serve the application, you need to install all of the dependencies. To do this, run the following commands inside of the project folder:
+
+```bash
+cd asicde-fronted
+npm install
+```
 
 ## Development server
 

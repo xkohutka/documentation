@@ -206,7 +206,7 @@
         }
       }
     },
-    "/auth/activate_user/{token}": {
+    "/auth/users/activate/{token}": {
       "get": {
         "tags": [
           "User management"

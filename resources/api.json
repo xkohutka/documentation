@@ -467,7 +467,7 @@
         }
       }
     },
-    "/repos/org/": {
+    "/repos/organization": {
       "get": {
         "tags": [
           "Repository management"
@@ -575,7 +575,7 @@
         }
       }
     },
-    "/org": {
+    "/organization": {
       "get": {
         "tags": [
           "Organization management"
@@ -674,7 +674,7 @@
         }
       }
     },
-    "/org/members": {
+    "/organization/members": {
       "get": {
         "tags": [
           "Organization member management"
@@ -751,7 +751,7 @@
         }
       }
     },
-    "/org/members/{member_uuid}": {
+    "/organization/members/{member_uuid}": {
       "put": {
         "tags": [
           "Organization member management"
@@ -827,7 +827,7 @@
         }
       }
     },
-    "/org/teams": {
+    "/organization/teams": {
       "get": {
         "tags": [
           "Organization team management"
@@ -932,7 +932,7 @@
         }
       }
     },
-    "/org/teams/{team_uuid}": {
+    "/organization/teams/{team_uuid}": {
       "get": {
         "tags": [
           "Organization team management"
@@ -1002,7 +1002,7 @@
         }
       }
     },
-    "/org/teams/{team_uuid}/members": {
+    "/organization/teams/{team_uuid}/members": {
       "get": {
         "tags": [
           "Organization team management"
@@ -1101,7 +1101,7 @@
         }
       }
     },
-    "/org/teams/{team_uuid}/members/{member_uuid}": {
+    "/organization/teams/{team_uuid}/members/{member_uuid}": {
       "put": {
         "tags": [
           "Organization team management"
@@ -1197,7 +1197,7 @@
         }
       }
     },
-    "/org/settings": {
+    "/organization/settings": {
       "get": {
         "tags": [
           "Organization management"
@@ -1305,7 +1305,8 @@
               },
               "expiration": {
                 "type": "string",
-                "format": "date-time"
+                "format": "date-time",
+                "example": "2021-03-24T08:21:23.555+0100"
               }
             }
           }
@@ -1319,8 +1320,9 @@
               "uuid",
               "username",
               "email",
-              "firstname",
-              "lastname"
+              "firstName",
+              "lastName",
+              "roles"
             ],
             "properties": {
               "uuid": {
@@ -1336,11 +1338,11 @@
                 "format": "email",
                 "example": "john.doe@mail.com"
               },
-              "firstname": {
+              "firstName": {
                 "type": "string",
                 "example": "John"
               },
-              "lastname": {
+              "lastName": {
                 "type": "string",
                 "example": "Doe"
               },
@@ -1367,14 +1369,26 @@
                 "allOf": [
                   {
                     "$ref": "#/components/schemas/UserSchema"
-                  },
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "OrganizationsSchema": {
+        "type": "object",
+        "allOf": [
+          {
+            "required": [
+              "organization"
+            ],
+            "properties": {
+              "organization": {
+                "type": "object",
+                "allOf": [
                   {
-                    "properties": {
-                      "orgnaization": {
-                        "type": "string",
-                        "format": "uuid"
-                      }
-                    }
+                    "$ref": "#/components/schemas/OrgGetSuccessSchema"
                   }
                 ]
               }
@@ -1447,11 +1461,13 @@
               },
               "created": {
                 "type": "string",
-                "format": "date-time"
+                "format": "date-time",
+                "example": "2021-03-24T08:21:23.555+0100"
               },
               "lastModification": {
                 "type": "string",
-                "format": "date-time"
+                "format": "date-time",
+                "example": "2021-03-24T08:21:23.555+0100"
               },
               "team": {
                 "type": "string",
@@ -1522,11 +1538,13 @@
               },
               "created": {
                 "type": "string",
-                "format": "date-time"
+                "format": "date-time",
+                "example": "2021-03-24T08:21:23.555+0100"
               },
               "lastModification": {
                 "type": "string",
-                "format": "date-time"
+                "format": "date-time",
+                "example": "2021-03-24T08:21:23.555+0100"
               },
               "team": {
                 "type": "string",
@@ -1595,8 +1613,8 @@
               "username",
               "password",
               "email",
-              "firstname",
-              "lastname"
+              "firstName",
+              "lastName"
             ],
             "properties": {
               "username": {
@@ -1610,10 +1628,10 @@
                 "type": "string",
                 "format": "email"
               },
-              "firstname": {
+              "firstName": {
                 "type": "string"
               },
-              "lastname": {
+              "lastName": {
                 "type": "string"
               }
             }
@@ -1649,7 +1667,7 @@
           },
           {
             "properties": {
-              "firstname": {
+              "firstName": {
                 "type": "string",
                 "example": "John"
               }
@@ -1657,7 +1675,7 @@
           },
           {
             "properties": {
-              "lastname": {
+              "lastName": {
                 "type": "string",
                 "example": "Doe"
               }
@@ -1984,6 +2002,9 @@
           },
           {
             "$ref": "#/components/schemas/UsersSchema"
+          },
+          {
+            "$ref": "#/components/schemas/OrganizationsSchema"
           }
         ]
       },
@@ -2262,8 +2283,8 @@
               "username": "john.doe",
               "password": "supersecret",
               "email": "john.doe@mail.com",
-              "firstname": "John",
-              "lastname": "Doe"
+              "firstName": "John",
+              "lastName": "Doe"
             }
           }
         }

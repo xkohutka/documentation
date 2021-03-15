@@ -297,7 +297,7 @@ paths:
         404:
           $ref: "#/components/responses/NonExistentUser" 
 
-  /repos/org/:
+  /repos/organization:
     get:
       tags: [Repository management]
       summary: Get all organization repositories
@@ -368,7 +368,7 @@ paths:
 
   # Organization management
 
-  /org:
+  /organization:
     get:
       tags: [Organization management]
       summary: Get organization information
@@ -424,7 +424,7 @@ paths:
         404:
           $ref: "#/components/responses/OrgGet404Response"
 
-  /org/members:
+  /organization/members:
     get:
       tags: [Organization member management]
       summary: Get organization members
@@ -471,7 +471,7 @@ paths:
         404:
           $ref: "#/components/responses/OrgGet404Response"
 
-  /org/members/{member_uuid}:
+  /organization/members/{member_uuid}:
     put:
       tags: [Organization member management]
       summary: Update organization member role
@@ -517,7 +517,7 @@ paths:
         404:
           $ref: "#/components/responses/OrgGet404Response"
 
-  /org/teams:
+  /organization/teams:
     get:
       tags: [Organization team management]
       summary: Get all teams in organization
@@ -580,7 +580,7 @@ paths:
         404:
           $ref: "#/components/responses/OrgGet404Response"
 
-  /org/teams/{team_uuid}:
+  /organization/teams/{team_uuid}:
     get:
       tags: [Organization team management]
       summary: Get team details
@@ -622,7 +622,7 @@ paths:
         404:
           $ref: "#/components/responses/OrgGet404Response"
 
-  /org/teams/{team_uuid}/members:
+  /organization/teams/{team_uuid}/members:
     get:
       tags: [Organization team management]
       summary: Get all team members
@@ -684,7 +684,7 @@ paths:
         404:
           $ref: "#/components/responses/OrgGet404Response"
 
-  /org/teams/{team_uuid}/members/{member_uuid}:
+  /organization/teams/{team_uuid}/members/{member_uuid}:
     put:
       tags: [Organization team management]
       summary: Update team member role
@@ -744,7 +744,7 @@ paths:
         404:
           $ref: "#/components/responses/OrgGet404Response"
 
-  /org/settings:
+  /organization/settings:
     get:
       tags: [Organization management]
       summary: Get organization settings
@@ -824,6 +824,7 @@ components:
             expiration:
               type: string
               format: date-time
+              example: 2021-03-24T08:21:23.555+0100
 
     UserSchema:
       type: object
@@ -832,8 +833,9 @@ components:
             - uuid
             - username
             - email
-            - firstname
-            - lastname
+            - firstName
+            - lastName
+            - roles
           properties:
             uuid:
               type: string
@@ -845,10 +847,10 @@ components:
               type: string
               format: email
               example: john.doe@mail.com
-            firstname:
+            firstName:
               type: string
               example: John
-            lastname:
+            lastName:
               type: string
               example: Doe
             roles:
@@ -866,10 +868,17 @@ components:
               type: object
               allOf:
                 - $ref: "#/components/schemas/UserSchema"
-                - properties:
-                    orgnaization:
-                      type: string
-                      format: uuid
+
+    OrganizationsSchema:
+      type: object
+      allOf:
+        - required:
+            - organization
+          properties:
+            organization:
+              type: object
+              allOf:
+                - $ref: "#/components/schemas/OrgGetSuccessSchema"
 
     MemberSchema:
       type: object
@@ -916,9 +925,11 @@ components:
             created:
               type: string
               format: date-time
+              example: 2021-03-24T08:21:23.555+0100
             lastModification:
               type: string
               format: date-time
+              example: 2021-03-24T08:21:23.555+0100
             team:
               type: string
               format: uuid
@@ -968,9 +979,11 @@ components:
             created:
               type: string
               format: date-time
+              example: 2021-03-24T08:21:23.555+0100
             lastModification:
               type: string
               format: date-time
+              example: 2021-03-24T08:21:23.555+0100
             team:
               type: string
               format: uuid
@@ -1019,8 +1032,8 @@ components:
             - username
             - password
             - email
-            - firstname
-            - lastname
+            - firstName
+            - lastName
           properties:
             username:
               type: string
@@ -1030,9 +1043,9 @@ components:
             email:
               type: string
               format: email
-            firstname:
+            firstName:
               type: string
-            lastname:
+            lastName:
               type: string
 
     AuthUpdateUserRequestSchema:
@@ -1051,11 +1064,11 @@ components:
               type: string
               format: email
         - properties:
-            firstname:
+            firstName:
               type: string
               example: John
         - properties:
-            lastname:
+            lastName:
               type: string
               example: Doe
         - properties:
@@ -1260,6 +1273,7 @@ components:
       allOf:
         - $ref: "#/components/schemas/TokenSchema"
         - $ref: "#/components/schemas/UsersSchema"
+        - $ref: "#/components/schemas/OrganizationsSchema"
 
     AuthRefreshTokenSuccessSchema:
       type: object
@@ -1443,8 +1457,8 @@ components:
             username: john.doe
             password: supersecret
             email: john.doe@mail.com
-            firstname: John
-            lastname: Doe
+            firstName: John
+            lastName: Doe
 
     AuthUpdateUserRequest:
       required: true

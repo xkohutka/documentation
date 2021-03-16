@@ -102,6 +102,60 @@
       }
     },
     "/auth/users": {
+      "get": {
+        "tags": [
+          "User management"
+        ],
+        "summary": "Search for users from contacts (organization and team members)",
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string",
+              "example": "John Doe"
+            },
+            "required": true,
+            "description": "Search query string"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "required": false,
+            "description": "Pagination page"
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "schema": {
+              "type": "integer",
+              "example": 10
+            },
+            "required": false,
+            "description": "Pagination batch size"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/AuthUserSearch200Response"
+          },
+          "400": {
+            "$ref": "#/components/responses/AuthUserSearch400Response"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
       "post": {
         "tags": [
           "User management"
@@ -1248,6 +1302,270 @@
           }
         }
       }
+    },
+    "/chat": {
+      "get": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Search for existing assigned chat rooms",
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string",
+              "example": "Chat room"
+            },
+            "required": false,
+            "description": "Search query string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ChatRoomSearch200Response"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Create a new chat room",
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/ChatRoomCreateRequest"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ChatRoomCreate200Response"
+          },
+          "400": {
+            "$ref": "#/components/responses/ChatRoomCreate400Response"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/chat/{room_uuid}": {
+      "get": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Get chat room details",
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "room_uuid",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "description": "Chat room identifier string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ChatRoomDetails200Response"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/ChatRoom404Response"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Update chat room details",
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "room_uuid",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "description": "Chat room identifier string"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/ChatRoomUpdateRequest"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Empty200Response"
+          },
+          "400": {
+            "$ref": "#/components/responses/ChatRoomUpdate400Response"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/ChatRoom404Response"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Delete chat room",
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "room_uuid",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "description": "Chat room identifier string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Empty200Response"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/chat/{room_uuid}/messages": {
+      "get": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Get chat room messages",
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "room_uuid",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "description": "Chat room identifier string"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "required": false,
+            "description": "Pagination page"
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "schema": {
+              "type": "integer",
+              "example": 10
+            },
+            "required": false,
+            "description": "Pagination batch size"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ChatRoomMessages200Response"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/ChatRoom404Response"
+          }
+        }
+      }
+    },
+    "/chat/{room_uuid}/messages/{message_uuid}": {
+      "delete": {
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Delete a chat room message",
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "room_uuid",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "description": "Chat room identifier string"
+          },
+          {
+            "in": "path",
+            "name": "message_uuid",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "description": "Chat room message identifier string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/Empty200Response"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1580,6 +1898,111 @@
               "member": {
                 "type": "boolean",
                 "example": true
+              }
+            }
+          }
+        ]
+      },
+      "ChatRoomSchema": {
+        "type": "object",
+        "allOf": [
+          {
+            "required": [
+              "uuid",
+              "name",
+              "permanent",
+              "created",
+              "created_by",
+              "last_activity",
+              "members"
+            ],
+            "properties": {
+              "uuid": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": {
+                "type": "string",
+                "example": "Chat room 1"
+              },
+              "permanent": {
+                "type": "boolean",
+                "example": true
+              },
+              "organization": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "team": {
+                "type": "string",
+                "format": "uuid",
+                "example": null
+              },
+              "repository": {
+                "type": "string",
+                "format": "uuid",
+                "example": null
+              },
+              "created": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2021-03-24T08:21:23.555+0100"
+              },
+              "created_by": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "last_activity": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2021-03-24T08:21:23.555+0100"
+              },
+              "members": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ChatRoomMessageSchema": {
+        "type": "object",
+        "allOf": [
+          {
+            "required": [
+              "uuid",
+              "author",
+              "message",
+              "created",
+              "type"
+            ],
+            "properties": {
+              "uuid": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "event",
+                  "message"
+                ]
+              },
+              "author": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "message": {
+                "type": "string",
+                "example": "Hi there!"
+              },
+              "created": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2021-03-24T08:21:23.555+0100"
               }
             }
           }
@@ -1976,6 +2399,64 @@
           }
         ]
       },
+      "ChatRoomCreateRequestSchema": {
+        "type": "object",
+        "allOf": [
+          {
+            "required": [
+              "name",
+              "members"
+            ]
+          },
+          {
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "Chat room 1"
+              },
+              "members": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ChatRoomUpdateRequestSchema": {
+        "type": "object",
+        "allOf": [
+          {
+            "required": [
+              "name"
+            ]
+          },
+          {
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "Chat room 1"
+              },
+              "remove": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "add": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          }
+        ]
+      },
       "ErrorResponseSchema": {
         "type": "object",
         "allOf": [
@@ -2021,6 +2502,35 @@
         "allOf": [
           {
             "$ref": "#/components/schemas/UsersSchema"
+          }
+        ]
+      },
+      "AuthUserSearchSuccessSchema": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PagingSchema"
+          },
+          {
+            "required": [
+              "data"
+            ],
+            "properties": {
+              "totalItems": {
+                "type": "integer",
+                "example": 1
+              },
+              "data": {
+                "type": "array",
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/UserSchema"
+                    }
+                  ]
+                }
+              }
+            }
           }
         ]
       },
@@ -2253,6 +2763,56 @@
             }
           }
         ]
+      },
+      "ChatRoomSearchSuccessSchema": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PagingSchema"
+          },
+          {
+            "required": [
+              "data"
+            ],
+            "properties": {
+              "totalItems": {
+                "type": "integer",
+                "example": 1
+              },
+              "data": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ChatRoomSchema"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ChatRoomMessagesSuccessSchema": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PagingSchema"
+          },
+          {
+            "required": [
+              "data"
+            ],
+            "properties": {
+              "totalItems": {
+                "type": "integer",
+                "example": 1
+              },
+              "data": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ChatRoomMessageSchema"
+                }
+              }
+            }
+          }
+        ]
       }
     },
     "requestBodies": {
@@ -2442,6 +3002,28 @@
             }
           }
         }
+      },
+      "ChatRoomCreateRequest": {
+        "required": true,
+        "description": "Chat room create request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ChatRoomCreateRequestSchema"
+            }
+          }
+        }
+      },
+      "ChatRoomUpdateRequest": {
+        "required": true,
+        "description": "Chat room update request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ChatRoomUpdateRequestSchema"
+            }
+          }
+        }
       }
     },
     "responses": {
@@ -2474,6 +3056,16 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/AuthUserDetailsSuccessSchema"
+            }
+          }
+        }
+      },
+      "AuthUserSearch200Response": {
+        "description": "Search for users successful",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AuthUserSearchSuccessSchema"
             }
           }
         }
@@ -2588,6 +3180,60 @@
           }
         }
       },
+      "ChatRoomSearch200Response": {
+        "description": "Chat rooms search success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ChatRoomSearchSuccessSchema"
+            }
+          }
+        }
+      },
+      "ChatRoomCreate200Response": {
+        "description": "Chat room created successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ChatRoomSchema"
+            },
+            "example": {
+              "uuid": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "name": "Chat room 1",
+              "permanent": false,
+              "organization": null,
+              "team": null,
+              "repository": null,
+              "created": "2021-03-24T08:21:23.555+0100",
+              "created_by": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+              "last_activity": "2021-03-24T08:21:23.555+0100",
+              "members": [
+                "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+              ]
+            }
+          }
+        }
+      },
+      "ChatRoomDetails200Response": {
+        "description": "Chat room exists",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ChatRoomSchema"
+            }
+          }
+        }
+      },
+      "ChatRoomMessages200Response": {
+        "description": "Chat room messages available",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ChatRoomMessagesSuccessSchema"
+            }
+          }
+        }
+      },
       "AuthLogin400Response": {
         "description": "Missing parameters in authentication request",
         "content": {
@@ -2686,6 +3332,20 @@
             "example": {
               "code": "INVALID_UUID",
               "message": "Invalid user identifier"
+            }
+          }
+        }
+      },
+      "AuthUserSearch400Response": {
+        "description": "Bad user search request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponseSchema"
+            },
+            "example": {
+              "code": "INVALID_QUERY",
+              "message": "Missing search query string"
             }
           }
         }
@@ -2858,6 +3518,34 @@
           }
         }
       },
+      "ChatRoomCreate400Response": {
+        "description": "Bad chat room create request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponseSchema"
+            },
+            "example": {
+              "code": "INVALID_MEMBERS",
+              "message": "User uuid does not exist"
+            }
+          }
+        }
+      },
+      "ChatRoomUpdate400Response": {
+        "description": "Bad chat room update request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponseSchema"
+            },
+            "example": {
+              "code": "INVALID_MEMBERS",
+              "message": "User uuid does not exist"
+            }
+          }
+        }
+      },
       "AuthLogin401Response": {
         "description": "Authentication unsuccessful",
         "content": {
@@ -2975,6 +3663,20 @@
             "example": {
               "code": "TEAM_NOT_EXISTS",
               "message": "Team does not exist"
+            }
+          }
+        }
+      },
+      "ChatRoom404Response": {
+        "description": "Chat room does not exist",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponseSchema"
+            },
+            "example": {
+              "code": "CHATROOM_NOT_EXISTS",
+              "message": "Chat room does not exist"
             }
           }
         }

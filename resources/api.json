@@ -1575,6 +1575,11 @@
         "tags": [
           "Collab Workspaces"
         ],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
         "parameters": [
           {
             "$ref": "#/components/parameters/repoId"
@@ -1675,6 +1680,11 @@
         "tags": [
           "Collab Workspaces"
         ],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
         "parameters": [
           {
             "$ref": "#/components/parameters/repoId"
@@ -1772,6 +1782,11 @@
         "tags": [
           "Collab Workspaces"
         ],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
         "operationId": "deleteWorkspace",
         "parameters": [
           {
@@ -1851,6 +1866,11 @@
         "description": "Commit changes in selected repository",
         "tags": [
           "Collab Git"
+        ],
+        "security": [
+          {
+            "bearerToken": []
+          }
         ],
         "parameters": [
           {
@@ -1939,6 +1959,11 @@
         "summary": "Pushes files to remote",
         "tags": [
           "Collab Git"
+        ],
+        "security": [
+          {
+            "bearerToken": []
+          }
         ],
         "parameters": [
           {
@@ -2038,6 +2063,11 @@
         "tags": [
           "Collab Git"
         ],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
         "parameters": [
           {
             "$ref": "#/components/parameters/repoId"
@@ -2136,6 +2166,11 @@
         "tags": [
           "Collab Git"
         ],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
         "parameters": [
           {
             "$ref": "#/components/parameters/repoId"
@@ -2232,6 +2267,11 @@
         "tags": [
           "Collab Git"
         ],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
         "operationId": "gitMerge",
         "parameters": [
           {
@@ -2317,6 +2357,199 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CollabErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parser/getPackageData": {
+      "post": {
+        "tags": [
+          "Code parser"
+        ],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Parses the given source codes and extracts the essential data on return",
+        "operationId": "parsePackageInformation",
+        "requestBody": {
+          "description": "SystemVerilog package source code",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParserSourceCode"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "data from package code",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParserPackageItem"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParserErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parser/getVisualizationData": {
+      "post": {
+        "tags": [
+          "Code parser"
+        ],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Parses the given source codes and extracts the essential data on return",
+        "operationId": "parseForVisualization",
+        "requestBody": {
+          "description": "SystemVerilog source code",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParserSourceCode"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "data for code",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParserExtractedElements"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParserErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parser/getDataForSubDiagram": {
+      "post": {
+        "tags": [
+          "Code parser"
+        ],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Parses the given source code and extracts the essential data on return",
+        "operationId": "parseForSubDiaVisualization",
+        "requestBody": {
+          "description": "SystemVerilog source code and identified submodule interfaces",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParserVisualizationData"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "data for code",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParserExtractedElements"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParserErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parser/getSubModules": {
+      "post": {
+        "tags": [
+          "Code parser"
+        ],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Parses the given source code and extracts the submodules for interface parsing on return",
+        "operationId": "parseForSubModuleInteraceRecognition",
+        "requestBody": {
+          "description": "SystemVerilog source code",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParserSourceCode"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "data for code",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParserIdentifiedSubmodules"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParserErrorResponse"
                 }
               }
             }
@@ -3739,6 +3972,82 @@
         }
       },
       "CollabErrorResponse": {
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "ParserPackageItem": {
+        "required": [
+          "dataType",
+          "dataName"
+        ],
+        "properties": {
+          "dataType": {
+            "type": "string"
+          },
+          "dataName": {
+            "type": "string"
+          }
+        }
+      },
+      "ParserVisualizationData": {
+        "required": [
+          "sourceCode",
+          "subModuleInterfaces"
+        ],
+        "properties": {
+          "sourceCode": {
+            "type": "string"
+          },
+          "subModuleInterfaces": {
+            "type": "string"
+          }
+        }
+      },
+      "ParserSourceCode": {
+        "required": [
+          "sourceCode"
+        ],
+        "properties": {
+          "sourceCode": {
+            "type": "string"
+          }
+        }
+      },
+      "ParserIdentifiedSubmodules": {
+        "required": [
+          "identifiedModules",
+          "identifiedInstance"
+        ],
+        "properties": {
+          "identifiedModules": {
+            "type": "string"
+          },
+          "identifiedInstance": {
+            "type": "string"
+          }
+        }
+      },
+      "ParserExtractedElements": {
+        "required": [
+          "json"
+        ],
+        "properties": {
+          "json": {
+            "type": "string"
+          }
+        }
+      },
+      "ParserErrorResponse": {
         "required": [
           "code",
           "message"

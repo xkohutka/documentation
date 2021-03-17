@@ -12,7 +12,7 @@ info:
 
 # server definitions
 servers:
-  - url: https://{environment}.asicde.org/{version}
+  - url: https://{environment}.asicde.org/api/{version}
     description: Public API endpoint
     variables:
       environment:
@@ -971,8 +971,475 @@ paths:
         401:
           $ref: "#/components/responses/Unauthorized"
 
+  /collab/workspace/{repoId}/initFromGit:
+    post:
+      summary: Initializes a collaboration workspace from git URI.
+      description: This method clones the remote repository and loads all files and branches into the collaboration context. Any existing repository with the same name and author will be replaced, as well as any existing collaborative documents.
+      operationId: initFromGit
+      tags: [ Collab Workspaces ]
+      parameters:
+        - $ref: '#/components/parameters/repoId'
+        - $ref: '#/components/parameters/auth'
+      requestBody:
+        description: Information required to clone and initialize a remote repo
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollabInitFromGit'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabSuccess'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '404':
+          description: Repo not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '409':
+          description: Branch already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+
+
+  /collab/workspace/{repoId}/init:
+    post:
+      summary: Initializes a collaboration workspace from repo files ZIP.
+      operationId: initWorkspace
+      tags: [ Collab Workspaces ]
+      parameters:
+        - $ref: '#/components/parameters/repoId'
+        - $ref: '#/components/parameters/auth'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CollabInitFromZip'
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabSuccess'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '404':
+          description: Repo not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '409':
+          description: Branch already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+
+  /collab/workspace/{repoId}:
+    delete:
+      summary: Deletes workspace and it's files
+      tags: [ Collab Workspaces ]
+      operationId: deleteWorkspace
+      parameters:
+        - $ref: '#/components/parameters/repoId'
+        - $ref: '#/components/parameters/auth'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabSuccess'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '404':
+          description: Repo not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+
+
+  /collab/git/{repoId}/commit:
+    post:
+      summary: Commits files
+      description: Commit changes in selected repository
+      tags: [ Collab Git ]
+      parameters:
+        - $ref: '#/components/parameters/repoId'
+        - $ref: '#/components/parameters/auth'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollabCommit'
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabSuccess'
+
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '404':
+          description: Base branch or repo not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '409':
+          description: Branch already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+
+
+  /collab/git/{repoId}/push:
+    post:
+      summary: Pushes files to remote
+      tags: [ Collab Git ]
+      parameters:
+        - $ref: '#/components/parameters/repoId'
+        - $ref: '#/components/parameters/auth'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollabPushPull'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabSuccess'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '404':
+          description: Base branch not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '409':
+          description: Branch already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+
+  /collab/git/{repoId}/pull:
+    post:
+      summary: Pulls files from remote
+      tags: [ Collab Git ]
+      parameters:
+        - $ref: '#/components/parameters/repoId'
+        - $ref: '#/components/parameters/auth'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollabPushPull'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabSuccess'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '404':
+          description: Base branch not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '409':
+          description: Branch already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+
+  /collab/git/{repoId}/branch:
+    post:
+      summary: Creates a new branch
+      tags: [ Collab Git ]
+      parameters:
+        - $ref: '#/components/parameters/repoId'
+        - $ref: '#/components/parameters/auth'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollabNewBranch'
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabSuccess'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '404':
+          description: Base branch not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '409':
+          description: Branch already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+
+    patch:
+      summary: Merges a branch
+      tags: [ Collab Git ]
+      operationId: gitMerge
+      parameters:
+        - $ref: '#/components/parameters/repoId'
+        - $ref: '#/components/parameters/auth'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollabMergeBranch'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabSuccess'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '403':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '404':
+          description: Base branch not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '409':
+          description: Branch already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollabErrorResponse'
+
 # API components
 components:
+  # Collab API parameters
+
+  parameters:
+    repoId:
+      name: repoId
+      in: path
+      required: true
+      description: ID of the repo
+      schema:
+        type: string
+    auth:
+      name: authorization
+      in: header
+      required: true
+      description: Auth token
+      schema:
+        type: string
+
   # Security schema
 
   securitySchemes:
@@ -1784,6 +2251,109 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/ChatRoomMessageSchema"
+
+    CollabInitFromGit:
+      type: object
+      required: [ author, uri ]
+      anyOf:
+        - properties:
+            author:
+              type: string
+              description: Username of repo author
+            uri:
+              type: string
+              description: URI for remote repository
+        - $ref: '#/components/schemas/CollabGitCredentials'
+
+    CollabInitFromZip:
+      required: [ file, author ]
+      properties:
+        author:
+          type: string
+          description: Username of repo author
+        file:
+          description: .zip file to upload
+          type: string
+          format: binary
+
+    CollabGitCredentials:
+      type: object
+      required: [ gitUsername, gitPassword ]
+      properties:
+        gitUsername:
+          type: string
+          description: Username for remote repository
+        gitPassword:
+          type: string
+          format: password
+          description: Password for remote repository
+
+    CollabCommit:
+      required: [ message, branch ]
+      allOf:
+        - properties:
+            message:
+              type: string
+              description: Commit message
+            files:
+              type: array
+              default: [ ]
+              items:
+                type: string
+              description: List of collab document IDs representing files to be commited. If not specified, all files are commited.
+        - $ref: '#/components/schemas/CollabBranch'
+
+    CollabPushPull:
+      allOf:
+        - $ref: '#/components/schemas/CollabGitCredentials'
+        - $ref: '#/components/schemas/CollabBranch'
+
+    CollabBranch:
+      required: [ branch ]
+      properties:
+        branch:
+          type: string
+          description: Branch to work on
+          default: master
+
+    CollabNewBranch:
+      required: [ new ]
+      properties:
+        base:
+          type: string
+          description: Branch on which the new one should be based
+          default: master
+        new:
+          type: string
+          description: New branch name
+
+    CollabMergeBranch:
+      properties:
+        merging:
+          type: string
+          description: Name of the branch being merged
+
+        into:
+          type: string
+          description: Name of the target branch to merge into
+          default: master
+
+    CollabSuccess:
+      properties:
+        msg:
+          type: string
+        data:
+          type: object
+
+    CollabErrorResponse:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
 
   # Requests
 

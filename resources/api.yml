@@ -293,10 +293,32 @@ paths:
         401:
           $ref: "#/components/responses/Unauthorized"
 
+  /repos/{repo_uuid}/toggleFavorite:
+    put:
+      tags: [Repository management]
+      summary: Toggles 'favorite' flag
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: repo_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Repository identifier string
+      responses:
+        200:
+          $ref: "#/components/responses/ReposGetOne200Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/Repos404Response"
+
   /repos/userAssociated:
     get:
       tags: [Repository management]
-      summary: Get all user-associated repositories (owned and team repositories)
+      summary: Get all user-associated repositories (owned & team repositories)
       security:
         - bearerToken: []
       parameters:
@@ -314,13 +336,6 @@ paths:
             example: 10
           required: true
           description: Pagination batch size
-        - in: query
-          name: username
-          schema:
-            type: string
-            example: adminsk
-          required: true
-          description: Username (to be changed with UUID)
       responses:
         200:
           $ref: "#/components/responses/ReposGetAll200Response"
@@ -1707,23 +1722,32 @@ components:
             name:
               type: string
               example: Repository1
-            url:
+            uri:
               type: string
               example: git@github.com:ASICDE/documentation.git
             archived:
               type: boolean
               example: false
+            authorUUID:
+              type: string
+              format: uuid
+            description:
+              type: string
+              example: "An example description."
             created:
               type: string
               format: date-time
               example: 2021-03-24T08:21:23.555+0100
-            lastModification:
+            createdBy:
+              type: string
+              example: "User123"
+            lastModified:
               type: string
               format: date-time
               example: 2021-03-24T08:21:23.555+0100
-            team:
+            lastModifiedBy:
               type: string
-              format: uuid
+              example: "User1234"
             authorization:
               type: object
               allOf:

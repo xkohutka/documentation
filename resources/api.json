@@ -2809,6 +2809,10 @@
                 "type": "string",
                 "example": "git@github.com:ASICDE/documentation.git"
               },
+              "favorite": {
+                "type": "boolean",
+                "example": true
+              },
               "archived": {
                 "type": "boolean",
                 "example": false

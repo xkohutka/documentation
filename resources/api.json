@@ -462,12 +462,48 @@
         }
       }
     },
+    "/repos/{repo_uuid}/toggleFavorite": {
+      "put": {
+        "tags": [
+          "Repository management"
+        ],
+        "summary": "Toggles 'favorite' flag",
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "repo_uuid",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "description": "Repository identifier string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ReposGetOne200Response"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/Repos404Response"
+          }
+        }
+      }
+    },
     "/repos/userAssociated": {
       "get": {
         "tags": [
           "Repository management"
         ],
-        "summary": "Get all user-associated repositories (owned and team repositories)",
+        "summary": "Get all user-associated repositories (owned & team repositories)",
         "security": [
           {
             "bearerToken": []
@@ -493,16 +529,6 @@
             },
             "required": true,
             "description": "Pagination batch size"
-          },
-          {
-            "in": "query",
-            "name": "username",
-            "schema": {
-              "type": "string",
-              "example": "adminsk"
-            },
-            "required": true,
-            "description": "Username (to be changed with UUID)"
           }
         ],
         "responses": {
@@ -2814,7 +2840,8 @@
             "required": [
               "uuid",
               "name",
-              "archived"
+              "archived",
+              "favorite"
             ],
             "properties": {
               "uuid": {
@@ -2825,13 +2852,17 @@
                 "type": "string",
                 "example": "Repository1"
               },
-              "url": {
+              "uri": {
                 "type": "string",
                 "example": "git@github.com:ASICDE/documentation.git"
               },
               "archived": {
                 "type": "boolean",
                 "example": false
+              },
+              "favorite": {
+                "type": "boolean",
+                "example": true
               }
             }
           }
@@ -2873,13 +2904,17 @@
                 "type": "string",
                 "example": "Repository1"
               },
-              "url": {
+              "uri": {
                 "type": "string",
                 "example": "git@github.com:ASICDE/documentation.git"
               },
               "archived": {
                 "type": "boolean",
                 "example": false
+              },
+              "favorite": {
+                "type": "boolean",
+                "example": true
               },
               "organization": {
                 "type": "string",
@@ -2939,6 +2974,7 @@
             "required": [
               "name",
               "archived",
+              "favorite",
               "authorization"
             ],
             "properties": {
@@ -2946,7 +2982,7 @@
                 "type": "string",
                 "example": "Repository1"
               },
-              "url": {
+              "uri": {
                 "type": "string",
                 "example": "git@github.com:ASICDE/documentation.git"
               },
@@ -2954,13 +2990,17 @@
                 "type": "boolean",
                 "example": false
               },
+              "favorite": {
+                "type": "boolean",
+                "example": true
+              },
               "organization": {
                 "type": "string",
                 "format": "uuid"
               },
               "team": {
                 "type": "string",
-                "format": "uuid"
+                "example": "User1234"
               },
               "authorization": {
                 "type": "object",
@@ -2994,44 +3034,6 @@
                     }
                   }
                 ]
-              }
-            }
-          }
-        ]
-      },
-      "RepoSchemaLite": {
-        "type": "object",
-        "allOf": [
-          {
-            "required": [
-              "uuid",
-              "name",
-              "url"
-            ],
-            "properties": {
-              "uuid": {
-                "type": "string",
-                "format": "uuid"
-              },
-              "name": {
-                "type": "string",
-                "example": "Repository1"
-              },
-              "url": {
-                "type": "string",
-                "example": "git@github.com:ASICDE/documentation.git"
-              },
-              "archived": {
-                "type": "boolean",
-                "example": false
-              },
-              "organization": {
-                "type": "string",
-                "format": "uuid"
-              },
-              "team": {
-                "type": "string",
-                "format": "uuid"
               }
             }
           }
@@ -3300,7 +3302,7 @@
           },
           {
             "properties": {
-              "url": {
+              "uri": {
                 "type": "string",
                 "example": "git@github.com:ASICDE/documentation.git"
               }
@@ -4306,7 +4308,7 @@
               "$ref": "#/components/schemas/RepoUpdateRequestSchema"
             },
             "example": {
-              "url": "git@github.com:ASICDE/documentation-new.git"
+              "uri": "git@github.com:ASICDE/documentation-new.git"
             }
           }
         }

@@ -16,6 +16,7 @@ This repository holds Docker compose files for the ASICDE software stack. With t
 2. Two main versions of ASICDE exist currently. One older version, that is contained in the `master` git branch and one new (staging, containing new features) contained in the `dev` branch. __These versions differ, so please choose your version carefully and do not mix services from different versions.__
 3. Use ONLY the `master` branch of the `asicde-docker` and `asicde-docker-dev` repositories.
 4. Docker deployment has two forms. One enables [deployment of the whole application stack](#production-deployment) (frontend with backend - or just frontend or just backend), the other form enables [local development of the backend](#backend-development-deployment).
+5. __Be sure to update your docker instances from time to time.__ First shut them down with `docker-compose down`, then pull the latest images with `docker-compose pull`. After this, you can start the instances again with `docker-compose up -d`. Make sure to set the correct docker-compose files by specifying the `-f XYZ.yml` parameter.
 
 ---
 
@@ -60,11 +61,11 @@ Follow the steps below:
 2. [Configure the services](#configuration)
 3. Deploy the software stack
    1. If you want to run the frontend and backend in the same stack (on the same machine)
-      - Start the stack with `docker-compose up -f docker-compose.yml -f docker-compose.frontend.yml`
+      - Start the stack with `docker-compose -f docker-compose.yml -f docker-compose.frontend.yml up`
       - You may add `-d` parameter to run the services in background - in __detached mode__.
    2. If you want to run frontend separate from backend (different machines)
       - On one machine, run: `docker-compose up -f docker-compose.yml`
-      - On the other machine, run: `docker-compose up -f docker-compose.frontend.yml`
+      - On the other machine, run: `docker-compose -f docker-compose.frontend.yml up`
 4. Verify the instance is working by sending HTTP requests to the backend or by visiting the frontend.
 
 ### Frontend development deployment - Custom <u>FRONTEND</u> with Docker backend
@@ -78,9 +79,9 @@ This configuration below allows you to __serve your frontend from any IDE__ and 
 2. [Configure the services](#configuration)
 3. Deploy the backend stack
    1. Running production-ready backend (`master` branch)
-      - Run `docker-compose up -f docker-compose.yml`
+      - Run `docker-compose -f docker-compose.yml up`
    2. Running development/staging backend (`dev` branch)
-      - Run `docker-compose up -f docker-compose.dev.yml`
+      - Run `docker-compose -f docker-compose.dev.yml up`
 4. Your backend will be ready on the port defined in the `router` module - the default is `TCP 10000`
 
 <h3 id="backend-development-deployment">Backend development deployment - Custom <u>BACKEND</u> with Docker frontend and database</h3>
@@ -202,6 +203,11 @@ The `docker-compose.dev.yml` file consists of the following backend services:
    - You can also change the Mongo database connection URL
 - `router` - NginX proxy router for routing traffic
    - You may change the port on which NginX will listen. By default the port `10000` is used.
+   - Here you can also set the API prefix that will be used (v2 backend should use `/api/v2`):
+
+   ```ini
+   API_PREFIX: /api/v1
+   ```
 
 The `docker-compose.frontend.dev.yml` file consists of the following frontend services:
 - `frontend` - The frontend static application.
@@ -211,23 +217,23 @@ The `docker-compose.frontend.dev.yml` file consists of the following frontend se
 The `env-dev/core.env` file contains configuration of the ASICDE Core API module:
 
 ```ini
-# Set the JWT authorization header:
-app.jwt.authorization.header=Authorization
-
-# Set the JWT token prefix string
-app.jwt.prefix=Bearer
-
 # Set the JWT token encryption key
 app.jwt.secret=JWTSuperSecretKey
 
-# Set the JWT token expiration time in milliseconds
-app.jwt.expiration.time=86400000
+# Set the JWT token expiration time in seconds
+app.jwt.expiration.time=86400
 
 # Set the URL for the Authentication API module
 auth.url=http://auth:8080/api/auth
 
 # Set the storage location for repository data inside of the container
 app.storage.location=/data
+
+# Enable organization invite confirmation
+app.organization.confirm_invite=false
+
+# Enable account verification
+app.account.verify=true
 
 # Enable file upload
 spring.servlet.multipart.enabled=true
@@ -237,6 +243,13 @@ spring.servlet.multipart.max-file-size=500MB
 
 # Set the maximum request size to be accepted by the server
 spring.servlet.multipart.max-request-size=500MB
+```
+
+The `env-dev/parser.env` file contains configuration of the ASICDE Parser API module:
+
+```ini
+# Set the URL for the Authentication API module
+auth.url=http://core:8080/api/auth
 ```
 
 The `env-dev/database.env` file contains configuration for the backend database:
@@ -289,9 +302,9 @@ The `docker-compose.yml` file consists of the following backend services:
       - Collab API: localhost:7070
 
       ```ini
-      AUTH_HOST: "http\\:\\/\\/host.docker.internal\\:8080"
-      PARSER_HOST: "http\\:\\/\\/host.docker.internal\\:8081"
-      REPO_HOST: "http\\:\\/\\/host.docker.internal\\:8082"
+      CORE_HOST: "http://host.docker.internal:8080"
+      PARSER_HOST: "http://host.docker.internal:8081"
+      COLLAB_HOST: "http://host.docker.internal:7070"
       ```
 
    - The `host.docker.internal` hostname represents `localhost` on the host machine where Docker is running. This means that Docker can connect to services running in Intellij IDEA.

@@ -507,7 +507,7 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/ReposGetAll200Response"
+            "$ref": "#/components/responses/ReposGetUserAssociated200Response"
           },
           "400": {
             "$ref": "#/components/responses/PagingError"
@@ -2640,6 +2640,50 @@
           }
         ]
       },
+      "AuditedTimeSchema": {
+        "type": "object",
+        "allOf": [
+          {
+            "required": [
+              "created",
+              "last_modified"
+            ],
+            "properties": {
+              "created": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2021-03-24T08:21:23.555+0100"
+              },
+              "last_modified": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2021-03-24T08:21:23.555+0100"
+              }
+            }
+          }
+        ]
+      },
+      "AuditedUserSchema": {
+        "type": "object",
+        "allOf": [
+          {
+            "required": [
+              "created_by",
+              "last_modified_by"
+            ],
+            "properties": {
+              "created_by": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "last_modified_by": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          }
+        ]
+      },
       "UserSchema": {
         "type": "object",
         "allOf": [
@@ -2649,8 +2693,7 @@
               "username",
               "email",
               "firstName",
-              "lastName",
-              "roles"
+              "lastName"
             ],
             "properties": {
               "uuid": {
@@ -2673,12 +2716,6 @@
               "lastName": {
                 "type": "string",
                 "example": "Doe"
-              },
-              "roles": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
               }
             }
           }
@@ -2767,12 +2804,69 @@
           }
         ]
       },
+      "UserRepoSchemaLite": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuditedTimeSchema"
+          },
+          {
+            "required": [
+              "uuid",
+              "name",
+              "archived"
+            ],
+            "properties": {
+              "uuid": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": {
+                "type": "string",
+                "example": "Repository1"
+              },
+              "url": {
+                "type": "string",
+                "example": "git@github.com:ASICDE/documentation.git"
+              },
+              "archived": {
+                "type": "boolean",
+                "example": false
+              }
+            }
+          }
+        ]
+      },
+      "UserAssociatedRepoSchemaLite": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuditedTimeSchema"
+          },
+          {
+            "$ref": "#/components/schemas/UserRepoSchemaLite"
+          },
+          {
+            "properties": {
+              "organization": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "team": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          }
+        ]
+      },
       "RepoSchema": {
         "type": "object",
         "allOf": [
           {
             "required": [
-              "name"
+              "name",
+              "authorization"
             ],
             "properties": {
               "name": {
@@ -2787,15 +2881,82 @@
                 "type": "boolean",
                 "example": false
               },
-              "created": {
+              "organization": {
                 "type": "string",
-                "format": "date-time",
-                "example": "2021-03-24T08:21:23.555+0100"
+                "format": "uuid"
               },
-              "lastModification": {
+              "team": {
                 "type": "string",
-                "format": "date-time",
-                "example": "2021-03-24T08:21:23.555+0100"
+                "format": "uuid"
+              },
+              "authorization": {
+                "type": "object",
+                "allOf": [
+                  {
+                    "required": [
+                      "type"
+                    ],
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "none",
+                          "plaintext",
+                          "ssh",
+                          "organization"
+                        ],
+                        "default": "plaintext"
+                      },
+                      "username": {
+                        "type": "string",
+                        "example": "githubuser"
+                      },
+                      "password": {
+                        "type": "string",
+                        "example": "supersecret"
+                      },
+                      "sshKey": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "RepoDetailsSchema": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AuditedTimeSchema"
+          },
+          {
+            "$ref": "#/components/schemas/AuditedUserSchema"
+          },
+          {
+            "required": [
+              "name",
+              "archived",
+              "authorization"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "Repository1"
+              },
+              "url": {
+                "type": "string",
+                "example": "git@github.com:ASICDE/documentation.git"
+              },
+              "archived": {
+                "type": "boolean",
+                "example": false
+              },
+              "organization": {
+                "type": "string",
+                "format": "uuid"
               },
               "team": {
                 "type": "string",
@@ -2864,15 +3025,9 @@
                 "type": "boolean",
                 "example": false
               },
-              "created": {
+              "organization": {
                 "type": "string",
-                "format": "date-time",
-                "example": "2021-03-24T08:21:23.555+0100"
-              },
-              "lastModification": {
-                "type": "string",
-                "format": "date-time",
-                "example": "2021-03-24T08:21:23.555+0100"
+                "format": "uuid"
               },
               "team": {
                 "type": "string",
@@ -3574,7 +3729,28 @@
               "data": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/RepoSchemaLite"
+                  "$ref": "#/components/schemas/UserRepoSchemaLite"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "RepoGetUserAssociatedSuccessSchema": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PagingSchema"
+          },
+          {
+            "required": [
+              "data"
+            ],
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UserAssociatedRepoSchemaLite"
                 }
               }
             }
@@ -3585,7 +3761,7 @@
         "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/RepoSchema"
+            "$ref": "#/components/schemas/RepoDetailsSchema"
           }
         ]
       },
@@ -4333,6 +4509,16 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/RepoGetAllSuccessSchema"
+            }
+          }
+        }
+      },
+      "ReposGetUserAssociated200Response": {
+        "description": "Repositories available",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RepoGetUserAssociatedSuccessSchema"
             }
           }
         }

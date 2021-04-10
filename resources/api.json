@@ -1298,6 +1298,34 @@
                     }
                 }
             },
+            "post": {
+                "tags": ["Education module"],
+                "summary": "Locks the ability to join the classroom",
+                "security": [{
+                    "bearerToken": []
+                }],
+                "parameters": [{
+                    "in": "path",
+                    "name": "classroom_uuid",
+                    "schema": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "required": true,
+                    "description": "Classroom identifier string"
+                }],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/Empty200Response"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/Classroom404"
+                    }
+                }
+            },
             "put": {
                 "tags": ["Education module"],
                 "summary": "Update classroom details",
@@ -3141,6 +3169,9 @@
                             "name": {
                                 "type": "string",
                                 "example": "Classroom1"
+                            },
+                            "locked": {
+                                "type": "boolean"
                             }
                         }
                     },
@@ -3529,7 +3560,7 @@
                 "allOf": [{
                     "required": ["name"],
                     "properties": {
-                        "role": {
+                        "name": {
                             "type": "string",
                             "example": "Team1"
                         }

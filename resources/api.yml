@@ -315,6 +315,30 @@ paths:
         404:
           $ref: "#/components/responses/Repos404Response"
 
+  /repos/{repo_uuid}/files:
+    put:
+      tags: [Repository management]
+      summary: Updates repository contents
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: repo_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Repository identifier string
+      requestBody:
+        $ref: "#/components/requestBodies/RepoFilesUpdateRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/Empty200Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/Repos404Response"
+
   /repos/userAssociated:
     get:
       tags: [Repository management]
@@ -822,6 +846,282 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         404:
           $ref: "#/components/responses/OrgGet404Response"
+
+  # Education module
+
+  /edu/classrooms:
+    get:
+      tags: [Education module]
+      summary: Get all assigned classrooms
+      security:
+        - bearerToken: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            example: 1
+          required: false
+          description: Pagination page
+        - in: query
+          name: size
+          schema:
+            type: integer
+            example: 10
+          required: false
+          description: Pagination batch size
+      responses:
+        200:
+          $ref: "#/components/responses/EduGetAllClassrooms200Response"
+        400:
+          $ref: "#/components/responses/PagingError"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+    post:
+      tags: [Education module]
+      summary: Create a new classroom
+      security:
+        - bearerToken: []
+      requestBody:
+        $ref: "#/components/requestBodies/EduCreateClassroomRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/Empty200Response"
+        400:
+          $ref: "#/components/responses/EduCreateClassroom400Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+
+  /edu/classrooms/join:
+    post:
+      tags: [Education module]
+      summary: Join an existing classroom
+      security:
+        - bearerToken: []
+      requestBody:
+        $ref: "#/components/requestBodies/EduJoinClassroomRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/Empty200Response"
+        400:
+          $ref: "#/components/responses/EduJoinClassroom400Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+
+  /edu/classrooms/{classroom_uuid}:
+    get:
+      tags: [Education module]
+      summary: Get classroom details
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: classroom_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Classroom identifier string
+      responses:
+        200:
+          $ref: "#/components/responses/EduGetClassroomDetails200Response"
+        400:
+          $ref: "#/components/responses/PagingError"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/Classroom404"
+    put:
+      tags: [Education module]
+      summary: Update classroom details
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: classroom_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Classroom identifier string
+      requestBody:
+        $ref: "#/components/requestBodies/EduUpdateClassroomRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/Empty200Response"
+        400:
+          $ref: "#/components/responses/EduUpdateClassroom400Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/Classroom404"
+    delete:
+      tags: [Education module]
+      summary: Delete a classroom
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: classroom_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Classroom identifier string
+      responses:
+        200:
+          $ref: "#/components/responses/Empty200Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+
+  /edu/classrooms/{classroom_uuid}/assignments:
+    get:
+      tags: [Education module]
+      summary: Get all classroom assignments - according to ownership and permissions
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: classroom_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Classroom identifier string
+        - in: query
+          name: page
+          schema:
+            type: integer
+            example: 1
+          required: false
+          description: Pagination page
+        - in: query
+          name: size
+          schema:
+            type: integer
+            example: 10
+          required: false
+          description: Pagination batch size
+      responses:
+        200:
+          $ref: "#/components/responses/EduGetAllClassroomAssignments200Response"
+        400:
+          $ref: "#/components/responses/PagingError"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/Classroom404"
+    post:
+      tags: [Education module]
+      summary: Create a new assignment
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: classroom_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Classroom identifier string
+      requestBody:
+        $ref: "#/components/requestBodies/EduCreateClassroomAssignmentRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/Empty200Response"
+        400:
+          $ref: "#/components/responses/EduCreateClassroomAssignment400Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/Classroom404"
+
+  /edu/classrooms/{classroom_uuid}/assignments/{assignment_uuid}:
+    get:
+      tags: [Education module]
+      summary: Get assignment details
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: classroom_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Classroom identifier string
+        - in: path
+          name: assignment_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Assignment identifier string
+      responses:
+        200:
+          $ref: "#/components/responses/EduGetClassroomAssignmentDetails200Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/Classroom404"
+    put:
+      tags: [Education module]
+      summary: Update assignment details or publish the assignment
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: classroom_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Classroom identifier string
+        - in: path
+          name: assignment_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Assignment identifier string
+      requestBody:
+        $ref: "#/components/requestBodies/EduUpdateClassroomAssignmentRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/Empty200Response"
+        400:
+          $ref: "#/components/responses/EduCreateClassroomAssignment400Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/Classroom404"
+    delete:
+      tags: [Education module]
+      summary: Delete an assignment
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: classroom_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Classroom identifier string
+        - in: path
+          name: assignment_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Assignment identifier string
+      responses:
+        200:
+          $ref: "#/components/responses/Empty200Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/Classroom404"
 
   # Chat
 
@@ -1671,6 +1971,7 @@ components:
             - email
             - firstName
             - lastName
+            - teacher
           properties:
             uuid:
               type: string
@@ -1688,6 +1989,9 @@ components:
             lastName:
               type: string
               example: Doe
+            teacher:
+              type: boolean
+              example: false
 
     UsersSchema:
       type: object
@@ -1777,31 +2081,12 @@ components:
               type: string
               format: uuid
 
-    RepoSchema:
+    RepoAuthorizationSchema:
       type: object
       allOf:
         - required:
-            - name
             - authorization
           properties:
-            name:
-              type: string
-              example: Repository1
-            uri:
-              type: string
-              example: git@github.com:ASICDE/documentation.git
-            archived:
-              type: boolean
-              example: false
-            favorite:
-              type: boolean
-              example: true
-            organization:
-              type: string
-              format: uuid
-            team:
-              type: string
-              format: uuid
             authorization:
               type: object
               allOf:
@@ -1825,16 +2110,11 @@ components:
                     sshKey:
                       type: string
 
-    RepoDetailsSchema:
+    RepoSchema:
       type: object
       allOf:
-        - $ref: "#/components/schemas/AuditedTimeSchema"
-        - $ref: "#/components/schemas/AuditedUserSchema"
         - required:
             - name
-            - archived
-            - favorite
-            - authorization
           properties:
             name:
               type: string
@@ -1853,29 +2133,18 @@ components:
               format: uuid
             team:
               type: string
-              example: "User1234"
-            authorization:
-              type: object
-              allOf:
-                - required:
-                    - type
-                  properties:
-                    type:
-                      type: string
-                      enum:
-                        - none
-                        - plaintext
-                        - ssh
-                        - organization
-                      default: plaintext
-                    username:
-                      type: string
-                      example: githubuser
-                    password:
-                      type: string
-                      example: supersecret
-                    sshKey:
-                      type: string
+              format: uuid
+
+    RepoDetailsSchema:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/AuditedTimeSchema"
+        - $ref: "#/components/schemas/AuditedUserSchema"
+        - $ref: "#/components/schemas/RepoSchema"
+        - $ref: "#/components/schemas/RepoAuthorizationSchema"
+        - required:
+            - archived
+            - favorite
 
     TeamSchema:
       type: object
@@ -1883,7 +2152,6 @@ components:
         - required:
             - uuid
             - name
-            - owner
             - member
           properties:
             uuid:
@@ -1892,12 +2160,104 @@ components:
             name:
               type: string
               example: Team1
-            owner:
-              type: string
-              format: uuid
             member:
               type: boolean
               example: true
+        - $ref: "#/components/schemas/AuditedTimeSchema"
+        - $ref: "#/components/schemas/AuditedUserSchema"
+
+    ClassroomSchema:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/ClassroomSchemaLite"
+        - required:
+            - members
+            - slug
+          properties:
+            members:
+              type: array
+              items:
+                type: string
+                format: uuid
+            slug:
+              type: string
+              example: fei-stuba-asic-01
+        - $ref: "#/components/schemas/AuditedTimeSchema"
+        - $ref: "#/components/schemas/AuditedUserSchema"
+
+    ClassroomSchemaLite:
+      type: object
+      allOf:
+        - required:
+            - uuid
+            - name
+          properties:
+            uuid:
+              type: string
+              format: uuid
+            name:
+              type: string
+              example: Classroom1
+        - $ref: "#/components/schemas/AuditedTimeSchema"
+        - $ref: "#/components/schemas/AuditedUserSchema"
+
+    ClassroomAssignmentSchema:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/ClassroomAssignmentSchemaLite"
+        - $ref: "#/components/schemas/RepoSchema"
+        - $ref: "#/components/schemas/RepoAuthorizationSchema"
+        - $ref: "#/components/schemas/AuditedTimeSchema"
+        - $ref: "#/components/schemas/AuditedUserSchema"
+        - required:
+            - comments
+          properties:
+            comments:
+              type: string
+              example: Very good - 10/10
+            name:
+              type: string
+              example: Assignment1
+            archived:
+              example:
+            favorite:
+              example:
+            team:
+              example:
+            organization:
+              example:
+
+    ClassroomAssignmentSchemaLite:
+      type: object
+      allOf:
+        - required:
+            - name
+            - owner
+            - parent
+            - classroom
+            - due_date
+            - published
+          properties:
+            name:
+              type: string
+              example: Assignment1
+            owner:
+              type: string
+              format: uuid
+            parent:
+              type: string
+              format: uuid
+            classroom:
+              type: string
+              format: uuid
+            due_date:
+              type: string
+              format: date-time
+              example: 2021-03-24T08:21:23.555+0100
+            published:
+              type: boolean
+        - $ref: "#/components/schemas/AuditedTimeSchema"
+        - $ref: "#/components/schemas/AuditedUserSchema"
 
     ChatRoomSchema:
       type: object
@@ -2014,31 +2374,28 @@ components:
               type: string
             lastName:
               type: string
+            teacher:
+              type: boolean 
 
     AuthUpdateUserRequestSchema:
       type: object
-      anyOf:
+      allOf:
         - properties:
             username:
               type: string
               example: john.doe
-        - properties:
             password:
               type: string
               format: password
-        - properties:
             email:
               type: string
               format: email
-        - properties:
             firstName:
               type: string
               example: John
-        - properties:
             lastName:
               type: string
               example: Doe
-        - properties:
             organization:
               type: string
               format: uuid
@@ -2050,20 +2407,17 @@ components:
 
     RepoUpdateRequestSchema:
       type: object
-      anyOf:
+      allOf:
         - properties:
             name:
               type: string
               example: Repository2
-        - properties:
             uri:
               type: string
               example: git@github.com:ASICDE/documentation.git
-        - properties:
             team:
               type: string
               format: uuid
-        - properties:
             authorization:
               type: object
               allOf:
@@ -2186,7 +2540,7 @@ components:
 
     OrgSettingsUpdateRequestSchema:
       type: object
-      anyOf:
+      allOf:
         - properties:
             name_policy:
               type: string
@@ -2194,11 +2548,9 @@ components:
                 - username
                 - fullname
                 - email
-        - properties:
             reader_by_default:
               type: boolean
               example: true
-        - properties:
             authorization:
               type: object
               allOf:
@@ -2221,6 +2573,138 @@ components:
                       example: supersecret
                     sshKey:
                       type: string
+
+    EduCreateClassroomRequestSchema:
+      type: object
+      allOf:
+        - required:
+            - name
+            - slug
+            - password
+          properties:
+            name:
+              type: string
+              example: Classroom1
+            slug:
+              type: string
+              example: fei-stuba-asic-01
+            password:
+              type: string
+              example: strongpassword
+
+    EduJoinClassroomRequestSchema:
+      type: object
+      allOf:
+        - required:
+            - slug
+            - password
+          properties:
+            slug:
+              type: string
+              example: fei-stuba-asic-01
+            password:
+              type: string
+              example: strongpassword
+
+    EduUpdateClassroomRequestSchema:
+      type: object
+      allOf:
+        - properties:
+            name:
+              type: string
+              example: Classroom1
+            slug:
+              type: string
+              example: fei-stuba-asic-01
+            password:
+              type: string
+              example: strongpassword
+
+    EduCreateClassroomAssignmentRequestSchema:
+      type: object
+      allOf:
+        - required:
+          - name
+          - published
+        - properties:
+            name:
+              type: string
+              example: Assignment2
+            uri:
+              type: string
+              example: git@github.com:ASICDE/documentation.git
+            authorization:
+              type: object
+              allOf:
+                - required:
+                    - type
+                  properties:
+                    type:
+                      type: string
+                      enum:
+                        - none
+                        - plaintext
+                        - ssh
+                        - organization
+                      default: plaintext
+                    username:
+                      type: string
+                      example: githubuser
+                    password:
+                      type: string
+                      example: supersecret
+                    sshKey:
+                      type: string
+            due_date:
+              type: string
+              format: date-time
+              example: 2021-03-24T08:21:23.555+0100
+            published:
+              type: boolean
+              example: false
+
+    EduUpdateClassroomAssignmentRequestSchema:
+      type: object
+      allOf:
+        - properties:
+            name:
+              type: string
+              example: Assignment2
+            uri:
+              type: string
+              example: git@github.com:ASICDE/documentation.git
+            authorization:
+              type: object
+              allOf:
+                - required:
+                    - type
+                  properties:
+                    type:
+                      type: string
+                      enum:
+                        - none
+                        - plaintext
+                        - ssh
+                        - organization
+                      default: plaintext
+                    username:
+                      type: string
+                      example: githubuser
+                    password:
+                      type: string
+                      example: supersecret
+                    sshKey:
+                      type: string
+            due_date:
+              type: string
+              format: date-time
+              example: 2021-03-24T08:21:23.555+0100
+            published:
+              type: boolean
+              example: false
+            comment:
+              type: string
+              example: Good work!
 
     ChatRoomCreateRequestSchema:
       type: object
@@ -2459,6 +2943,40 @@ components:
                     sshKey:
                       type: string
 
+    ClassroomsGetAllSuccessSchema:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/PagingSchema"
+        - required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/ClassroomSchemaLite"
+
+    ClassroomsGetOneSuccessSchema:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/ClassroomSchema"
+
+    ClassroomAssignmentsGetAllSuccessSchema:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/PagingSchema"
+        - required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/ClassroomAssignmentSchemaLite"
+
+    ClassroomAssignmentsGetOneSuccessSchema:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/ClassroomAssignmentSchema"
+
     ChatRoomSearchSuccessSchema:
       type: object
       allOf:
@@ -2672,6 +3190,7 @@ components:
             email: john.doe@mail.com
             firstName: John
             lastName: Doe
+            teacher: false
 
     AuthUpdateUserRequest:
       required: true
@@ -2702,6 +3221,16 @@ components:
             $ref: "#/components/schemas/RepoUpdateRequestSchema"
           example:
             uri: git@github.com:ASICDE/documentation-new.git
+
+    RepoFilesUpdateRequest:
+      required: true
+      description: Repo files update request
+      content:
+        application/zip:
+          schema:
+            type: string
+            format: binary
+            example: Binary contents
 
     # Organization management
 
@@ -2787,6 +3316,46 @@ components:
             $ref: "#/components/schemas/OrgSettingsUpdateRequestSchema"
           example:
             name_policy: fullname
+
+    EduCreateClassroomRequest:
+      required: true
+      description: Classroom creation request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/EduCreateClassroomRequestSchema"
+
+    EduJoinClassroomRequest:
+      required: true
+      description: Classroom creation request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/EduJoinClassroomRequestSchema"
+
+    EduUpdateClassroomRequest:
+      required: true
+      description: Classroom creation request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/EduUpdateClassroomRequestSchema"
+
+    EduCreateClassroomAssignmentRequest:
+      required: true
+      description: Classroom assignment creation request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/EduCreateClassroomAssignmentRequestSchema"
+
+    EduUpdateClassroomAssignmentRequest:
+      required: true
+      description: Classroom assignment update request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/EduUpdateClassroomAssignmentRequestSchema"
 
     ChatRoomCreateRequest:
       required: true
@@ -2922,6 +3491,34 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/OrgGetSettingsSuccessSchema"
+
+    EduGetAllClassrooms200Response:
+      description: Classrooms available
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ClassroomsGetAllSuccessSchema"
+
+    EduGetClassroomDetails200Response:
+      description: Classroom found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ClassroomsGetOneSuccessSchema"
+
+    EduGetAllClassroomAssignments200Response:
+      description: Classrooms available
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ClassroomAssignmentsGetAllSuccessSchema"
+
+    EduGetClassroomAssignmentDetails200Response:
+      description: Classroom found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ClassroomAssignmentsGetOneSuccessSchema"
 
     ChatRoomSearch200Response:
       description: Chat rooms search success
@@ -3167,6 +3764,56 @@ components:
             code: INVALID_NAME_POLICY
             message: Invalid name policy value
 
+    EduCreateClassroom400Response:
+      description: Bad classroom create request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            code: INVALID_SLUG
+            message: The slug is already used by another classroom
+
+    EduJoinClassroom400Response:
+      description: Bad classroom create request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            code: INVALID_SLUG
+            message: The classroom does not exist
+
+    EduUpdateClassroom400Response:
+      description: Bad classroom update request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            code: INVALID_SLUG
+            message: The slug is already used by another classroom
+
+    EduCreateClassroomAssignment400Response:
+      description: Bad classroom assignment create request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            code: INVALID_DUE_DATE
+            message: Invalid due date
+
+    EduUpdateClassroomAssignment400Response:
+      description: Bad classroom assignment update request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            code: INVALID_DUE_DATE
+            message: Invalid due date
+
     ChatRoomCreate400Response:
       description: Bad chat room create request
       content:
@@ -3276,6 +3923,16 @@ components:
           example:
             code: TEAM_NOT_EXISTS
             message: Team does not exist
+
+    Classroom404:
+      description: Classroom does not exist
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            code: CLASSROOM_NOT_EXISTS
+            message: Classroom does not exist
 
     ChatRoom404Response:
       description: Chat room does not exist

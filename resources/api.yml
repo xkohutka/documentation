@@ -994,6 +994,99 @@ paths:
         401:
           $ref: "#/components/responses/Unauthorized"
 
+  /edu/classrooms/{classroom_uuid}/members:
+    get:
+      tags: [Education module]
+      summary: Get all classroom members
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: classroom_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Classroom identifier string
+        - in: query
+          name: page
+          schema:
+            type: integer
+            example: 1
+          required: false
+          description: Pagination page
+        - in: query
+          name: size
+          schema:
+            type: integer
+            example: 10
+          required: false
+          description: Pagination batch size
+      responses:
+        200:
+          $ref: "#/components/responses/EduGetAllClassroomMembers200Response"
+        400:
+          $ref: "#/components/responses/PagingError"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/Classroom404"
+    post:
+      tags: [Education module]
+      summary: Add a teacher
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: classroom_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Classroom identifier string
+      requestBody:
+        $ref: "#/components/requestBodies/EduInviteTeacherRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/Empty200Response"
+        400:
+          $ref: "#/components/responses/EduAddClassroomTeacher400Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/Classroom404"
+
+  /edu/classrooms/{classroom_uuid}/members/{member_uuid}:
+    delete:
+      tags: [Education module]
+      summary: Remove a classroom member
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: classroom_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Classroom identifier string
+        - in: path
+          name: member_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: User identifier string
+      responses:
+        200:
+          $ref: "#/components/responses/Empty200Response"
+        400:
+          $ref: "#/components/responses/PagingError"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/Classroom404"
+
   /edu/classrooms/{classroom_uuid}/assignments:
     get:
       tags: [Education module]
@@ -2048,6 +2141,18 @@ components:
                 - admin
               default: member
 
+    ClassroomMemberSchema:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/UserSchema"
+        - properties:
+            role:
+              type: string
+              enum:
+                - member
+                - teacher
+              default: member
+
     TeamMemberSchema:
       type: object
       allOf:
@@ -2191,14 +2296,8 @@ components:
       allOf:
         - $ref: "#/components/schemas/ClassroomSchemaLite"
         - required:
-            - members
             - slug
           properties:
-            members:
-              type: array
-              items:
-                type: string
-                format: uuid
             slug:
               type: string
               example: fei-stuba-asic-01
@@ -2628,6 +2727,16 @@ components:
               type: string
               example: strongpassword
 
+    EduInviteTeacherRequestSchema:
+      type: object
+      allOf:
+        - required:
+            - email
+          properties:
+            email:
+              type: string
+              example: teacher@school.com
+
     EduUpdateClassroomRequestSchema:
       type: object
       allOf:
@@ -2981,6 +3090,18 @@ components:
       type: object
       allOf:
         - $ref: "#/components/schemas/ClassroomSchema"
+
+    ClassroomMembersGetAllSuccessSchema:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/PagingSchema"
+        - required:
+            - data
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/ClassroomMemberSchema"
 
     ClassroomAssignmentsGetAllSuccessSchema:
       type: object
@@ -3355,6 +3476,14 @@ components:
           schema:
             $ref: "#/components/schemas/EduJoinClassroomRequestSchema"
 
+    EduInviteTeacherRequest:
+      required: true
+      description: Teacher invitation request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/EduInviteTeacherRequestSchema"
+
     EduUpdateClassroomRequest:
       required: true
       description: Classroom creation request
@@ -3528,15 +3657,22 @@ components:
           schema:
             $ref: "#/components/schemas/ClassroomsGetOneSuccessSchema"
 
+    EduGetAllClassroomMembers200Response:
+      description: Classroom members available
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ClassroomMembersGetAllSuccessSchema"
+
     EduGetAllClassroomAssignments200Response:
-      description: Classrooms available
+      description: Classroom assignments available
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/ClassroomAssignmentsGetAllSuccessSchema"
 
     EduGetClassroomAssignmentDetails200Response:
-      description: Classroom found
+      description: Classroom assignment found
       content:
         application/json:
           schema:
@@ -3805,6 +3941,16 @@ components:
           example:
             code: INVALID_SLUG
             message: The classroom does not exist
+
+    EduAddClassroomTeacher400Response:
+      description: Bad classroom teacher invitation request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponseSchema"
+          example:
+            code: NOT_A_TEACHER
+            message: The provided user is not a teacher
 
     EduUpdateClassroom400Response:
       description: Bad classroom update request

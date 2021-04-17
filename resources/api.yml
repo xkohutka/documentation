@@ -1331,6 +1331,28 @@ paths:
         401:
           $ref: "#/components/responses/Unauthorized"
 
+  /chatrooms/{room_uuid}/joinable:
+    get:
+      tags: [Chat]
+      summary: Verify if provided chatroom is joinable by currently logged in user
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: room_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Chat room identifier string
+      responses:
+        200: 
+          $ref: "#/components/responses/ChatRoomDetails200Response"
+        401: 
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/ChatRoom404Response"
+
   /chatroom/{room_uuid}/messages/paged:
     get:
       tags: [Chat]

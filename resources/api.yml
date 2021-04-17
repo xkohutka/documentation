@@ -1238,20 +1238,13 @@ paths:
 
   # Chat
 
-  /chat:
+  /chatrooms:
     get:
       tags: [Chat]
-      summary: Search for existing assigned chat rooms
+      summary: Get available chat rooms for currently logged in user
       security:
         - bearerToken: []
       parameters:
-        - in: query
-          name: search
-          schema:
-            type: string
-            example: Chat room
-          required: false
-          description: Search query string
       responses:
         200:
           $ref: "#/components/responses/ChatRoomSearch200Response"
@@ -1266,13 +1259,15 @@ paths:
         $ref: "#/components/requestBodies/ChatRoomCreateRequest"
       responses:
         200:
-          $ref: "#/components/responses/ChatRoomCreate200Response"
+          $ref: "#/components/responses/Empty200Response"
         400:
           $ref: "#/components/responses/ChatRoomCreate400Response"
         401:
           $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NonExistentUser"
 
-  /chat/{room_uuid}:
+  /chatrooms/{room_uuid}:
     get:
       tags: [Chat]
       summary: Get chat room details
@@ -1280,7 +1275,7 @@ paths:
         - bearerToken: []
       parameters:
         - in: path
-          name: room_uuid
+          name: uuid
           schema:
             type: string
             format: uuid
@@ -1331,15 +1326,15 @@ paths:
           required: true
           description: Chat room identifier string
       responses:
-        200:
+        204:
           $ref: "#/components/responses/Empty200Response"
         401:
           $ref: "#/components/responses/Unauthorized"
 
-  /chat/{room_uuid}/messages:
+  /chatroom/{room_uuid}/messages/paged:
     get:
       tags: [Chat]
-      summary: Get chat room messages
+      summary: Get paginated chat room messages
       security:
         - bearerToken: []
       parameters:
@@ -1372,7 +1367,50 @@ paths:
         404:
           $ref: "#/components/responses/ChatRoom404Response"
 
-  /chat/{room_uuid}/messages/{message_uuid}:
+  /chatrooms/{room_uuid}/messages:
+    get:
+      tags: [Chat]
+      summary: Get unpaged chat room messages
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: room_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Chat room identifier string
+      responses:
+        200:
+          $ref: "#/components/responses/ChatRoomUnpagedMessages200Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/ChatRoom404Response"
+
+    post:
+      tags: [Chat]
+      summary: Add message to chat room
+      security: 
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: chatroomUuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Chat room identified string
+      responses:
+        201:
+          $ref: "#/components/responses/Empty201Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/ChatRoom404Response"
+
+  /chatrooms/{room_uuid}/messages/{message_uuid}:
     delete:
       tags: [Chat]
       summary: Delete a chat room message
@@ -1398,7 +1436,122 @@ paths:
           $ref: "#/components/responses/Empty200Response"
         401:
           $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/Empty200Response"
 
+  /chatrooms/{room_uuid}/members:
+    post:
+      tags: [Chat]
+      summary: Add chat members to chat room
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: room_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Chat room identifier string
+      requestBody:
+        usersUuid:
+          type: array
+          items:
+            type: string
+            format: uuid
+      responses:
+        200:
+          $ref: "#/components/responses/Empty200Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NonExistentUser"
+
+    get:
+      tags: [Chat]
+      summary: Get chat members for selected chat room
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: room_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Chat room identifier string
+      responses:
+        200:
+          description: Chat room members response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChatMemberSchema"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/ChatRoom404Response"
+    
+  /chatrooms/{room_uuid}/members/{memberUuid}:
+    get:
+      tags: [Chat]
+      summary: Get single chat member for selected room
+      security:
+        - bearerToken: []
+      parameters:
+      - in: path
+        name: room_uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+        description: Chat room identifier string
+      - in: path
+        name: memberUuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+        description: Chat member identifier string
+      
+      responses:
+        200:
+          $ref: "#/components/schemas/ChatMemberSchema"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/ChatRoom404Response"
+    
+    delete:
+      tags: [Chat]
+      summary: Delete single chat member for selected chat room
+      security:
+        - bearerToken: []
+      parameters:
+      - in: path
+        name: room_uuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+        description: Chat room identifier string
+      - in: path
+        name: memberUuid
+        schema:
+          type: string
+          format: uuid
+        required: true
+        description: Chat member identifier string
+      responses:
+        204:
+          $ref: "#/components/responses/Empty204Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/ChatRoom404Response"
+          
   # Collab module
 
   /collab/workspace/{repoId}/initFromGit:
@@ -2386,10 +2539,11 @@ components:
         - required:
             - uuid
             - name
-            - permanent
+            - owner
             - created
-            - created_by
-            - last_activity
+            - createdBy
+            - lastModified
+            - lastModifiedBy
             - members
           properties:
             uuid:
@@ -2398,25 +2552,17 @@ components:
             name:
               type: string
               example: Chat room 1
-            permanent:
-              type: boolean
-              example: true
             organization:
-              type: string
-              format: uuid
+              $ref: "#/components/schemas/OrganizationsSchema"
             team:
-              type: string
-              format: uuid
-              example: null
-            repository:
-              type: string
-              format: uuid
-              example: null
+              $ref: "#/components/schemas/TeamSchema"
+            repo:
+              $ref: "#/components/schemas/RepoSchema"
             created:
               type: string
               format: date-time
               example: 2021-03-24T08:21:23.555+0100
-            created_by:
+            createdBy:
               type: string
               format: uuid
             last_activity:
@@ -2426,37 +2572,50 @@ components:
             members:
               type: array
               items:
-                type: string
-                format: uuid
+                $ref: "#/components/schemas/ChatMemberSchema"
 
-    ChatRoomMessageSchema:
+    ChatMemberSchema:
       type: object
       allOf:
         - required:
-            - uuid
-            - author
-            - message
-            - created
-            - type
+          - uuid
+          - name
+          - user
+          - chatRoom
           properties:
             uuid:
               type: string
               format: uuid
-            type:
+            name:
               type: string
-              enum:
-                - event
-                - message
-            author:
+              example: chatuser124
+            user:
+              $ref: "#/components/schemas/UserSchema"
+            chatRoom:
+              $ref: "#/components/schemas/ChatRoomSchema"
+    
+    ChatMessageSchema:
+      type: object
+      allOf:
+        - required:
+          - uuid
+          - message
+          - author
+          - epochTimestamp
+          properties:
+            uuid:
               type: string
               format: uuid
             message:
               type: string
-              example: Hi there!
-            created:
+              example: Hello world
+            author:
               type: string
-              format: date-time
-              example: 2021-03-24T08:21:23.555+0100
+              example: chatuser124
+              description: Username of chatmember who posted selected chat message
+            epochTimestamp:
+              type: number
+              example: 1618440477
 
     # Request schemas
 
@@ -2847,6 +3006,10 @@ components:
             name:
               type: string
               example: Chat room 1
+            shouldExpireIn:
+              type: integer
+              example: 30
+              description: Room expires in ${shouldExpireIn} days after creation
             members:
               type: array
               items:
@@ -2862,12 +3025,12 @@ components:
             name:
               type: string
               example: Chat room 1
-            remove:
+            membersToRemove:
               type: array
               items:
                 type: string
                 format: uuid
-            add:
+            membersToAdd:
               type: array
               items:
                 type: string
@@ -3149,6 +3312,17 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/ChatRoomMessageSchema"
+
+    ChatRoomUnpagedMessagesSuccessSchema:
+      type: object
+      allOf:
+        - required:
+          - messages
+          properties:
+            messages:
+              type: array
+              items:
+                $ref: "#/components/schemas/ChatMessageSchema"
 
     CollabInitFromGit:
       type: object
@@ -3531,6 +3705,9 @@ components:
     Empty200Response:
       description: OK
 
+    Empty201Response:
+      description: Created
+
     AuthLogin200Response:
       description: Authentication successful
       content:
@@ -3690,19 +3867,8 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ChatRoomSchema"
-          example:
-            uuid: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-            name: Chat room 1
-            permanent: false
-            organization: null
-            team: null
-            repository: null
-            created: 2021-03-24T08:21:23.555+0100
-            created_by: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-            last_activity: 2021-03-24T08:21:23.555+0100
-            members:
-              - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+            $ref: "#/components/schemas/Empty200Response"
+          
 
     ChatRoomDetails200Response:
       description: Chat room exists
@@ -3717,6 +3883,18 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/ChatRoomMessagesSuccessSchema"
+
+    ChatRoomUnpagedMessages200Response:
+      description: Unpaged chat messages
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ChatRoomUnpagedMessagesSuccessSchema"
+
+    # 204 No Content
+
+    Empty204Response:
+      description: No content
 
     # 400 Bad request
 
@@ -4109,7 +4287,6 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponseSchema"
           example:
-            code: CHATROOM_NOT_EXISTS
             message: Chat room does not exist
 
     # 429 Too many requests

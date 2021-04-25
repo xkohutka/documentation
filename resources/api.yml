@@ -91,7 +91,7 @@ paths:
           name: page
           schema:
             type: integer
-            example: 1
+            example: 0
           required: false
           description: Pagination page
         - in: query
@@ -368,7 +368,7 @@ paths:
         401:
           $ref: "#/components/responses/Unauthorized"
         404:
-          $ref: "#/components/responses/NonExistentUser" 
+          $ref: "#/components/responses/NonExistentUser"
 
   /repos/organization:
     get:
@@ -545,30 +545,6 @@ paths:
           $ref: "#/components/responses/OrgGet404Response"
 
   /organization/members/{member_uuid}:
-    put:
-      tags: [Organization member management]
-      summary: Update organization member role
-      security:
-        - bearerToken: []
-      parameters:
-        - in: path
-          name: member_uuid
-          schema:
-            type: string
-            format: uuid
-          required: true
-          description: User identifier string
-      requestBody:
-        $ref: "#/components/requestBodies/OrgMemberUpdateRequest"
-      responses:
-        200:
-          $ref: "#/components/responses/Empty200Response"
-        400:
-          $ref: "#/components/responses/OrgMemberUpdate400Response"
-        401:
-          $ref: "#/components/responses/Unauthorized"
-        404:
-          $ref: "#/components/responses/OrgGet404Response"
     delete:
       tags: [Organization member management]
       summary: Remove organization member
@@ -636,22 +612,6 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         404:
           $ref: "#/components/responses/OrgGet404Response"
-    put:
-      tags: [Organization team management]
-      summary: Update team name
-      security:
-        - bearerToken: []
-      requestBody:
-        $ref: "#/components/requestBodies/OrgTeamUpdateRequest"
-      responses:
-        200:
-          $ref: "#/components/responses/Empty200Response"
-        400:
-          $ref: "#/components/responses/OrgTeamUpdate400Response"
-        401:
-          $ref: "#/components/responses/Unauthorized"
-        404:
-          $ref: "#/components/responses/OrgGet404Response"
 
   /organization/teams/{team_uuid}:
     get:
@@ -670,6 +630,30 @@ paths:
       responses:
         200:
           $ref: "#/components/responses/OrgGetTeamDetails200Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/OrgGet404Response"
+    put:
+      tags: [Organization team management]
+      summary: Update team name
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: team_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Team identifier string
+      requestBody:
+        $ref: "#/components/requestBodies/OrgTeamUpdateRequest"
+      responses:
+        200:
+          $ref: "#/components/responses/Empty200Response"
+        400:
+          $ref: "#/components/responses/OrgTeamUpdate400Response"
         401:
           $ref: "#/components/responses/Unauthorized"
         404:
@@ -1177,6 +1161,33 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         404:
           $ref: "#/components/responses/Classroom404"
+    post:
+      tags: [Education module]
+      summary: Publish assignment
+      security:
+        - bearerToken: []
+      parameters:
+        - in: path
+          name: classroom_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Classroom identifier string
+        - in: path
+          name: assignment_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Assignment identifier string
+      responses:
+        200:
+          $ref: "#/components/responses/Empty200Response"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/Classroom404"
     put:
       tags: [Education module]
       summary: Update assignment details or publish the assignment
@@ -1244,7 +1255,6 @@ paths:
       summary: Get available chat rooms for currently logged in user
       security:
         - bearerToken: []
-      parameters:
       responses:
         200:
           $ref: "#/components/responses/ChatRoomSearch200Response"
@@ -1275,7 +1285,7 @@ paths:
         - bearerToken: []
       parameters:
         - in: path
-          name: uuid
+          name: room_uuid
           schema:
             type: string
             format: uuid
@@ -1346,9 +1356,9 @@ paths:
           required: true
           description: Chat room identifier string
       responses:
-        200: 
+        200:
           $ref: "#/components/responses/ChatRoomDetails200Response"
-        401: 
+        401:
           $ref: "#/components/responses/Unauthorized"
         404:
           $ref: "#/components/responses/ChatRoom404Response"
@@ -1414,11 +1424,11 @@ paths:
     post:
       tags: [Chat]
       summary: Add message to chat room
-      security: 
+      security:
         - bearerToken: []
       parameters:
         - in: path
-          name: chatroomUuid
+          name: room_uuid
           schema:
             type: string
             format: uuid
@@ -1476,11 +1486,19 @@ paths:
           required: true
           description: Chat room identifier string
       requestBody:
-        usersUuid:
-          type: array
-          items:
-            type: string
-            format: uuid
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                usersUuid:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+              required:
+                - usersUuid
       responses:
         200:
           $ref: "#/components/responses/Empty200Response"
@@ -1515,7 +1533,7 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         404:
           $ref: "#/components/responses/ChatRoom404Response"
-    
+
   /chatrooms/{room_uuid}/members/{memberUuid}:
     get:
       tags: [Chat]
@@ -1523,21 +1541,21 @@ paths:
       security:
         - bearerToken: []
       parameters:
-      - in: path
-        name: room_uuid
-        schema:
-          type: string
-          format: uuid
-        required: true
-        description: Chat room identifier string
-      - in: path
-        name: memberUuid
-        schema:
-          type: string
-          format: uuid
-        required: true
-        description: Chat member identifier string
-      
+        - in: path
+          name: room_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Chat room identifier string
+        - in: path
+          name: memberUuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Chat member identifier string
+
       responses:
         200:
           $ref: "#/components/schemas/ChatMemberSchema"
@@ -1545,27 +1563,27 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         404:
           $ref: "#/components/responses/ChatRoom404Response"
-    
+
     delete:
       tags: [Chat]
       summary: Delete single chat member for selected chat room
       security:
         - bearerToken: []
       parameters:
-      - in: path
-        name: room_uuid
-        schema:
-          type: string
-          format: uuid
-        required: true
-        description: Chat room identifier string
-      - in: path
-        name: memberUuid
-        schema:
-          type: string
-          format: uuid
-        required: true
-        description: Chat member identifier string
+        - in: path
+          name: room_uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Chat room identifier string
+        - in: path
+          name: memberUuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Chat member identifier string
       responses:
         204:
           $ref: "#/components/responses/Empty204Response"
@@ -1573,7 +1591,7 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         404:
           $ref: "#/components/responses/ChatRoom404Response"
-          
+
   # Collab module
 
   /collab/workspace/{repoId}/initFromGit:
@@ -2183,23 +2201,99 @@ components:
   schemas:
     # Universal schemas
 
+
+    SortSchema:
+      type: object
+      allOf:
+        - required:
+            - sorted
+            - unsorted
+            - empty
+          properties:
+            sorted:
+              type: boolean
+              example: false
+            unsorted:
+              type: boolean
+              example: true
+            empty:
+              type: boolean
+              example: true
+
+    PageableSchema:
+      type: object
+      allOf:
+        - required:
+            - sort
+            - offset
+            - pageSize
+            - pageNumber
+            - paged
+            - unpaged
+          properties:
+            sort:
+              $ref: '#/components/schemas/SortSchema'
+            offset:
+              type: integer
+              example: 0
+            pageSize:
+              type: integer
+              example: 4
+            pageNumber:
+              type: integer
+              example: 0
+            paged:
+              type: boolean
+              example: true
+            unpaged:
+              type: boolean
+              example: false
+
+
     PagingSchema:
       type: object
       allOf:
         - required:
-            - pageNum
+            - pageable
+            - totalElements
             - totalPages
-            - totalItems
+            - last
+            - size
+            - number
+            - sort
+            - numberOfElements
+            - first
+            - empty
           properties:
-            pageNum:
+            pageable:
+              $ref: '#/components/schemas/PageableSchema'
+            totalElements:
               type: integer
-              example: 1
+              example: 4
             totalPages:
               type: integer
-              example: 3
-            totalItems:
+              example: 1
+            last:
+              type: boolean
+              example: true
+            size:
               type: integer
-              example: 27
+              example: 4
+            number:
+              type: integer
+              example: 0
+            sort:
+              $ref: '#/components/schemas/SortSchema'
+            numberOfElements:
+              type: integer
+              example: 4
+            first:
+              type: boolean
+              example: true
+            empty:
+              type: boolean
+              example: false
+
 
     TokenSchema:
       type: object
@@ -2224,14 +2318,14 @@ components:
       type: object
       allOf:
         - required:
-          - created
-          - last_modified
+            - created
+            - lastModified
           properties:
             created:
               type: string
               format: date-time
               example: 2021-03-24T08:21:23.555+0100
-            last_modified:
+            lastModified:
               type: string
               format: date-time
               example: 2021-03-24T08:21:23.555+0100
@@ -2240,15 +2334,15 @@ components:
       type: object
       allOf:
         - required:
-          - created_by
-          - last_modified_by
+            - created_by
+            - last_modified_by
           properties:
             created_by:
               type: string
-              format: uuid
+              example: user1
             last_modified_by:
               type: string
-              format: uuid
+              example: user1
 
     UserSchema:
       type: object
@@ -2259,7 +2353,6 @@ components:
             - email
             - firstName
             - lastName
-            - teacher
           properties:
             uuid:
               type: string
@@ -2277,9 +2370,42 @@ components:
             lastName:
               type: string
               example: Doe
-            teacher:
-              type: boolean
-              example: false
+
+    UserDetailSchema:
+      type: object
+      allOf:
+        - required:
+            - uuid
+            - username
+            - email
+            - firstName
+            - lastName
+          properties:
+            uuid:
+              type: string
+              format: uuid
+            username:
+              type: string
+              example: john.doe
+            email:
+              type: string
+              format: email
+              example: john.doe@mail.com
+            firstName:
+              type: string
+              example: John
+            lastName:
+              type: string
+              example: Doe
+            created:
+              type: string
+              format: timestamp
+              example: 2021-04-19T03:26:12.121+0000
+            lastModified:
+              type: string
+              format: timestamp
+              example: 2021-04-19T03:26:12.121+0000
+
 
     UsersSchema:
       type: object
@@ -2331,55 +2457,63 @@ components:
     TeamMemberSchema:
       type: object
       allOf:
-        - $ref: "#/components/schemas/UserSchema"
         - properties:
-            role:
+            uuid:
               type: string
-              default: null
+              format: uuid
+            user:
+              $ref: "#/components/schemas/UserSchema"
+            permission:
+              type: string
+              default: READ
               enum:
-                - null
-                - viewer
-                - contributor
-                - admin
+                - ADMIN
+                - READ
+                - READ-WRITE
 
-    UserRepoSchemaLite:
+    RepoDto:
       type: object
       allOf:
         - $ref: "#/components/schemas/AuditedTimeSchema"
         - required:
             - uuid
+            - createdBy
+            - lastModifiedBy
             - name
-            - archived
+            - authorUUID
+            - fileName
             - favorite
+            - description
+            - uri
           properties:
             uuid:
               type: string
               format: uuid
+            createdBy:
+              type: string
+            lastModifiedBy:
+              type: string
             name:
               type: string
               example: Repository1
-            uri:
+            authorUUID:
               type: string
-              example: git@github.com:ASICDE/documentation.git
-            archived:
-              type: boolean
-              example: false
+              format: uuid
+            fileName:
+              type: string
             favorite:
               type: boolean
               example: true
+            description:
+              type: string
+            uri:
+              type: string
+              example: git@github.com:ASICDE/documentation.git
 
     UserAssociatedRepoSchemaLite:
       type: object
       allOf:
-        - $ref: "#/components/schemas/AuditedTimeSchema"
-        - $ref: "#/components/schemas/UserRepoSchemaLite"
-        - properties:
-            organization:
-              type: string
-              format: uuid
-            team:
-              type: string
-              format: uuid
+        - $ref: "#/components/schemas/RepoDto"
 
     RepoAuthorizationSchema:
       type: object
@@ -2419,21 +2553,20 @@ components:
             name:
               type: string
               example: Repository1
+            authorUUID:
+              type: string
+              format: uuid
+            fileName:
+              type: string
             uri:
               type: string
               example: git@github.com:ASICDE/documentation.git
-            archived:
-              type: boolean
-              example: false
+            description:
+              type: string
+              example: some description
             favorite:
               type: boolean
               example: true
-            organization:
-              type: string
-              format: uuid
-            team:
-              type: string
-              format: uuid
 
     RepoDetailsSchema:
       type: object
@@ -2441,18 +2574,39 @@ components:
         - $ref: "#/components/schemas/AuditedTimeSchema"
         - $ref: "#/components/schemas/AuditedUserSchema"
         - $ref: "#/components/schemas/RepoSchema"
-        - $ref: "#/components/schemas/RepoAuthorizationSchema"
         - required:
             - archived
             - favorite
 
-    TeamSchema:
+    TeamDto:
+      type: object
+      allOf:
+        - required:
+            - name
+            - memberships
+            - organization
+            - repo
+          properties:
+            name:
+              type: string
+              example: Team1
+            organization:
+              $ref: "#/components/schemas/OrganizationsSchema"
+            repo:
+              $ref: "#/components/schemas/RepoDto"
+
+        - $ref: "#/components/schemas/AuditedTimeSchema"
+        - $ref: "#/components/schemas/AuditedUserSchema"
+
+
+    TeamInfoSchema:
       type: object
       allOf:
         - required:
             - uuid
             - name
             - member
+            - owner
           properties:
             uuid:
               type: string
@@ -2460,6 +2614,9 @@ components:
             name:
               type: string
               example: Team1
+            owner:
+              type: string
+              format: uuid
             member:
               type: boolean
               example: true
@@ -2577,7 +2734,7 @@ components:
             organization:
               $ref: "#/components/schemas/OrganizationsSchema"
             team:
-              $ref: "#/components/schemas/TeamSchema"
+              $ref: "#/components/schemas/TeamDto"
             repo:
               $ref: "#/components/schemas/RepoSchema"
             created:
@@ -2600,10 +2757,10 @@ components:
       type: object
       allOf:
         - required:
-          - uuid
-          - name
-          - user
-          - chatRoom
+            - uuid
+            - name
+            - user
+            - chatRoom
           properties:
             uuid:
               type: string
@@ -2615,15 +2772,15 @@ components:
               $ref: "#/components/schemas/UserSchema"
             chatRoom:
               $ref: "#/components/schemas/ChatRoomSchema"
-    
+
     ChatMessageSchema:
       type: object
       allOf:
         - required:
-          - uuid
-          - message
-          - author
-          - epochTimestamp
+            - uuid
+            - message
+            - author
+            - epochTimestamp
           properties:
             uuid:
               type: string
@@ -2676,8 +2833,8 @@ components:
               type: string
             lastName:
               type: string
-            teacher:
-              type: boolean 
+            description:
+              type: string
 
     AuthUpdateUserRequestSchema:
       type: object
@@ -2686,6 +2843,9 @@ components:
             username:
               type: string
               example: john.doe
+            oldPassword:
+              type: string
+              format: password
             password:
               type: string
               format: password
@@ -2698,9 +2858,9 @@ components:
             lastName:
               type: string
               example: Doe
-            organization:
+            description:
               type: string
-              format: uuid
+              example: some description
 
     ReposCreateRequestSchema:
       type: object
@@ -2717,31 +2877,9 @@ components:
             uri:
               type: string
               example: git@github.com:ASICDE/documentation.git
-            team:
+            description:
               type: string
-              format: uuid
-            authorization:
-              type: object
-              allOf:
-                - required:
-                    - type
-                  properties:
-                    type:
-                      type: string
-                      enum:
-                        - none
-                        - plaintext
-                        - ssh
-                        - organization
-                      default: plaintext
-                    username:
-                      type: string
-                      example: githubuser
-                    password:
-                      type: string
-                      example: supersecret
-                    sshKey:
-                      type: string
+              example: some description
 
     OrgCreateRequestSchema:
       type: object
@@ -2767,9 +2905,9 @@ components:
       type: object
       allOf:
         - required:
-            - invite
+            - email
           properties:
-            invite:
+            email:
               type: string
               example: alice.gordon@mail.com
 
@@ -2818,12 +2956,11 @@ components:
               format: uuid
             role:
               type: string
-              default: null
+              default: READ
               enum:
-                - null
-                - viewer
-                - contributor
-                - admin
+                - ADMIN
+                - READ
+                - READ-WRITE
 
     OrgTeamMemberUpdateRequestSchema:
       type: object
@@ -2833,12 +2970,11 @@ components:
           properties:
             role:
               type: string
-              default: null
+              default: READ
               enum:
-                - null
-                - viewer
-                - contributor
-                - admin
+                - ADMIN
+                - READ
+                - READ-WRITE
 
     OrgSettingsUpdateRequestSchema:
       type: object
@@ -2936,8 +3072,8 @@ components:
       type: object
       allOf:
         - required:
-          - name
-          - published
+            - name
+            - published
         - properties:
             name:
               type: string
@@ -3022,8 +3158,8 @@ components:
       type: object
       allOf:
         - required:
-          - name
-          - members
+            - name
+            - members
         - properties:
             name:
               type: string
@@ -3042,7 +3178,7 @@ components:
       type: object
       allOf:
         - required:
-          - name
+            - name
         - properties:
             name:
               type: string
@@ -3083,26 +3219,18 @@ components:
       allOf:
         - $ref: "#/components/schemas/TokenSchema"
 
-    AuthUserDetailsSuccessSchema:
-      type: object
-      allOf:
-        - $ref: "#/components/schemas/UsersSchema"
-
     AuthUserSearchSuccessSchema:
       type: object
       allOf:
-        - $ref: "#/components/schemas/PagingSchema"
         - required:
-          - data
+            - content
           properties:
-            totalItems:
-              type: integer
-              example: 1
-            data:
+            content:
               type: array
               items:
                 allOf:
-                  - $ref: "#/components/schemas/UserSchema"
+                  - $ref: "#/components/schemas/UserDetailSchema"
+        - $ref: "#/components/schemas/PagingSchema"
 
     RepoCreateSuccessSchema:
       type: object
@@ -3117,50 +3245,85 @@ components:
     RepoGetAllSuccessSchema:
       type: object
       allOf:
-        - $ref: "#/components/schemas/PagingSchema"
         - required:
-            - data
+            - content
           properties:
-            data:
+            content:
               type: array
               items:
-                $ref: "#/components/schemas/UserRepoSchemaLite"
+                $ref: "#/components/schemas/RepoDto"
+        - $ref: "#/components/schemas/PagingSchema"
 
     RepoGetUserAssociatedSuccessSchema:
       type: object
       allOf:
-        - $ref: "#/components/schemas/PagingSchema"
         - required:
             - data
           properties:
-            data:
+            content:
               type: array
               items:
                 $ref: "#/components/schemas/UserAssociatedRepoSchemaLite"
+        - $ref: "#/components/schemas/PagingSchema"
 
     RepoGetOneSuccessSchema:
       type: object
       allOf:
-        - $ref: "#/components/schemas/RepoDetailsSchema"
+        - $ref: "#/components/schemas/RepoDto"
 
     OrgCreateSuccessSchema:
       type: object
       allOf:
+        - $ref: "#/components/schemas/AuditedTimeSchema"
         - required:
             - uuid
+            - createdBy
+            - lastModifiedBy
+            - name
+            - owner
+            - invites
+            - teams
           properties:
             uuid:
               type: string
               format: uuid
+            createdBy:
+              type: string
+              example: user1
+            lastModifiedBy:
+              type: string
+              example: user1
+            name:
+              type: string
+              example: Acme
+            owner:
+              $ref: '#/components/schemas/UserDetailSchema'
+            invites:
+              type: array
+              $ref: '#/components/schemas/SortSchema'
+            teams:
+              type: array
+              $ref: '#/components/schemas/SortSchema'
+
+
 
     OrgGetSuccessSchema:
       type: object
       allOf:
+        - $ref: "#/components/schemas/AuditedTimeSchema"
         - required:
             - uuid
             - name
             - owner
+            - createdBy
+            - lastModifiedBy
           properties:
+            createdBy:
+              type: string
+              example: user1
+            lastModifiedBy:
+              type: string
+              example: user1
             uuid:
               type: string
               format: uuid
@@ -3171,29 +3334,30 @@ components:
               type: string
               format: uuid
 
+
     OrgGetMembersSuccessSchema:
       type: object
       allOf:
-        - $ref: "#/components/schemas/PagingSchema"
         - required:
-            - data
+            - content
           properties:
-            data:
+            content:
               type: array
               items:
                 $ref: "#/components/schemas/MemberSchema"
+        - $ref: "#/components/schemas/PagingSchema"
 
     OrgGetTeamsSuccessSchema:
       type: object
       allOf:
-        - $ref: "#/components/schemas/PagingSchema"
         - required:
-            - data
+            - content
           properties:
-            data:
+            content:
               type: array
               items:
-                $ref: "#/components/schemas/TeamSchema"
+                $ref: "#/components/schemas/TeamInfoSchema"
+        - $ref: "#/components/schemas/PagingSchema"
 
     OrgCreateTeamSuccessSchema:
       type: object
@@ -3208,19 +3372,19 @@ components:
     OrgGetTeamDetailsSuccessSchema:
       type: object
       allOf:
-        - $ref: "#/components/schemas/TeamSchema"
+        - $ref: "#/components/schemas/TeamDto"
 
     OrgTeamGetMembersSuccessSchema:
       type: object
       allOf:
-        - $ref: "#/components/schemas/PagingSchema"
         - required:
-            - data
+            - content
           properties:
-            data:
+            content:
               type: array
               items:
                 $ref: "#/components/schemas/TeamMemberSchema"
+        - $ref: "#/components/schemas/PagingSchema"
 
     OrgGetSettingsSuccessSchema:
       type: object
@@ -3262,14 +3426,14 @@ components:
     ClassroomsGetAllSuccessSchema:
       type: object
       allOf:
-        - $ref: "#/components/schemas/PagingSchema"
         - required:
-            - data
+            - content
           properties:
-            data:
+            content:
               type: array
               items:
                 $ref: "#/components/schemas/ClassroomSchemaLite"
+        - $ref: "#/components/schemas/PagingSchema"
 
     ClassroomsGetOneSuccessSchema:
       type: object
@@ -3279,26 +3443,26 @@ components:
     ClassroomMembersGetAllSuccessSchema:
       type: object
       allOf:
-        - $ref: "#/components/schemas/PagingSchema"
         - required:
-            - data
+            - content
           properties:
-            data:
+            content:
               type: array
               items:
                 $ref: "#/components/schemas/ClassroomMemberSchema"
+        - $ref: "#/components/schemas/PagingSchema"
 
     ClassroomAssignmentsGetAllSuccessSchema:
       type: object
       allOf:
-        - $ref: "#/components/schemas/PagingSchema"
         - required:
-            - data
+            - content
           properties:
-            data:
+            content:
               type: array
               items:
                 $ref: "#/components/schemas/ClassroomAssignmentSchemaLite"
+        - $ref: "#/components/schemas/PagingSchema"
 
     ClassroomAssignmentsGetOneSuccessSchema:
       type: object
@@ -3308,38 +3472,38 @@ components:
     ChatRoomSearchSuccessSchema:
       type: object
       allOf:
-        - $ref: "#/components/schemas/PagingSchema"
         - required:
-            - data
+            - content
           properties:
             totalItems:
               type: integer
               example: 1
-            data:
+            content:
               type: array
               items:
                 $ref: "#/components/schemas/ChatRoomSchema"
+        - $ref: "#/components/schemas/PagingSchema"
 
     ChatRoomMessagesSuccessSchema:
       type: object
       allOf:
-        - $ref: "#/components/schemas/PagingSchema"
         - required:
-            - data
+            - content
           properties:
             totalItems:
               type: integer
               example: 1
-            data:
+            content:
               type: array
               items:
                 $ref: "#/components/schemas/ChatRoomMessageSchema"
+        - $ref: "#/components/schemas/PagingSchema"
 
     ChatRoomUnpagedMessagesSuccessSchema:
       type: object
       allOf:
         - required:
-          - messages
+            - messages
           properties:
             messages:
               type: array
@@ -3529,7 +3693,7 @@ components:
             email: john.doe@mail.com
             firstName: John
             lastName: Doe
-            teacher: false
+            description: some description here
 
     AuthUpdateUserRequest:
       required: true
@@ -3749,7 +3913,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/AuthUserDetailsSuccessSchema"
+            $ref: "#/components/schemas/UserDetailSchema"
 
     AuthUserSearch200Response:
       description: Search for users successful
@@ -3819,7 +3983,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/OrgCreateTeamSuccessSchema"
+            $ref: "#/components/schemas/TeamDto"
 
     OrgGetTeamDetails200Response:
       description: Organization exists
@@ -3889,8 +4053,8 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Empty200Response"
-          
+            $ref: "#/components/responses/Empty200Response"
+
 
     ChatRoomDetails200Response:
       description: Chat room exists

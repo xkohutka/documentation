@@ -2445,14 +2445,17 @@ components:
     ClassroomMemberSchema:
       type: object
       allOf:
-        - $ref: "#/components/schemas/UserSchema"
+        - $ref: "#/components/schemas/AuditedTimeSchema"
         - properties:
+            user:
+              $ref: "#/components/schemas/UserSchema"
             role:
               type: string
               enum:
-                - member
-                - teacher
-              default: member
+                - OWNER
+                - ADMIN
+                - STUDENT
+              default: STUDENT
 
     TeamMemberSchema:
       type: object
@@ -2651,6 +2654,12 @@ components:
               example: Classroom1
             locked:
               type: boolean
+            slug:
+              type: string
+              example: classroomslug
+            password:
+              type: string
+              example: classroompassword
         - $ref: "#/components/schemas/AuditedTimeSchema"
         - $ref: "#/components/schemas/AuditedUserSchema"
 
@@ -2658,52 +2667,66 @@ components:
       type: object
       allOf:
         - $ref: "#/components/schemas/ClassroomAssignmentSchemaLite"
-        - $ref: "#/components/schemas/RepoSchema"
-        - $ref: "#/components/schemas/RepoAuthorizationSchema"
-        - $ref: "#/components/schemas/AuditedTimeSchema"
-        - $ref: "#/components/schemas/AuditedUserSchema"
-        - required:
-            - comments
-          properties:
-            comments:
-              type: string
-              example: Very good - 10/10
-            name:
-              type: string
-              example: Assignment1
-            archived:
-              example:
-            favorite:
-              example:
-            team:
-              example:
-            organization:
-              example:
 
     ClassroomAssignmentSchemaLite:
       type: object
       allOf:
         - required:
+            - uuid
             - name
-            - owner
+            - author
             - parent
             - classroom
-            - due_date
+            - dueDate
             - published
           properties:
+            uuid:
+              type: string
+              format: uuid
             name:
               type: string
               example: Assignment1
-            owner:
-              type: string
-              format: uuid
+            author:
+              $ref: "#/components/schemas/UserSchema"
             parent:
-              type: string
-              format: uuid
+              $ref: "#/components/schemas/ParentClassroomAssignmentSchemaLite"
             classroom:
+              $ref: "#/components/schemas/ClassroomSchema"
+            dueDate:
+              type: string
+              format: date-time
+              example: 2021-03-24T08:21:23.555+0100
+            published:
+              type: boolean
+        - $ref: "#/components/schemas/AuditedTimeSchema"
+        - $ref: "#/components/schemas/AuditedUserSchema"
+
+    ParentClassroomAssignmentSchemaLite:
+      type: object
+      allOf:
+        - required:
+            - uuid
+            - name
+            - author
+            - parent
+            - classroom
+            - dueDate
+            - published
+          properties:
+            uuid:
               type: string
               format: uuid
-            due_date:
+            name:
+              type: string
+              example: Assignment1
+            author:
+              $ref: "#/components/schemas/UserSchema"
+            parent:
+              nullable: true
+              example: null
+            classroom:
+              $ref: "#/components/schemas/ClassroomSchema"
+            dueDate:
               type: string
               format: date-time
               example: 2021-03-24T08:21:23.555+0100
@@ -3103,7 +3126,7 @@ components:
                       example: supersecret
                     sshKey:
                       type: string
-            due_date:
+            dueDate:
               type: string
               format: date-time
               example: 2021-03-24T08:21:23.555+0100
@@ -3115,44 +3138,13 @@ components:
       type: object
       allOf:
         - properties:
-            name:
-              type: string
-              example: Assignment2
-            uri:
-              type: string
-              example: git@github.com:ASICDE/documentation.git
-            authorization:
-              type: object
-              allOf:
-                - required:
-                    - type
-                  properties:
-                    type:
-                      type: string
-                      enum:
-                        - none
-                        - plaintext
-                        - ssh
-                        - organization
-                      default: plaintext
-                    username:
-                      type: string
-                      example: githubuser
-                    password:
-                      type: string
-                      example: supersecret
-                    sshKey:
-                      type: string
-            due_date:
+            dueDate:
               type: string
               format: date-time
               example: 2021-03-24T08:21:23.555+0100
-            published:
-              type: boolean
-              example: false
-            comment:
+            description:
               type: string
-              example: Good work!
+              example: description
 
     ChatRoomCreateRequestSchema:
       type: object

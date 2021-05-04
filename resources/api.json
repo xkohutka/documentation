@@ -5013,6 +5013,18 @@
                   "type": "string",
                   "format": "uuid"
                 }
+              },
+              "organizationUuid": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "teamUuid": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "repuUuid": {
+                "type": "string",
+                "format": "uuid"
               }
             }
           }
@@ -5523,14 +5535,10 @@
               "content"
             ],
             "properties": {
-              "totalItems": {
-                "type": "integer",
-                "example": 1
-              },
               "content": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/ChatRoomMessageSchema"
+                  "$ref": "#/components/schemas/ChatMessageSchema"
                 }
               }
             }

@@ -27,10 +27,51 @@ Contains all necessary source code artifacts to run backend features (API, parse
 ## Installation, build
 
 Primarily, make sure you have every prerequisite installed and running correctly. 
-In order to make Spring framework work correctly, set it's profiles to 'local' and 'default' - this loads the correct application context, with application properties injected in the code. 
 To build the project, use following command in the project root folder:
 
 ```bash
 mvn clean install 
 ```
 This generates deployable and executable binaries, which can be found in the `{moduleName}/target` folder, or in your Maven repository folder.
+
+## Running the application
+
+In order to make Spring framework work correctly, set it's profiles to 'local' and 'default' - this loads the correct application context, with application properties injected in the code. 
+To run the core application, simply execute the Spring boot application defined in AsicdeCoreApplication class. 
+
+See [dev environment setup page](https://github.com/ASICDE/documentation/blob/master/dev-environment-setup.md) for additional application build and running information.
+
+As for other modules, set the correct profiles (default, local) and launch the application. 
+
+## Application launch
+
+All real-time system logging is printed in the standard output (console). Additionally, you can enable Spring debug output for more verbose messaging
+- set `logging.level.org.springframework.web=DEBUG` in application.properties
+- provide `--debug` flag when executing the application 
+
+Upon running the application itself, all necessary behind-the-scenes spring dependencies are resolved and injected - regarding persistence, security, application context, web context, ControllerAdvices etc. 
+
+Database versioning is executed at this point as well - all necessary information is contained below, in the Database versioning sub-section.
+
+After persistence dependencies are resolved, main beans are injected and web context is created. Ultimately, servlet listening to the API requests along with all API endpoints defined in RestController classes is exposed, and application is ready to receive requests.
+
+## Core module 
+
+Since the core module is the most significant one in the context of the web IDE, we provide closer look at this artifact. We omit the obvious or seamlessly insignificant features of this module.
+
+### Configuration
+
+Aside from configuration classes provided in asicde.core.config package, environment variables are contained in the `application.properties` file, residing in resources folder (the default, root resources folder). This file contains dependency configuration (persistence, database versioning, web configurations), but also custom variables (account verification, constants for scheduled tasks...). 
+
+### Database versioning
+
+Module uses Liquibase as it's database versioning engine. The root directory or the path to parent change log for the versioning files must be provided in application.properties. You can find versioning files (database changelogs) for this module in resources/db/changelog folder.
+
+### Authentication, authorization
+
+Even though auth-client is present, the authentication is mainly handled in core module, since it's the main point where user data is handled. Re-implementation of authentication server might be a matter of future work, if it is ever necessary.
+
+REST API requests authorization is primarily evaluated with JWT token - see CoreSecurityConfig for actual path antMatchers, which are free of token authorization. Then, requests can be evaluated with `@PreAuthorize` expression at the endpoint level. In this module, it is mainly utilized to evaluate user access to certain resources, such as user-specific data, organization/team/classroom data etc.
+
+### Error handling
+Module `commons-error-handling` contains mostly all of the exceptions, which are thrown from the code at the request-processing time. You can customize, and add new error handlers in `commons-web` module, in the ErrorHandlingControllerAdvice.

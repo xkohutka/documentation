@@ -1,6 +1,6 @@
 [<< Return to documentation overview](README.md)
 
-[>> Go to repository](https://github.com/ASICDE/asicde-frontend)
+[>> Go to repository](https://github.com/ASICDE/asicde-backend)
 
 # ASICDE Backend
 

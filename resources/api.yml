@@ -3101,38 +3101,10 @@ components:
             name:
               type: string
               example: Assignment2
-            uri:
-              type: string
-              example: git@github.com:ASICDE/documentation.git
-            authorization:
-              type: object
-              allOf:
-                - required:
-                    - type
-                  properties:
-                    type:
-                      type: string
-                      enum:
-                        - none
-                        - plaintext
-                        - ssh
-                        - organization
-                      default: plaintext
-                    username:
-                      type: string
-                      example: githubuser
-                    password:
-                      type: string
-                      example: supersecret
-                    sshKey:
-                      type: string
             dueDate:
               type: string
               format: date-time
               example: 2021-03-24T08:21:23.555+0100
-            published:
-              type: boolean
-              example: false
 
     EduUpdateClassroomAssignmentRequestSchema:
       type: object

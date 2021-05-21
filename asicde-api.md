@@ -6,12 +6,11 @@
 
 This repository holds API interface definitions. The full API specification is listed below. Each separate API module has it's own definition formatted in [Swagger](https://swagger.io/). These definitions are then compiled using Maven into data models which are then used in the backend modules. 
 
-__\*\*\* NOTE: The latest documentation for the API interface can be found here: [https://api.asicde.org/docs](https://api.asicde.org/docs).__
+__\*\*\* NOTE: The latest documentation for the API interface can be found here: [https://team01-20.studenti.fiit.stuba.sk/api-docs/](https://team01-20.studenti.fiit.stuba.sk/api-docs/).__
 
 Table of Contents
 =================
 
-<!--ts-->
    * [Auth](#auth)
        * [Create User](#create-user)
        * [Get Users](#get-users)
@@ -37,7 +36,6 @@ Table of Contents
       * [Get Submodules](#get-submodules)
    * [Visualization](#visualization)
       * [Load Existing Module](#load-existing-module)
-<!--te-->
 
 
 ## Auth

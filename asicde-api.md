@@ -19,6 +19,9 @@ Table of Contents
        * [Update User](#update-user)
        * [Activate User](#activate-user)
        * [Deactivate User](#deactivate-user)
+       * [Mark User Login](#mark-user-login)
+       * [Get All Users](#get-all-users)
+       * [Get All Users Roles](#get-all-users-roles)
    * [Eval](#eval)       
        * [Upload Project](#upload-project)
    * [Repo](#repo)
@@ -36,6 +39,18 @@ Table of Contents
       * [Get Submodules](#get-submodules)
    * [Visualization](#visualization)
       * [Load Existing Module](#load-existing-module)
+   * [Admin Dashboard](#admin-dashboard)
+      * [Mark Users Activity](#mark-users-activity)
+      * [Get All Users Activity](#get-all-users-activity)
+      * [Get User Organization](#get-user-organization)
+   * [Classrooms](#classrooms)
+      * [Get All Classrooms](#get-all-classrooms)
+      * [Publish Assignment](#publish-assignment)
+   * [Notifications](#notifications)
+      * [Get User Specific Invitations](#get-user-specific-invitations)
+      * [Get Outgoing Invitations](#get-outgoing-invitations)
+      * [Decide Invitation](#decide-invitation)
+      * [Delete Invitation](#delete-invitation)
 
 
 ## Auth
@@ -481,8 +496,140 @@ No content
 ```
 
 
-## Eval
 
+
+
+
+### Mark User Login
+
+**URL** : `/users/logged`
+
+**Method** : `PUT`
+
+**Auth required** : YES (bearerAuth)
+
+**Description** : Marks users last login
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+
+(application/json)
+```json
+{
+    "lastLogin": "date"
+}
+```
+
+#### Success Response
+
+**Code** : `200 OK`
+
+**Content example**
+
+No content
+
+#### Error Responses
+| Code | Message |
+| ------ | ------ |
+| 400 | The requested information is incomplete or malformed. |
+| 401 | An access token isn’t provided, or is invalid. |
+| 403 | An access token is valid, but requires more privileges |
+| 404 | Everything is okay, but the resource doesn’t exist. |
+| 422 | The requested information is okay, but invalid |
+| 500 | The servers are not working as expected. |
+
+**Content**
+
+No content
+
+
+### Get All Users
+
+**URL** : `/users/all`
+
+**Method** : `GET`
+
+**Auth required** : YES (bearerAuth), ADMIN
+
+**Description** : Retrieve all users
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+
+Empty
+
+#### Success Response
+
+**Code** : `200 OK`
+
+**Content example**
+
+No content
+
+#### Error Responses
+| Code | Message |
+| ------ | ------ |
+| 400 | The requested information is incomplete or malformed. |
+| 401 | An access token isn’t provided, or is invalid. |
+| 403 | An access token is valid, but requires more privileges |
+| 404 | Everything is okay, but the resource doesn’t exist. |
+| 422 | The requested information is okay, but invalid |
+| 500 | The servers are not working as expected. |
+
+**Content**
+
+No content
+
+
+
+### Get All Users Roles
+
+**URL** : `/users/roles/${uuid}`
+
+**Method** : `GET`
+
+**Auth required** : YES (bearerAuth), ADMIN
+
+**Description** : Retrieve all users roles
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+
+Empty
+
+#### Success Response
+
+**Code** : `200 OK`
+
+**Content example**
+
+No content
+
+#### Error Responses
+| Code | Message |
+| ------ | ------ |
+| 400 | The requested information is incomplete or malformed. |
+| 401 | An access token isn’t provided, or is invalid. |
+| 403 | An access token is valid, but requires more privileges |
+| 404 | Everything is okay, but the resource doesn’t exist. |
+| 422 | The requested information is okay, but invalid |
+| 500 | The servers are not working as expected. |
+
+**Content**
+
+No content
+
+
+## Eval
 
 ### Upload Project
 
@@ -540,9 +687,8 @@ No parameters
 ```
 
 
+
 ## Repo
-
-
 
 ### Create Repo
 
@@ -967,7 +1113,6 @@ No content
 
 ## Systemverilogparser
 
-
 ### Code To Dia Extract
 
 **URL** : `/parse /getPackageData`
@@ -1188,8 +1333,6 @@ No parameters
 
 ## Visualization
 
-
-
 ### Load Existing Module
  
 **URL** : `/visualization /loadModule`
@@ -1241,3 +1384,427 @@ No parameters
      "message": "string"
 }
 ```
+
+
+
+## Admin Dashboard
+
+### Mark Users Activity
+ 
+**URL** : `/admin_users/`
+
+**Method** : `POST`
+
+**Auth required** : YES (bearerAuth), ADMIN
+
+**Description** : Mark users last activity by type
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+
+```json
+{
+     "logged": "boolean",
+     "signed": "boolean",
+     "edited": "boolean",
+     "date": "[date of activity]"
+}
+```
+
+#### Success Response
+
+**Code** : `200 OK`
+
+**Content example**
+No content
+
+#### Error Responses
+| Code | Message |
+| ------ | ------ |
+| 400 | The requested information is incomplete or malformed. |
+| 401 | An access token isn’t provided, or is invalid. |
+| 403 | An access token is valid, but requires more privileges |
+| 404 | Everything is okay, but the resource doesn’t exist. |
+| 409 | A conflict of data exists, even with valid information. |
+| 422 | The requested information is okay, but invalid |
+| 500 | The servers are not working as expected. |
+
+**Content**
+No content
+
+### Get All Users Activity
+ 
+**URL** : `/admin_users/users`
+
+**Method** : `GET`
+
+**Auth required** : YES (bearerAuth), ADMIN
+
+**Description** : Get all users activity
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+
+Empty
+
+#### Success Response
+
+**Code** : `200 OK`
+
+**Content example**
+No content
+
+#### Error Responses
+| Code | Message |
+| ------ | ------ |
+| 400 | The requested information is incomplete or malformed. |
+| 401 | An access token isn’t provided, or is invalid. |
+| 403 | An access token is valid, but requires more privileges |
+| 404 | Everything is okay, but the resource doesn’t exist. |
+| 409 | A conflict of data exists, even with valid information. |
+| 422 | The requested information is okay, but invalid |
+| 500 | The servers are not working as expected. |
+
+**Content**
+No content
+
+
+### Get All Organizations
+ 
+**URL** : `/organization/all`
+
+**Method** : `GET`
+
+**Auth required** : YES (bearerAuth), ADMIN
+
+**Description** : Get all organizations
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+
+Empty
+
+#### Success Response
+
+**Code** : `200 OK`
+
+**Content example**
+No content
+
+#### Error Responses
+| Code | Message |
+| ------ | ------ |
+| 400 | The requested information is incomplete or malformed. |
+| 401 | An access token isn’t provided, or is invalid. |
+| 403 | An access token is valid, but requires more privileges |
+| 404 | Everything is okay, but the resource doesn’t exist. |
+| 409 | A conflict of data exists, even with valid information. |
+| 422 | The requested information is okay, but invalid |
+| 500 | The servers are not working as expected. |
+
+**Content**
+No content
+
+
+### Get User Organization
+ 
+**URL** : `/organization/admin/owner/${ownerUsername}`
+
+**Method** : `GET`
+
+**Auth required** : YES (bearerAuth), ADMIN
+
+**Description** : Get the organization of this owner
+
+**Parameters**
+
+| Attribute | Type | Required | Description |
+| ------ | ------ | ------ | ------ |
+| ownerUsername | string | True | Username |
+
+**Request Body**
+
+Empty
+
+#### Success Response
+
+**Code** : `200 OK`
+
+**Content example**
+No content
+
+#### Error Responses
+| Code | Message |
+| ------ | ------ |
+| 400 | The requested information is incomplete or malformed. |
+| 401 | An access token isn’t provided, or is invalid. |
+| 403 | An access token is valid, but requires more privileges |
+| 404 | Everything is okay, but the resource doesn’t exist. |
+| 409 | A conflict of data exists, even with valid information. |
+| 422 | The requested information is okay, but invalid |
+| 500 | The servers are not working as expected. |
+
+**Content**
+No content
+
+
+## Classrooms
+
+### Get All Classrooms
+
+**URL** : `/edu/usersclassrooms/all`
+
+**Method** : `GET`
+
+**Auth required** : YES (bearerAuth), ADMIN
+
+**Description** : Get all classrooms
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+
+Empty
+
+#### Success Response
+
+**Code** : `200 OK`
+
+**Content example**
+No content
+
+#### Error Responses
+| Code | Message |
+| ------ | ------ |
+| 400 | The requested information is incomplete or malformed. |
+| 401 | An access token isn’t provided, or is invalid. |
+| 403 | An access token is valid, but requires more privileges |
+| 404 | Everything is okay, but the resource doesn’t exist. |
+| 409 | A conflict of data exists, even with valid information. |
+| 422 | The requested information is okay, but invalid |
+| 500 | The servers are not working as expected. |
+
+**Content**
+No content
+
+### Publish Assignment
+
+**URL** : `/edu/classrooms/{classroomUuid}/assignments/{assignmentUuid}`
+
+**Method** : `POST`
+
+**Auth required** : YES (bearerAuth), TEACHER
+
+**Description** : Publish selected assignment by classroom owner
+
+**Parameters**
+
+| Attribute | Type | Required | Description |
+| ------ | ------ | ------ | ------ |
+| classroomUuid | uuid | True | UUID of classroom |
+| assignmentUuid | uuid | True | UUID of assignment |
+
+**Request Body**
+
+(application/json)
+```json
+{
+    "publishStatus": "boolean"
+}
+```
+
+#### Success Response
+
+**Code** : `200 OK`
+
+**Content example**
+No content
+
+#### Error Responses
+| Code | Message |
+| ------ | ------ |
+| 400 | The requested information is incomplete or malformed. |
+| 401 | An access token isn’t provided, or is invalid. |
+| 403 | An access token is valid, but requires more privileges |
+| 404 | Everything is okay, but the resource doesn’t exist. |
+| 409 | A conflict of data exists, even with valid information. |
+| 422 | The requested information is okay, but invalid |
+| 500 | The servers are not working as expected. |
+
+**Content**
+No content
+
+## Notifications
+
+### Get User Specific Invitations
+
+**URL** : `/organization_invite/get_users_invitations`
+
+**Method** : `GET`
+
+**Auth required** : YES (bearerAuth)
+
+**Description** : Get loggen in users invitations
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+
+Empty
+
+#### Success Response
+
+**Code** : `200 OK`
+
+**Content example**
+No content
+
+#### Error Responses
+| Code | Message |
+| ------ | ------ |
+| 400 | The requested information is incomplete or malformed. |
+| 401 | An access token isn’t provided, or is invalid. |
+| 403 | An access token is valid, but requires more privileges |
+| 404 | Everything is okay, but the resource doesn’t exist. |
+| 409 | A conflict of data exists, even with valid information. |
+| 422 | The requested information is okay, but invalid |
+| 500 | The servers are not working as expected. |
+
+**Content**
+No content
+
+### Get Outgoing Invitations
+
+**URL** : `/organization_invite/get_invited_users`
+
+**Method** : `GET`
+
+**Auth required** : YES (bearerAuth)
+
+**Description** : Get outgoing users invitations for currently logged in users
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+
+Empty
+
+#### Success Response
+
+**Code** : `200 OK`
+
+**Content example**
+No content
+
+#### Error Responses
+| Code | Message |
+| ------ | ------ |
+| 400 | The requested information is incomplete or malformed. |
+| 401 | An access token isn’t provided, or is invalid. |
+| 403 | An access token is valid, but requires more privileges |
+| 404 | Everything is okay, but the resource doesn’t exist. |
+| 409 | A conflict of data exists, even with valid information. |
+| 422 | The requested information is okay, but invalid |
+| 500 | The servers are not working as expected. |
+
+**Content**
+No content
+
+### Decide Invitation
+
+**URL** : `/invitation/decision`
+
+**Method** : `PUT`
+
+**Auth required** : YES (bearerAuth)
+
+**Description** : Dedice invitation
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+
+```json
+{
+     "decStatus": "boolean"
+}
+```
+
+#### Success Response
+
+**Code** : `200 OK`
+
+**Content example**
+No content
+
+#### Error Responses
+| Code | Message |
+| ------ | ------ |
+| 400 | The requested information is incomplete or malformed. |
+| 401 | An access token isn’t provided, or is invalid. |
+| 403 | An access token is valid, but requires more privileges |
+| 404 | Everything is okay, but the resource doesn’t exist. |
+| 409 | A conflict of data exists, even with valid information. |
+| 422 | The requested information is okay, but invalid |
+| 500 | The servers are not working as expected. |
+
+**Content**
+No content
+
+### Delete Invitation
+
+**URL** : `/organization_invite/{uuid}`
+
+**Method** : `DELETE`
+
+**Auth required** : YES (bearerAuth)
+
+**Description** : Cancel invitation
+
+**Parameters**
+
+| Attribute | Type | Required | Description |
+| ------ | ------ | ------ | ------ |
+| uuid | uuid | True | Uuid of invitation |
+
+**Request Body**
+
+Empty
+
+#### Success Response
+
+**Code** : `200 OK`
+
+**Content example**
+No content
+
+#### Error Responses
+| Code | Message |
+| ------ | ------ |
+| 400 | The requested information is incomplete or malformed. |
+| 401 | An access token isn’t provided, or is invalid. |
+| 403 | An access token is valid, but requires more privileges |
+| 404 | Everything is okay, but the resource doesn’t exist. |
+| 409 | A conflict of data exists, even with valid information. |
+| 422 | The requested information is okay, but invalid |
+| 500 | The servers are not working as expected. |
+
+**Content**
+No content

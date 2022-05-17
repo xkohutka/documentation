@@ -1,0 +1,56 @@
+pipeline {
+    
+    agent any
+    
+    stages {
+        stage("Clean workspace"){
+            steps{
+                cleanWs()
+            }
+        }
+        stage("Pull repository"){
+            steps{
+                withCredentials([sshUserPrivateKey(credentialsId: "github", keyFileVariable: 'keyfile')]) {    
+                    script{
+                        sh "GIT_SSH_COMMAND='ssh -i ${keyfile} -o IdentitiesOnly=yes' git clone --branch docker-dev git@github.com:ASICDE/asicde-docker.git ."
+                    }
+                }
+            }
+        }
+        /*
+        stage("Prepare for dev deployment") {
+            steps {
+                script {
+                    //sh "mv docker-compose.frontend.yml docker-compose.override.yml"
+                    //sh "sed -i -e 's/- 10000:80/- 10002:80/g' docker-compose.yml"
+                    //sh "sed -i -e 's/- 10001:80/- 10003:80/g' docker-compose.override.yml"
+                    //sh "sed -i -e 's/hub.asicde.online\\/asicde\\/router/localhost:8082\\/asicde\\/router/g' docker-compose*"
+                    //sh "sed -i -e 's/hub.asicde.online\\/asicde\\/auth/localhost:8082\\/asicde\\/auth-dev/g' docker-compose*"
+                    //sh "sed -i -e 's/hub.asicde.online\\/asicde\\/repo/localhost:8082\\/asicde\\/repo-dev/g' docker-compose*"
+                    //sh "sed -i -e 's/hub.asicde.online\\/asicde\\/parser/localhost:8082\\/asicde\\/parser/g' docker-compose*"
+                    //sh "sed -i -e 's/hub.asicde.online\\/asicde\\/frontend/localhost:8082\\/asicde\\/frontend-dev/g' docker-compose*"
+                }
+            }
+        }*/
+        stage('Deploy website container') {
+            steps {
+                script {
+                    sh "docker login hub.asicde.online --username jenkins --password yN{8MaL6SY]VKTXW"
+                    sh "docker-compose -f docker-compose.prod.yml -p asicde-docker-master kill || true"
+                    sh "docker-compose -f docker-compose.prod.yml -p asicde-docker-master rm -f || true"
+                    sh "docker-compose -f docker-compose.prod.yml -p asicde-docker-master pull"
+                    sh "docker-compose -f docker-compose.prod.yml -p asicde-docker-master up -d"
+                }
+            }
+        }
+    }
+    
+    post {
+        failure {
+            discordSend description: "Build failed! :cry:", link: "${env.BUILD_URL}", result: currentBuild.currentResult, title: "${env.JOB_NAME}", webhookURL: "https://discord.com/api/webhooks/907804702895398942/vT7kJasQoUXxERM7Ixqrv65bQvB6kQ4o7hOkdtP_dt-A7BVgEgmwkriZdW1llUogajab"
+        }
+        success {
+            discordSend description: "Build success! :partying_face:", link: "${env.BUILD_URL}", result: currentBuild.currentResult, title: "${env.JOB_NAME}", webhookURL: "https://discord.com/api/webhooks/907804702895398942/vT7kJasQoUXxERM7Ixqrv65bQvB6kQ4o7hOkdtP_dt-A7BVgEgmwkriZdW1llUogajab"
+        }
+    }
+}

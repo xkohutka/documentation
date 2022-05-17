@@ -1,0 +1,40 @@
+pipeline {
+    
+    agent any
+    
+    stages {
+        stage("Clean workspace"){
+            steps{
+                cleanWs()
+            }
+        }
+        stage("Pull repository"){
+            steps{
+                withCredentials([sshUserPrivateKey(credentialsId: "github", keyFileVariable: 'keyfile')]) {    
+                    script{
+                        sh "GIT_SSH_COMMAND='ssh -i ${keyfile} -o IdentitiesOnly=yes' git clone -b local-dev git@github.com:ASICDE/asicde-router.git ."
+                    }
+                }
+            }
+        }
+        stage('Build & push docker images') {
+            steps {
+                script {
+                        withCredentials([usernamePassword(credentialsId: 'nexus', usernameVariable: 'user', passwordVariable: 'pass')]) {
+                        sh "docker login -u ${user} -p ${pass} localhost:8082"
+                        
+                        docker.build("localhost:8082/asicde/custom-router:${env.BUILD_ID}")
+                        sh "docker image tag localhost:8082/asicde/custom-router:${env.BUILD_ID} localhost:8082/asicde/custom-router:latest"
+                        sh "docker push localhost:8082/asicde/custom-router:${env.BUILD_ID}"
+                        sh "docker push localhost:8082/asicde/custom-router:latest"
+                    }
+                }
+            }
+        }
+        // stage('Deploy dev') {
+        //     steps {
+        //         build job: "ASICDE-deploy-dev", wait: true
+        //     }
+        // }
+    }
+}

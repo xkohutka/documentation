@@ -1,0 +1,38 @@
+pipeline {
+    
+    agent any
+    
+    stages {
+        stage("Clean workspace"){
+            steps{
+                cleanWs()
+            }
+        }
+        stage("Pull repository"){
+            steps{
+                withCredentials([sshUserPrivateKey(credentialsId: "github", keyFileVariable: 'keyfile')]) {    
+                    script{
+                        sh "GIT_SSH_COMMAND='ssh -i ${keyfile} -o IdentitiesOnly=yes' git clone -b dev git@github.com:ASICDE/asicde-api.git ."
+                    }
+                }
+            }
+        }
+        stage("Build maven project"){
+            steps{
+                script{
+                    sh "mvn -DskipTests clean deploy"
+                }
+            }
+        }
+        stage('Run tests') { 
+            steps {
+                sh 'mvn test' 
+            }
+        }
+        // stage('Deploy dev') {
+        //     steps {
+        //         build job: "ASICDE-deploy-dev", wait: true
+        //     }
+        // }
+    }
+}

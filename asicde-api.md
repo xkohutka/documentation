@@ -51,7 +51,21 @@ Table of Contents
       * [Get Outgoing Invitations](#get-outgoing-invitations)
       * [Decide Invitation](#decide-invitation)
       * [Delete Invitation](#delete-invitation)
-
+   * [Forum](#forum)
+	   * Public
+          * [Get public threads](#get-public-threads)
+          * [Create public thread](#create-public-thread)
+          * [Get public thread detail](#get-public-thread-detail)
+          * [Add message to public thread](#add-message-to-public-thread)
+          * [Update message in public thread](#update-message-in-public-thread)
+          * [Remove message from public thread](#remove-message-from-public-thread)
+	   * Organization
+          * [Get organization threads](#get-organization-threads)
+          * [Create organization thread](#create-organization-thread)
+          * [Get organization thread detail](#get-organization-thread-detail)
+          * [Add message to organization thread](#add-message-to-organization-thread)
+          * [Update message in organization thread](#update-message-in-organization-thread)
+          * [Remove message from organization thread](#remove-message-from-organization-thread)
 
 ## Auth
 ### Create User
@@ -1808,3 +1822,591 @@ No content
 
 **Content**
 No content
+
+## Forum
+### Public
+#### Get public threads
+
+**URL** : `/forum`
+
+**Method** : `GET`
+
+**Auth required** : YES (bearerAuth)
+
+**Description** : 
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+
+Empty
+
+#### Success Response
+
+**Code** : `201 OK`
+
+**Content example**
+(application/json)
+```json
+{
+    "content": [
+        {
+            "uuid": "fb153596-addc-11ec-b909-0242ac120002",
+            "title": "test thread",
+            "created": "2022-03-27T16:48:28.797+0000",
+            "user": {
+                "@id": "1",
+                "uuid": "869288b9-416d-486a-bbc4-84ebbd94f991",
+                "created": "2022-03-27T14:48:09.145+0000",
+                "lastModified": "2022-05-17T13:02:46.576+0000",
+                "lastLogin": "2022-05-17T13:02:46.417+0000",
+                "lastAccountEdit": null,
+                "username": "username",
+                "active": true,
+                "email": "user@example.com",
+                "firstName": "First",
+                "lastName": "Second"
+            },
+            "text": "message"
+        }
+	]
+}
+```
+
+#### Create public thread
+
+**URL** : `/forum`
+
+**Method** : `POST`
+
+**Auth required** : YES (bearerAuth)
+
+**Description** : 
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+(application/json)
+```json
+{
+    "title": "Test",
+    "message": "test"
+}
+```
+
+#### Success Response
+
+**Code** : `201 OK`
+
+**Content example**
+(application/json)
+```json
+{
+    "uuid": "fb153596-addc-11ec-b909-0242ac120002",
+    "title": "test thread",
+    "created": "2022-03-27T16:48:28.797+0000",
+    "user": {
+        "@id": "1",
+        "uuid": "869288b9-416d-486a-bbc4-84ebbd94f991",
+        "created": "2022-03-27T14:48:09.145+0000",
+        "lastModified": "2022-05-17T13:02:46.576+0000",
+        "lastLogin": "2022-05-17T13:02:46.417+0000",
+        "lastAccountEdit": null,
+        "username": "username",
+        "active": true,
+        "email": "user@example.com",
+        "firstName": "First",
+        "lastName": "Second"
+    },
+    "text": "message"
+}
+```
+
+#### Get public thread detail
+
+**URL** : `/forum/{thread_uuid}`
+
+**Method** : `GET`
+
+**Auth required** : YES (bearerAuth)
+
+**Description** : 
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+
+Empty
+
+#### Success Response
+
+**Code** : `201 OK`
+
+**Content example**
+(application/json)
+```json
+{
+    "uuid": "fb153596-addc-11ec-b909-0242ac120002",
+    "title": "test thread",
+    "created": "2022-03-27T16:48:28.797+0000",
+    "user": {
+        "@id": "1",
+        "uuid": "869288b9-416d-486a-bbc4-84ebbd94f991",
+        "created": "2022-03-27T14:48:09.145+0000",
+        "lastModified": "2022-05-17T13:02:46.576+0000",
+        "lastLogin": "2022-05-17T13:02:46.417+0000",
+        "lastAccountEdit": null,
+        "username": "username",
+        "active": true,
+        "email": "user@example.com",
+        "firstName": "First",
+        "lastName": "Second"
+    },
+    "messages": [
+		{
+			"uuid": "cdcb0ad9-4529-481a-bc45-088ff9b6e1b8",
+			"text": "test3",
+			"user": {
+				"@id": "2",
+				"uuid": "869288b9-416d-486a-bbc4-84ebbd94f991",
+				"created": "2022-03-27T14:48:09.145+0000",
+				"lastModified": "2022-05-17T13:02:46.576+0000",
+				"lastLogin": "2022-05-17T13:02:46.417+0000",
+				"lastAccountEdit": null,
+				"username": "username",
+				"active": true,
+				"email": "user@example.com",
+				"firstName": "First",
+				"lastName": "Second"
+			},
+			"created": "2022-04-25T13:30:56.456+0000"
+		},
+		...
+	]
+}
+```
+
+#### Add message to public thread
+
+**URL** : `/forum/{thread_uuid}`
+
+**Method** : `POST`
+
+**Auth required** : YES (bearerAuth)
+
+**Description** : 
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+
+(application/json)
+```json
+{
+    "message": "test3"
+}
+```
+
+#### Success Response
+
+**Code** : `201 OK`
+
+**Content example**
+(application/json)
+```json
+{
+    "uuid": "0da10f5e-6f23-4f2f-a9cc-c582395cebdc",
+    "text": "test3",
+    "user": {
+        "@id": "1",
+        "uuid": "869288b9-416d-486a-bbc4-84ebbd94f991",
+        "created": "2022-03-27T14:48:09.145+0000",
+        "lastModified": "2022-05-17T13:02:46.576+0000",
+        "lastLogin": "2022-05-17T13:02:46.417+0000",
+        "lastAccountEdit": null,
+		"username": "username",
+		"active": true,
+		"email": "user@example.com",
+		"firstName": "First",
+		"lastName": "Second"
+    },
+    "created": "2022-05-17T15:10:46.418+0000"
+}
+```
+
+#### Update message in public thread
+
+**URL** : `/forum/{thread_uuid}/{message_uuid}`
+
+**Method** : `PUT`
+
+**Auth required** : YES (bearerAuth)
+
+**Description** : 
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+
+(application/json)
+```json
+{
+    "message": "test3"
+}
+```
+
+#### Success Response
+
+**Code** : `201 OK`
+
+**Content example**
+(application/json)
+```json
+{
+    "uuid": "0da10f5e-6f23-4f2f-a9cc-c582395cebdc",
+    "text": "test3",
+    "user": {
+        "@id": "1",
+        "uuid": "869288b9-416d-486a-bbc4-84ebbd94f991",
+        "created": "2022-03-27T14:48:09.145+0000",
+        "lastModified": "2022-05-17T13:02:46.576+0000",
+        "lastLogin": "2022-05-17T13:02:46.417+0000",
+        "lastAccountEdit": null,
+		"username": "username",
+		"active": true,
+		"email": "user@example.com",
+		"firstName": "First",
+		"lastName": "Second"
+    },
+    "created": "2022-05-17T15:10:46.418+0000"
+}
+```
+
+#### Remove message from public thread
+
+**URL** : `/forum/{thread_uuid}/{message_uuid}`
+
+**Method** : `DELETE`
+
+**Auth required** : YES (bearerAuth)
+
+**Description** : 
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+
+Empty
+
+#### Success Response
+
+**Code** : `201 OK`
+
+**Content example**
+Empty
+
+### organization
+#### Get organization threads
+
+**URL** : `/forum`
+
+**Method** : `GET`
+
+**Auth required** : YES (bearerAuth)
+
+**Description** : 
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+
+Empty
+
+#### Success Response
+
+**Code** : `201 OK`
+
+**Content example**
+(application/json)
+```json
+{
+    "content": [
+        {
+            "uuid": "fb153596-addc-11ec-b909-0242ac120002",
+            "title": "test thread",
+            "created": "2022-03-27T16:48:28.797+0000",
+            "user": {
+                "@id": "1",
+                "uuid": "869288b9-416d-486a-bbc4-84ebbd94f991",
+                "created": "2022-03-27T14:48:09.145+0000",
+                "lastModified": "2022-05-17T13:02:46.576+0000",
+                "lastLogin": "2022-05-17T13:02:46.417+0000",
+                "lastAccountEdit": null,
+                "username": "username",
+                "active": true,
+                "email": "user@example.com",
+                "firstName": "First",
+                "lastName": "Second"
+            },
+            "text": "message"
+        }
+	]
+}
+```
+
+#### Create organization thread
+
+**URL** : `/forum`
+
+**Method** : `POST`
+
+**Auth required** : YES (bearerAuth)
+
+**Description** : 
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+(application/json)
+```json
+{
+    "title": "Test",
+    "message": "test"
+}
+```
+
+#### Success Response
+
+**Code** : `201 OK`
+
+**Content example**
+(application/json)
+```json
+{
+    "uuid": "fb153596-addc-11ec-b909-0242ac120002",
+    "title": "test thread",
+    "created": "2022-03-27T16:48:28.797+0000",
+    "user": {
+        "@id": "1",
+        "uuid": "869288b9-416d-486a-bbc4-84ebbd94f991",
+        "created": "2022-03-27T14:48:09.145+0000",
+        "lastModified": "2022-05-17T13:02:46.576+0000",
+        "lastLogin": "2022-05-17T13:02:46.417+0000",
+        "lastAccountEdit": null,
+        "username": "username",
+        "active": true,
+        "email": "user@example.com",
+        "firstName": "First",
+        "lastName": "Second"
+    },
+    "text": "message"
+}
+```
+
+#### Get organization thread detail
+
+**URL** : `/forum/organization/{thread_uuid}`
+
+**Method** : `GET`
+
+**Auth required** : YES (bearerAuth)
+
+**Description** : 
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+
+Empty
+
+#### Success Response
+
+**Code** : `201 OK`
+
+**Content example**
+(application/json)
+```json
+{
+    "uuid": "fb153596-addc-11ec-b909-0242ac120002",
+    "title": "test thread",
+    "created": "2022-03-27T16:48:28.797+0000",
+    "user": {
+        "@id": "1",
+        "uuid": "869288b9-416d-486a-bbc4-84ebbd94f991",
+        "created": "2022-03-27T14:48:09.145+0000",
+        "lastModified": "2022-05-17T13:02:46.576+0000",
+        "lastLogin": "2022-05-17T13:02:46.417+0000",
+        "lastAccountEdit": null,
+        "username": "username",
+        "active": true,
+        "email": "user@example.com",
+        "firstName": "First",
+        "lastName": "Second"
+    },
+    "messages": [
+		{
+			"uuid": "cdcb0ad9-4529-481a-bc45-088ff9b6e1b8",
+			"text": "test3",
+			"user": {
+				"@id": "2",
+				"uuid": "869288b9-416d-486a-bbc4-84ebbd94f991",
+				"created": "2022-03-27T14:48:09.145+0000",
+				"lastModified": "2022-05-17T13:02:46.576+0000",
+				"lastLogin": "2022-05-17T13:02:46.417+0000",
+				"lastAccountEdit": null,
+				"username": "username",
+				"active": true,
+				"email": "user@example.com",
+				"firstName": "First",
+				"lastName": "Second"
+			},
+			"created": "2022-04-25T13:30:56.456+0000"
+		},
+		...
+	]
+}
+```
+
+#### Add message to organization thread
+
+**URL** : `/forum/organization/{thread_uuid}`
+
+**Method** : `POST`
+
+**Auth required** : YES (bearerAuth)
+
+**Description** : 
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+
+(application/json)
+```json
+{
+    "message": "test3"
+}
+```
+
+#### Success Response
+
+**Code** : `201 OK`
+
+**Content example**
+(application/json)
+```json
+{
+    "uuid": "0da10f5e-6f23-4f2f-a9cc-c582395cebdc",
+    "text": "test3",
+    "user": {
+        "@id": "1",
+        "uuid": "869288b9-416d-486a-bbc4-84ebbd94f991",
+        "created": "2022-03-27T14:48:09.145+0000",
+        "lastModified": "2022-05-17T13:02:46.576+0000",
+        "lastLogin": "2022-05-17T13:02:46.417+0000",
+        "lastAccountEdit": null,
+		"username": "username",
+		"active": true,
+		"email": "user@example.com",
+		"firstName": "First",
+		"lastName": "Second"
+    },
+    "created": "2022-05-17T15:10:46.418+0000"
+}
+```
+
+#### Update message in organization thread
+
+**URL** : `/forum/organization/{thread_uuid}/{message_uuid}`
+
+**Method** : `PUT`
+
+**Auth required** : YES (bearerAuth)
+
+**Description** : 
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+
+(application/json)
+```json
+{
+    "message": "test3"
+}
+```
+
+#### Success Response
+
+**Code** : `201 OK`
+
+**Content example**
+(application/json)
+```json
+{
+    "uuid": "0da10f5e-6f23-4f2f-a9cc-c582395cebdc",
+    "text": "test3",
+    "user": {
+        "@id": "1",
+        "uuid": "869288b9-416d-486a-bbc4-84ebbd94f991",
+        "created": "2022-03-27T14:48:09.145+0000",
+        "lastModified": "2022-05-17T13:02:46.576+0000",
+        "lastLogin": "2022-05-17T13:02:46.417+0000",
+        "lastAccountEdit": null,
+		"username": "username",
+		"active": true,
+		"email": "user@example.com",
+		"firstName": "First",
+		"lastName": "Second"
+    },
+    "created": "2022-05-17T15:10:46.418+0000"
+}
+```
+
+#### Remove message from organization thread
+
+**URL** : `/forum/organization/{thread_uuid}/{message_uuid}`
+
+**Method** : `DELETE`
+
+**Auth required** : YES (bearerAuth)
+
+
+**Description** : 
+
+**Parameters**
+
+No parameters
+
+**Request Body**
+
+Empty
+
+#### Success Response
+
+**Code** : `201 OK`
+
+**Content example**
+Empty

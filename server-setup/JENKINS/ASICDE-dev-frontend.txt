@@ -1,0 +1,76 @@
+pipeline {
+    
+    agent any
+
+    stages {
+        stage("Clean workspace"){
+            steps{
+                cleanWs()
+            }
+        }
+        stage("Pull repository"){
+            steps{
+                withCredentials([sshUserPrivateKey(credentialsId: "github", keyFileVariable: 'keyfile')]) {    
+                    script{
+                        sh "GIT_SSH_COMMAND='ssh -i ${keyfile} -o IdentitiesOnly=yes' git clone --recursive -b dev git@github.com:ASICDE/asicde-frontend.git ."
+                    }
+                }
+            }
+        }
+        stage("Prepare for dev deployment") {
+            steps {
+                script {
+                    sh "find . -type f -exec sed -i -e 's/http:\\/\\/localhost:10000/https:\\/\\/api-dev.asicde.online/g' {} \\;"
+                    sh 'echo "FROM nginx:1.14.1-alpine \\nCOPY nginx/default.conf /etc/nginx/conf.d/ \\nRUN rm -rf /usr/share/nginx/html/* \\nCOPY dist/asicde-frontend/ /usr/share/nginx/html \\nCMD [\\"nginx\\", \\"-g\\", \\"daemon off;\\"]" > Dockerfile'
+                }
+            }
+        }
+        stage('Install dependencies') {
+            steps {
+                script {
+                    nodejs(nodeJSInstallationName: 'nodejs') {
+                        sh "npm install --force"
+                    }
+                }
+            }
+        }
+        stage('Build app') {
+            steps {
+                script {
+                    nodejs(nodeJSInstallationName: 'nodejs') {
+                        sh "ng build --configuration=production" //  --source-map=false
+                    }
+                }
+            }
+        }
+        stage('Build & push docker images') {
+            steps {
+                script {
+                        withCredentials([usernamePassword(credentialsId: 'nexus', usernameVariable: 'user', passwordVariable: 'pass')]) {
+                        sh "docker login -u ${user} -p ${pass} http://localhost:8082"
+                        sh "docker build -t localhost:8082/asicde/frontend-dev:${env.BUILD_ID} --no-cache ."
+                        sh "docker image tag localhost:8082/asicde/frontend-dev:${env.BUILD_ID} localhost:8082/asicde/frontend-dev:latest"
+                        sh "docker push localhost:8082/asicde/frontend-dev:${env.BUILD_ID}"
+                        sh "docker push localhost:8082/asicde/frontend-dev:latest"
+                    }
+                }
+            }
+        }
+        stage('Deploy dev') {
+            steps {
+                build job: "ASICDE-deploy-dev", wait: true
+            }
+        }
+    }
+    
+    
+    
+    post {
+        failure {
+            discordSend description: "Build failed! :cry:", link: "${env.BUILD_URL}", result: currentBuild.currentResult, title: "${env.JOB_NAME}", webhookURL: "https://discord.com/api/webhooks/907804702895398942/vT7kJasQoUXxERM7Ixqrv65bQvB6kQ4o7hOkdtP_dt-A7BVgEgmwkriZdW1llUogajab"
+        }
+        success {
+            discordSend description: "Build success! :partying_face:", link: "${env.BUILD_URL}", result: currentBuild.currentResult, title: "${env.JOB_NAME}", webhookURL: "https://discord.com/api/webhooks/907804702895398942/vT7kJasQoUXxERM7Ixqrv65bQvB6kQ4o7hOkdtP_dt-A7BVgEgmwkriZdW1llUogajab"
+        }
+    }
+}

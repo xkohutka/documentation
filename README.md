@@ -15,7 +15,7 @@ This repository holds the documentation for various dependencies of this project
 ## Installation guides
 
 - [How to setup a development environment](dev-environment-setup.md)
-- [Installation of the development stack](dev-stack-installation.md)
+- [Server setup](server-setup.md)
 
 ## Development guides
 

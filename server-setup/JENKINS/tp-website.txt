@@ -1,0 +1,53 @@
+   pipeline {
+        
+        agent any
+    
+        stages {
+            stage("Clean workspace"){
+                steps{
+                    cleanWs()
+                }
+            }
+            stage("Pull repository"){
+                steps{
+                    withCredentials([sshUserPrivateKey(credentialsId: "github", keyFileVariable: 'keyfile')]) {    
+                        script{
+                            sh "GIT_SSH_COMMAND='ssh -i ${keyfile} -o IdentitiesOnly=yes' git clone git@github.com:EdoKrajcir/tp1-web.git ."
+                        }
+                    }
+                }
+            }
+            stage('Build & push docker images') {
+                steps {
+                    script {
+                        withCredentials([usernamePassword(credentialsId: 'nexus', usernameVariable: 'user', passwordVariable: 'pass')]) {
+                            sh "docker login -u ${user} -p ${pass} http://localhost:8082"
+                            
+                            def frontendImage = docker.build("localhost:8082/asicde/website:${env.BUILD_ID}")
+                            sh "docker image tag localhost:8082/asicde/website:${env.BUILD_ID} localhost:8082/asicde/website:latest"
+                            sh "docker push localhost:8082/asicde/website:${env.BUILD_ID}"
+                            sh "docker push localhost:8082/asicde/website:latest"
+                        }
+                    }
+                }
+            }
+            stage('Deploy website container') {
+                steps {
+                    script {
+                        sh "docker kill asicde-website || true"
+                        sh "docker rm asicde-website || true"
+                        sh "docker run -d -p 8083:80 --restart unless-stopped --name asicde-website localhost:8082/asicde/website:latest"
+                    }
+                }
+            }
+        }
+        
+        post {
+            failure {
+                discordSend description: "Edo, Edo... Build failed! :cry:", link: "${env.BUILD_URL}", result: currentBuild.currentResult, title: "Team website", webhookURL: "https://discord.com/api/webhooks/907804702895398942/vT7kJasQoUXxERM7Ixqrv65bQvB6kQ4o7hOkdtP_dt-A7BVgEgmwkriZdW1llUogajab"
+            }
+            success {
+                discordSend description: "GOOD JOB EDO! :partying_face:", link: "${env.BUILD_URL}", result: currentBuild.currentResult, title: "Team website", webhookURL: "https://discord.com/api/webhooks/907804702895398942/vT7kJasQoUXxERM7Ixqrv65bQvB6kQ4o7hOkdtP_dt-A7BVgEgmwkriZdW1llUogajab"
+            }
+        }
+    }

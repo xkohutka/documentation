@@ -31,7 +31,6 @@ Table of Contents
        * [Update Repo Files](#update-repo-files)
 	   * [Toggle Favorite Repo](#toggle-favorite-repo)
 	   * [Toggle Archived Repo](#toggle-favorite-repo)
-	   * [Get Repos Associated With User](#get-repos-associated-with-user)
 	   * [Get Repos For Curent Organization](#get-repos-for-current-organization)
 	   * [Get Public Repos Except Current User's Repos](#get-public-repos-except-current-users-repos)
    * [Systemverilogparser](#systemverilogparser)
@@ -1084,45 +1083,6 @@ No content
 
 
 
-### Get Repos Associated With User
-
-**URL** : `/repos /userAssociated `
-
-**Method** : `PUT`
-
-**Auth required** : YES (bearerAuth)
-
-**Description** : 
-
-**Parameters**
-
-No parameters
-
-
-**Request Body**
-
-#### Success Response
-
-**Code** : `200 OK`
-
-**Content example**
-
-No content
-
-#### Error Responses
-| Code | Message |
-| ------ | ------ |
-| 400 | The requested information is incomplete or malformed. |
-| 401 | An access token isn’t provided, or is invalid. |
-| 403 | An access token is valid, but requires more privileges |
-| 404 | Everything is okay, but the resource doesn’t exist. |
-| 422 | The requested information is okay, but invalid |
-| 500 | The servers are not working as expected. |
-
-**Content**
-
-
-
 ### Get Repos For Current Organization
 
 **URL** : `/repos /org `
@@ -1160,8 +1120,26 @@ No content
 
 **Content**
 
+(application/json):
 
-
+```json
+{
+	content: [{@id: "1", uuid: "1266715a-7ed5-4432-9b63-951d9d741577", created: "2022-05-08T13:52:32.932+0000",…},…]
+	0: {@id: "1", uuid: "1266715a-7ed5-4432-9b63-951d9d741577", created: "2022-05-08T13:52:32.932+0000",…}
+	1: {@id: "2", uuid: "b8cffffc-18cb-4ab8-816d-eab34a841911", created: "2022-05-08T13:52:50.159+0000",…}
+	2: {@id: "3", uuid: "a8faba8a-4d37-45b7-9b54-aedff82d742b", created: "2022-05-08T14:32:33.632+0000",…}
+	empty: false
+	first: true
+	last: true
+	number: 0
+	numberOfElements: 3
+	pageable: "INSTANCE"
+	size: 3
+	sort: {sorted: false, unsorted: true, empty: true}
+	totalElements: 3
+	totalPages: 1
+}
+```
 
 
 ### Get Public Repos Except Current User's Repos
@@ -1199,9 +1177,23 @@ No content
 | 500 | The servers are not working as expected. |
 
 **Content**
+(application/json):
 
-
-
+```json
+{
+	content: [{@id: "1", uuid: "4c5198f0-16db-4028-97e1-b502e3848469", created: "2022-05-05T11:38:58.460+0000",…},…]
+	empty: false
+	first: true
+	last: true
+	number: 0
+	numberOfElements: 18
+	pageable: {sort: {sorted: false, unsorted: true, empty: true}, offset: 0, pageNumber: 0, pageSize: 2147483647,…}
+	size: 2147483647
+	sort: {sorted: false, unsorted: true, empty: true}
+	totalElements: 18
+	totalPages: 1
+}
+```
 
 ## Systemverilogparser
 

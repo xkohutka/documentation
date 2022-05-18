@@ -29,6 +29,11 @@ Table of Contents
        * [Delete Repo](#delete-repo)
        * [Get Repo Files](#get-repo-files)
        * [Update Repo Files](#update-repo-files)
+	   * [Toggle Favorite Repo](#toggle-favorite-repo)
+	   * [Toggle Archived Repo](#toggle-favorite-repo)
+	   * [Get Repos Associated With User](#get-repos-associated-with-user)
+	   * [Get Repos For Curent Organization(#get-repos-for-current-organization)
+	   * [Get Public Repos Except Current User's Repos(#get-public-repos-except-current-users-repos)
    * [Systemverilogparser](#systemverilogparser)
       * [Code To Dia Extract](#code-to-dia-extract)
       * [Get Visualization Data](#get-visualization-data)
@@ -1079,7 +1084,7 @@ No content
 
 
 
-### Get All Repos Associated With User
+### Get Repos Associated With User
 
 **URL** : `/repos /userAssociated `
 
@@ -1118,7 +1123,7 @@ No content
 
 
 
-### Get All For Current Organization
+### Get Repos For Current Organization
 
 **URL** : `/repos /org `
 
@@ -1159,7 +1164,7 @@ No content
 
 
 
-### Get All Public Repos Except Current User's Repos
+### Get Public Repos Except Current User's Repos
 
 **URL** : `/repos /allPublic `
 

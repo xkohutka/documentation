@@ -1028,7 +1028,7 @@ No content
 
 **Description** : 
 
-**Parameters**
+**Parameters** :
 
 | Attribute | Type | Required | Description |
 | ------ | ------ | ------ | ------ |
@@ -1094,7 +1094,7 @@ No content
 **Description** : 
 
 
-**Parameters**
+**Parameters** :
 
 
 **Request Body**
@@ -1123,22 +1123,71 @@ No content
 (application/json):
 
 ```json
-{
-	content: [{@id: "1", uuid: "1266715a-7ed5-4432-9b63-951d9d741577", created: "2022-05-08T13:52:32.932+0000",…},…]
-	0: {@id: "1", uuid: "1266715a-7ed5-4432-9b63-951d9d741577", created: "2022-05-08T13:52:32.932+0000",…}
-	1: {@id: "2", uuid: "b8cffffc-18cb-4ab8-816d-eab34a841911", created: "2022-05-08T13:52:50.159+0000",…}
-	2: {@id: "3", uuid: "a8faba8a-4d37-45b7-9b54-aedff82d742b", created: "2022-05-08T14:32:33.632+0000",…}
-	empty: false
-	first: true
-	last: true
-	number: 0
-	numberOfElements: 3
-	pageable: "INSTANCE"
-	size: 3
-	sort: {sorted: false, unsorted: true, empty: true}
-	totalElements: 3
-	totalPages: 1
-}
+	"content":[
+		{"@id":"1",
+		"uuid":"1266715a-7ed5-4432-9b63-951d9d741577",
+		"created":"2022-05-08T13:52:32.932+0000",
+		"createdBy":"test",
+		"lastModified":"2022-05-08T13:52:32.932+0000",
+		"lastModifiedBy":"test",
+		"lastLogin":null,
+		"lastAccountEdit":null,
+		"name":"teaambestt"
+		,"authorUUID":"cd552a6d-360a-4dc4-aebb-5a04e056788b",
+		"fileName":null,
+		"favorite":false,
+		"archived":false,
+		"description":null,
+		"uri":"","is_private":false,
+		"isPublic":null},
+		
+		{"@id":"2",
+		"uuid":"b8cffffc-18cb-4ab8-816d-eab34a841911",
+		"created":"2022-05-08T13:52:50.159+0000",
+		"createdBy":"test",
+		"lastModified":"2022-05-08T13:52:50.159+0000",
+		"lastModifiedBy":"test",
+		"lastLogin":null,
+		"lastAccountEdit":null,
+		"name":"repoFromOrg",
+		"authorUUID":"cd552a6d-360a-4dc4-aebb-5a04e056788b",
+		"fileName":null,
+		"favorite":null,
+		"archived":null,
+		"description":"",
+		"uri":" ",
+		"is_private":false,
+		"isPublic":true},
+		
+		{"@id":"3",
+		"uuid":"a8faba8a-4d37-45b7-9b54-aedff82d742b",
+		"created":"2022-05-08T14:32:33.632+0000",
+		"createdBy":"test",
+		"lastModified":"2022-05-08T14:32:33.632+0000",
+		"lastModifiedBy":"test",
+		"lastLogin":null,
+		"lastAccountEdit":null,
+		"name":"orgnewrepo",
+		"authorUUID":"cd552a6d-360a-4dc4-aebb-5a04e056788b",
+		"fileName":null,
+		"favorite":null,
+		"archived":null,
+		"description":"",
+		"uri":" ",
+		"is_private":false,
+		"isPublic":true}],
+	
+	"pageable":"INSTANCE",
+	"last":true,
+	"totalPages":1,
+	"totalElements":3,
+	"number":0,
+	"sort":{"sorted":false,"unsorted":true,"empty":true},
+	"size":3,
+	"numberOfElements":3,
+	"first":true,
+	"empty":false
+	}
 ```
 
 
@@ -1152,10 +1201,10 @@ No content
 
 **Description** : 
 
-**Parameters**
+**Parameters** :
 
 
-**Request Body**
+**Request Body** :
 
 
 #### Success Response
@@ -1180,20 +1229,10 @@ No content
 (application/json):
 
 ```json
-{
-	content: [{@id: "1", uuid: "4c5198f0-16db-4028-97e1-b502e3848469", created: "2022-05-05T11:38:58.460+0000",…},…]
-	empty: false
-	first: true
-	last: true
-	number: 0
-	numberOfElements: 18
-	pageable: {sort: {sorted: false, unsorted: true, empty: true}, offset: 0, pageNumber: 0, pageSize: 2147483647,…}
-	size: 2147483647
-	sort: {sorted: false, unsorted: true, empty: true}
-	totalElements: 18
-	totalPages: 1
-}
+{"content":[{"@id":"1","uuid":"4c5198f0-16db-4028-97e1-b502e3848469","created":"2022-05-05T11:38:58.460+0000","createdBy":"klihan","lastModified":"2022-05-05T11:38:58.460+0000","lastModifiedBy":"klihan","lastLogin":null,"lastAccountEdit":null,"name":"Test","authorUUID":"7d5068be-c581-48b2-9a96-ce81c9627ce9","fileName":null,"favorite":null,"archived":null,"description":"","uri":" ","is_private":true,"isPublic":true},{"@id":"2","uuid":"c69cd135-944c-47e3-b23c-91d2dcd47003","created":"2022-05-05T12:38:40.088+0000","createdBy":"david","lastModified":"2022-05-05T12:38:40.088+0000","lastModifiedBy":"david","lastLogin":null,"lastAccountEdit":null,"name":"test repo","authorUUID":"ea9f7214-d44b-40f2-8b39-70b27412e52d","fileName":null,"favorite":null,"archived":null,"description":"","uri":" ","is_private":true,"isPublic":true},{"@id":"3","uuid":"50542213-7318-44c4-a850-ebe9e6339f19","created":"2022-05-05T22:46:10.533+0000","createdBy":"p.kollarova","lastModified":"2022-05-05T22:46:10.533+0000","lastModifiedBy":"p.kollarova","lastLogin":null,"lastAccountEdit":null,"name":"org repo","authorUUID":"d56f311f-088e-448b-9fae-c850b50820c8","fileName":null,"favorite":null,"archived":null,"description":"","uri":" ","is_private":false,"isPublic":true},{"@id":"4","uuid":"9df948a2-a012-40ae-a5f1-b65df4813114","created":"2022-05-05T22:46:23.635+0000","createdBy":"p.kollarova","lastModified":"2022-05-05T22:46:23.635+0000","lastModifiedBy":"p.kollarova","lastLogin":null,"lastAccountEdit":null,"name":"my repo","authorUUID":"d56f311f-088e-448b-9fae-c850b50820c8","fileName":null,"favorite":null,"archived":null,"description":"","uri":" ","is_private":true,"isPublic":true},{"@id":"5","uuid":"72e02fee-6498-4845-a715-b8ee4d8e3a22","created":"2022-05-08T15:10:13.647+0000","createdBy":"user1_testrepo","lastModified":"2022-05-08T15:10:13.647+0000","lastModifiedBy":"user1_testrepo","lastLogin":null,"lastAccountEdit":null,"name":"enworg","authorUUID":"168152c0-9291-438a-94b4-06b924214cc8","fileName":null,"favorite":null,"archived":null,"description":"","uri":" ","is_private":false,"isPublic":true},{"@id":"6","uuid":"118e4085-4585-4dde-b8e2-ff744fa79536","created":"2022-05-07T11:27:28.885+0000","createdBy":"asicde_test","lastModified":"2022-05-07T11:27:28.885+0000","lastModifiedBy":"asicde_test","lastLogin":null,"lastAccountEdit":null,"name":"TestRepository","authorUUID":"35073ca5-99e8-489b-b2e8-156156c68e4b","fileName":null,"favorite":null,"archived":null,"description":"IcarusVerilogTest","uri":" ","is_private":true,"isPublic":true},{"@id":"7","uuid":"56b51257-7687-4cd0-b0a1-e5675132759c","created":"2022-05-08T15:23:14.194+0000","createdBy":"testuser","lastModified":"2022-05-08T15:23:14.194+0000","lastModifiedBy":"testuser","lastLogin":null,"lastAccountEdit":null,"name":"meine","authorUUID":"1d402653-afd6-4d6e-881e-bdf556cf96cf","fileName":null,"favorite":null,"archived":null,"description":"","uri":" ","is_private":false,"isPublic":true},{"@id":"8","uuid":"270b19f4-f0dd-4d08-b344-f8a2ec48607b","created":"2022-05-08T19:16:10.441+0000","createdBy":"test","lastModified":"2022-05-08T19:16:10.441+0000","lastModifiedBy":"test","lastLogin":null,"lastAccountEdit":null,"name":"test","authorUUID":"0f619782-1043-4797-a5ce-9e6f209b3b9b","fileName":null,"favorite":null,"archived":null,"description":"test","uri":" ","is_private":false,"isPublic":true},{"@id":"9","uuid":"992242c6-9968-4cf6-b4bf-d38d59abf62e","created":"2022-05-08T19:39:13.295+0000","createdBy":"test","lastModified":"2022-05-08T19:39:13.295+0000","lastModifiedBy":"test","lastLogin":null,"lastAccountEdit":null,"name":"test123456","authorUUID":"0f619782-1043-4797-a5ce-9e6f209b3b9b","fileName":null,"favorite":null,"archived":null,"description":"test","uri":" ","is_private":true,"isPublic":true},{"@id":"10","uuid":"50888488-75e3-4471-89fc-61622e007d3b","created":"2022-05-09T18:18:22.136+0000","createdBy":"matej.janecek19","lastModified":"2022-05-09T18:18:22.136+0000","lastModifiedBy":"matej.janecek19","lastLogin":null,"lastAccountEdit":null,"name":"Project 2","authorUUID":"dd6143e3-4e11-4ecd-9f71-19127cee0ac9","fileName":null,"favorite":null,"archived":null,"description":"","uri":" ","is_private":true,"isPublic":true},{"@id":"11","uuid":"c23591c0-8fdf-4c20-bc99-aee33d3ba633","created":"2022-05-08T11:39:19.458+0000","createdBy":"user2_testrepo","lastModified":"2022-05-08T11:39:41.382+0000","lastModifiedBy":"user2_testrepo","lastLogin":null,"lastAccountEdit":null,"name":"repozitar_public","authorUUID":"7d89fddd-8661-4aca-99b2-c6be9b5e70d8","fileName":null,"favorite":false,"archived":false,"description":"","uri":" ","is_private":true,"isPublic":true},{"@id":"12","uuid":"c3249118-5855-434e-ac78-d5c86edc68c2","created":"2022-05-08T15:05:39.191+0000","createdBy":"user1_testrepo","lastModified":"2022-05-08T15:05:39.191+0000","lastModifiedBy":"user1_testrepo","lastLogin":null,"lastAccountEdit":null,"name":"sass","authorUUID":"168152c0-9291-438a-94b4-06b924214cc8","fileName":null,"favorite":null,"archived":null,"description":"","uri":" ","is_private":true,"isPublic":true},{"@id":"13","uuid":"2256079f-a483-425f-856f-5c2770192998","created":"2022-05-10T18:42:05.143+0000","createdBy":"vixizu","lastModified":"2022-05-10T18:44:30.449+0000","lastModifiedBy":"vixizu","lastLogin":null,"lastAccountEdit":null,"name":"team16","authorUUID":"6c61293e-a1c6-4af0-9b72-207282a1fb70","fileName":null,"favorite":true,"archived":null,"description":"team page","uri":"https://team16-21.studenti.fiit.stuba.sk/.git/config","is_private":true,"isPublic":true},{"@id":"14","uuid":"3ebedc7e-cde1-42fd-9696-856acd0fecfe","created":"2022-05-13T00:32:08.983+0000","createdBy":"TEaILhvddB","lastModified":"2022-05-13T00:32:08.983+0000","lastModifiedBy":"TEaILhvddB","lastLogin":null,"lastAccountEdit":null,"name":"TestRepo_IpkaS","authorUUID":"5aff284a-5d0c-4fc4-b6b6-15d6b9a4f888","fileName":null,"favorite":null,"archived":null,"description":"Cypress Test Repository","uri":" ","is_private":true,"isPublic":true},{"@id":"15","uuid":"5c4d5cd6-c611-4d5c-87be-17c7ea6f535f","created":"2022-05-13T00:34:54.721+0000","createdBy":"tq9QNvWyNq","lastModified":"2022-05-13T00:34:54.721+0000","lastModifiedBy":"tq9QNvWyNq","lastLogin":null,"lastAccountEdit":null,"name":"TestRepo_cUpl8","authorUUID":"b9ddb6e8-95c4-49f4-bf63-70a186dd1827","fileName":null,"favorite":null,"archived":null,"description":"Cypress Test Repository","uri":" ","is_private":true,"isPublic":true},{"@id":"16","uuid":"7f36af3f-0e0b-45ea-9df5-d1fa0ce9fc3d","created":"2022-05-14T19:01:29.901+0000","createdBy":"user1_testrepo","lastModified":"2022-05-14T19:01:29.901+0000","lastModifiedBy":"user1_testrepo","lastLogin":null,"lastAccountEdit":null,"name":"awd","authorUUID":"168152c0-9291-438a-94b4-06b924214cc8","fileName":null,"favorite":null,"archived":null,"description":"wa","uri":" ","is_private":true,"isPublic":true},{"@id":"17","uuid":"df2e39d5-73db-4a16-a5b4-26b857a53bf2","created":"2022-05-16T10:16:04.743+0000","createdBy":"edokrajcir","lastModified":"2022-05-16T10:16:04.743+0000","lastModifiedBy":"edokrajcir","lastLogin":null,"lastAccountEdit":null,"name":"repozitar 1","authorUUID":"a2507abf-7deb-4fef-b33f-7056ef29145f","fileName":null,"favorite":null,"archived":null,"description":"repo 1","uri":" ","is_private":true,"isPublic":true},{"@id":"18","uuid":"68c66806-b84b-40ca-ae56-8dddaaf00a2d","created":"2022-05-16T10:16:14.621+0000","createdBy":"edokrajcir","lastModified":"2022-05-16T10:16:14.621+0000","lastModifiedBy":"edokrajcir","lastLogin":null,"lastAccountEdit":null,"name":"repozitar 2","authorUUID":"a2507abf-7deb-4fef-b33f-7056ef29145f","fileName":null,"favorite":null,"archived":null,"description":"","uri":" ","is_private":true,"isPublic":true}],"pageable":{"sort":{"sorted":false,"unsorted":true,"empty":true},"offset":0,"pageNumber":0,"pageSize":2147483647,"paged":true,"unpaged":false},"last":true,"totalPages":1,"totalElements":18,"number":0,"sort":{"sorted":false,"unsorted":true,"empty":true},"size":2147483647,"numberOfElements":18,"first":true,"empty":false}
 ```
+
+
 
 ## Systemverilogparser
 

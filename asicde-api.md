@@ -765,23 +765,7 @@ Empty
 
 **Content example**
 (application/json)
-```json
-{
-    "pageNum": 0,
-    "totalPages": 0,
-    "totalItems": 0,
-    "data": [
-        {
-        "id": 0,
-        "author": "string",
-        "fileName": "string",
-        "name": "string",
-        "uri": "string"
-        }
-    ],
-    "sideLoads": {}
-}
-```
+
 
 #### Error Responses
 | Code | Message |
@@ -964,6 +948,255 @@ No content
      "message": "string"
 }
 ```
+
+
+### Toggle Favorite Repo
+
+**URL** : `/repos /{repoName} /toggleFavorite `
+
+**Method** : `PUT`
+
+**Auth required** : YES (bearerAuth)
+
+**Description** : 
+
+**Parameters**
+
+| Attribute | Type | Required | Description |
+| ------ | ------ | ------ | ------ |
+| repoName | string | True | Name of the repo |
+
+
+**Request Body**
+
+
+#### Success Response
+
+**Code** : `200 OK`
+
+**Content example**
+
+
+#### Error Responses
+| Code | Message |
+| ------ | ------ |
+| 400 | The requested information is incomplete or malformed. |
+| 401 | An access token isn’t provided, or is invalid. |
+| 403 | An access token is valid, but requires more privileges |
+| 404 | Everything is okay, but the resource doesn’t exist. |
+| 422 | The requested information is okay, but invalid |
+| 500 | The servers are not working as expected. |
+
+**Content**
+(application/json):
+
+```json
+{
+    "@id": "1",
+    "uuid": "a4f8b5d4-5592-4b76-b2ca-9555558d45ee",
+    "created": "2022-05-08T08:57:07.058+0000",
+    "createdBy": "test",
+    "lastModified": "2022-05-18T14:02:46.210+0000",
+    "lastModifiedBy": "typek",
+    "lastLogin": null,
+    "lastAccountEdit": null,
+    "name": "test_repo",
+    "authorUUID": "cd552a6d-360a-4dc4-aebb-5a04e056788b",
+    "fileName": null,
+    "favorite": true,
+    "archived": false,
+    "description": "",
+    "uri": "",
+    "is_private": true,
+    "isPublic": true
+}
+```
+
+
+
+### Toggle Archived Repo
+
+**URL** : `/repos /{repoName} /toggleArchived `
+
+**Method** : `PUT`
+
+**Auth required** : YES (bearerAuth)
+
+**Description** : 
+
+**Parameters**
+
+| Attribute | Type | Required | Description |
+| ------ | ------ | ------ | ------ |
+| repoName | string | True | Name of the repo |
+
+
+**Request Body**
+
+
+#### Success Response
+
+**Code** : `200 OK`
+
+**Content example**
+
+No content
+
+#### Error Responses
+| Code | Message |
+| ------ | ------ |
+| 400 | The requested information is incomplete or malformed. |
+| 401 | An access token isn’t provided, or is invalid. |
+| 403 | An access token is valid, but requires more privileges |
+| 404 | Everything is okay, but the resource doesn’t exist. |
+| 422 | The requested information is okay, but invalid |
+| 500 | The servers are not working as expected. |
+
+**Content**
+(application/json):
+
+```json
+{
+    "@id": "1",
+    "uuid": "a4f8b5d4-5592-4b76-b2ca-9555558d45ee",
+    "created": "2022-05-08T08:57:07.058+0000",
+    "createdBy": "test",
+    "lastModified": "2022-05-18T14:02:46.210+0000",
+    "lastModifiedBy": "typek",
+    "lastLogin": null,
+    "lastAccountEdit": null,
+    "name": "test_repo",
+    "authorUUID": "cd552a6d-360a-4dc4-aebb-5a04e056788b",
+    "fileName": null,
+    "favorite": true,
+    "archived": false,
+    "description": "",
+    "uri": "",
+    "is_private": true,
+    "isPublic": true
+}
+```
+
+
+
+### Get All Repos Associated With User
+
+**URL** : `/repos /userAssociated `
+
+**Method** : `PUT`
+
+**Auth required** : YES (bearerAuth)
+
+**Description** : 
+
+**Parameters**
+
+No parameters
+
+
+**Request Body**
+
+#### Success Response
+
+**Code** : `200 OK`
+
+**Content example**
+
+No content
+
+#### Error Responses
+| Code | Message |
+| ------ | ------ |
+| 400 | The requested information is incomplete or malformed. |
+| 401 | An access token isn’t provided, or is invalid. |
+| 403 | An access token is valid, but requires more privileges |
+| 404 | Everything is okay, but the resource doesn’t exist. |
+| 422 | The requested information is okay, but invalid |
+| 500 | The servers are not working as expected. |
+
+**Content**
+
+
+
+### Get All For Current Organization
+
+**URL** : `/repos /org `
+
+**Method** : `PUT`
+
+**Auth required** : YES (bearerAuth)
+
+**Description** : 
+
+
+**Parameters**
+
+
+**Request Body**
+
+
+#### Success Response
+
+**Code** : `200 OK`
+
+**Content example**
+
+No content
+
+#### Error Responses
+| Code | Message |
+| ------ | ------ |
+| 400 | The requested information is incomplete or malformed. |
+| 401 | An access token isn’t provided, or is invalid. |
+| 403 | An access token is valid, but requires more privileges |
+| 404 | Everything is okay, but the resource doesn’t exist. |
+| 422 | The requested information is okay, but invalid |
+| 500 | The servers are not working as expected. |
+
+**Content**
+
+
+
+
+
+### Get All Public Repos Except Current User's Repos
+
+**URL** : `/repos /allPublic `
+
+**Method** : `PUT`
+
+**Auth required** : YES (bearerAuth)
+
+**Description** : 
+
+**Parameters**
+
+
+**Request Body**
+
+
+#### Success Response
+
+**Code** : `200 OK`
+
+**Content example**
+
+No content
+
+#### Error Responses
+| Code | Message |
+| ------ | ------ |
+| 400 | The requested information is incomplete or malformed. |
+| 401 | An access token isn’t provided, or is invalid. |
+| 403 | An access token is valid, but requires more privileges |
+| 404 | Everything is okay, but the resource doesn’t exist. |
+| 422 | The requested information is okay, but invalid |
+| 500 | The servers are not working as expected. |
+
+**Content**
+
+
+
 
 ## Systemverilogparser
 

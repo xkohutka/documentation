@@ -1123,6 +1123,7 @@ No content
 (application/json):
 
 ```json
+{
 	"content":[
 		{"@id":"1",
 		"uuid":"1266715a-7ed5-4432-9b63-951d9d741577",
@@ -1186,7 +1187,8 @@ No content
 	"size":3,
 	"numberOfElements":3,
 	"first":true,
-	"empty":false
+	"empty":false}
+	
 	}
 ```
 

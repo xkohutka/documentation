@@ -1,0 +1,5 @@
+sudo docker exec -it asicde-docker-master_db_1 /bin/bash
+psql -U asicde
+SELECT * FROM core.user;
+SELECT * FROM core.user_role;
+UPDATE core.user_role SET role = 'ADMIN' WHERE user_id = 9;

@@ -93,8 +93,8 @@ No parameters
     "username": "[username]",
     "password": "[password]",
     "email":"[email]",
-    "firstname":"[first name]",
-    "lastname":"[last name]",
+    "firstName":"[first name]",
+    "lastName":"[last name]",
     "descritpion":"[description]"
 }
 ```

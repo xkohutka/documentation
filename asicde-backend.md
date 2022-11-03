@@ -76,8 +76,8 @@ In order to run the Spring Boot projects, you first need to install projects usi
   2. [api](https://github.com/ASICDE/asicde-api)
   3. [backend](https://github.com/ASICDE/asicde-backend)
 
-
-(**Recomended:**) run maven commands in console as you may need some [additional arguments](https://maven.apache.org/plugins-archives/maven-surefire-plugin-2.12.4/examples/skipping-test.html). You can also install dependencies using IntelliJ (more on this later)
+### Install Maven dependecies using console
+(**Recomended:**) run maven commands in console as you may need some [additional arguments](https://maven.apache.org/plugins-archives/maven-surefire-plugin-2.12.4/examples/skipping-test.html). You can also install dependencies using IntelliJ (more on this later). This generates deployable and executable binaries, which can be found in the `{moduleName}/target` folder, or in your Maven repository folder.
 
 ```bash
 cd asicde-parent/
@@ -92,29 +92,46 @@ mvn clean
 mvn install #alternatively try: mvn install -DskipTests
 ```
 
+### (Optional) Install Maven dependecies using IntelliJ
+- **Skip this step if you have already install dependencies using console.** 
+- To install the project dependencies using Maven, you need to follow these steps:
+  - Open Maven tab in the side menu and select the project with (root) label.
+  - Select Lifecycle goals `clean` and `install`
+    ![Maven build options](resources/mvn-install.png)
+  - Run the selected goals using `Run Maven Build` button.
+  - The IDE should automatically open a console window, indicating the build status and results.
+
+
+## Run application
+1. Open directory (ASICDE) with all three project in IntelliJ IDE. 
+2. Wait until all files are loaded
+3. Load / allow all IntelliJ popus and recomendations
+4. Edit run configuration:
+    -  ![Spring Boot (Java Application) run configuration](resources/intelliJ-configuration.png)
+    - **Important:** set active profiles to: 'local,default'
+    -  ![Spring Boot (Java Application) active profiles](resources/set-active-profiles.png)
+5. Run the app (may require multiple popups to be enabled)
+    - There should be no errors in the console
+    - The database should contain all the tables:
+        - Check schema core, there should be more than 10 tables.
+6. You're ready to [>> TODO: start development](tba) or [>> TODO: start testing](tba)
+
+
+## (Optional) Connect to DB in IntelliJ
+1. Go to database menu:
+    -  ![Spring Boot (Java Application) run configuration](resources/connect-to-db.png)
+2. Connect to DB with credential {username: 'asicde', password: 'password'} 
+    -  ![Spring Boot (Java Application) run configuration](resources/connect-to-db2.png)
+3. Download missing drivers
+4. Test connection / Apply
+5. Select asicde database and all its schemas
+
+
+# Additional information
 
 ## Module pre-requisites
 - Build asicde-parent and asicde-api Maven projects 
     - Some projects are using Swagger-generated API and models, which need to be generated in binary form, as the backend modules are utilizing those. 
-
-## Installation, build
-
-Primarily, make sure you have every prerequisite installed and running correctly. 
-To build the project, use following command in the project root folder:
-
-```bash
-mvn clean install 
-```
-This generates deployable and executable binaries, which can be found in the `{moduleName}/target` folder, or in your Maven repository folder.
-
-## Running the application
-
-In order to make Spring framework work correctly, set it's profiles to 'local' and 'default' - this loads the correct application context, with application properties injected in the code. 
-To run the core application, simply execute the Spring boot application defined in AsicdeCoreApplication class. 
-
-See [dev environment setup page](https://github.com/ASICDE/documentation/blob/master/dev-environment-setup.md) for additional application build and running information.
-
-As for other modules, set the correct profiles (default, local) and launch the application. 
 
 ## Application launch
 

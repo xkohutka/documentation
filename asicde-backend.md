@@ -39,9 +39,59 @@ Contains all necessary source code artifacts to run backend features (API, parse
 - [IntelliJ IDEA](https://www.jetbrains.com/idea/download/) 
     - This guide is primarily centered on this IDE, as is offers integrated utilities for all necessary frameworks
     - (Optional) [Create Jetbrains student account](https://www.jetbrains.com/shop/eform/students) if you don't have one yet
-    - (Optional) Download and use Ultimate version, login with your account
+    - (Optional) Download and use **Ultimate version**, login with your account
 - (Optional) [Docker](https://www.docker.com/)
     - Containerization of the Java application. You may need Docker for other ASICDE projects, however you don't need Docker to run java backend
+
+# Setting up a development environment
+This section describes the process of setting up a development environment for Java backend of ASICDE project.
+
+
+## Prerequisites
+Make sure you set all [prerequisites](#prerequisites-for-java-backend-development-without-docker)
+
+
+## Clone all backend repositories
+It is advised to create one directory as your workspace, where you will clone all of the project repositories, so let's create it.
+```bash
+mkdir ASICDE
+cd ASICDE
+```
+
+
+**Important:** make sure that you're using current branch of the project (master should work, else try dev). Don't forget to [checkout to your branch](https://www.git-tower.com/learn/git/commands/git-checkout/) when you start developing. [>> Learn more about branches in ASICDE project](dev-lifecycle.md)
+
+
+Now navigate to your ACIDE directory then clone all backend repositories:
+
+```bash
+git clone https://github.com/ASICDE/asicde-parent.git
+git clone https://github.com/ASICDE/asicde-api.git
+git clone https://github.com/ASICDE/asicde-backend.git
+```
+
+## Install Maven dependencies
+In order to run the Spring Boot projects, you first need to install projects using Maven in the following order:
+  1. [parent](https://github.com/ASICDE/asicde-parent/)
+  2. [api](https://github.com/ASICDE/asicde-api)
+  3. [backend](https://github.com/ASICDE/asicde-backend)
+
+
+(**Recomended:**) run maven commands in console as you may need some [additional arguments](https://maven.apache.org/plugins-archives/maven-surefire-plugin-2.12.4/examples/skipping-test.html). You can also install dependencies using IntelliJ (more on this later)
+
+```bash
+cd asicde-parent/
+mvn clean
+mvn install
+cd ..
+cd asicde-api/
+mvn clean
+mvn install
+cd ..
+mvn clean
+mvn install #alternatively try: mvn install -DskipTests
+```
+
 
 ## Module pre-requisites
 - Build asicde-parent and asicde-api Maven projects 

@@ -114,7 +114,7 @@ mvn install #alternatively try: mvn install -DskipTests
     - There should be no errors in the console
     - The database should contain all the tables:
         - Check schema core, there should be more than 10 tables.
-6. You're ready to [>> TODO: start development](tba) or [>> TODO: start testing](tba)
+6. You're ready to [>> TODO: start development](tba) or [>> Start testing](asicde-backend-testing-enviroment.md)
 
 
 ## (Optional) Connect to DB in IntelliJ

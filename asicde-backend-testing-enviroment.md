@@ -20,7 +20,7 @@ By default, there is empty database. We must create user to make other requests:
     - Backend is running on port 8080 on localhost:
         1. Use `http://127.0.0.1:8080/api/auth/users` as URL
         2. **Important:** select method POST 
-        3. Fill Body with raw -> JSON information about new user:
+        3. Fill Body (raw -> JSON) with information about new user:
             ```json
             {
                 "username": "username",
@@ -61,4 +61,4 @@ To get information about user, authorization is required. Use URL: `http://127.0
 3. JSON response should contain multiple parameters about user. 
 
 # Testing API
-Use Postman for testing backend API. [>> Show me ASICDE API](#asicde-api.md)
+Use Postman for testing backend API. [>> Show me ASICDE API](asicde-api.md)

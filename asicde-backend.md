@@ -88,9 +88,13 @@ cd asicde-api/
 mvn clean
 mvn install
 cd ..
+cd asicde-backend/
 mvn clean
 mvn install #alternatively try: mvn install -DskipTests
 ```
+
+*If you come across an error with the `spotify` package, you can try specifying the version in `ascide-backend/core/pom.xml` like so:* 
+![image](https://user-images.githubusercontent.com/45385678/200171575-c0fc877d-e7a8-4b6a-9af7-590c7ff45c48.png)
 
 ### (Optional) Install Maven dependecies using IntelliJ
 - **Skip this step if you have already install dependencies using console.** 

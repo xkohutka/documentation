@@ -15,7 +15,7 @@ In your project folder, clone all of these repositories:
 
 ```bash
 git clone -b local-dev https://github.com/ASICDE/asicde-router.git
-git clone -b local-dev https://github.com/ASICDE/asicde-docker.git
+git clone -b docker-dev https://github.com/ASICDE/asicde-docker.git
 git clone https://github.com/ASICDE/asicde-chat.git
 git clone https://github.com/ASICDE/asicde-collab.git
 git clone -b dev https://github.com/ASICDE/asicde-parent.git

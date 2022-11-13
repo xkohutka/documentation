@@ -13,7 +13,7 @@ This repository holds the documentation for various dependencies of this project
 - [ASICDE.org website `website`](website.md)
 
 ## Installation guides
-
+- [Docker local environment setup](dev-environment-docker-setup.md)
 - [How to setup a development environment](dev-environment-setup.md)
 - [Server setup](server-setup.md)
 

@@ -14,12 +14,13 @@ This repository holds the documentation for various dependencies of this project
 
 ## Installation guides
 
-- [How to setup a development environment](dev-environment-setup.md)
+- [How to setup a backend development environment](https://github.com/xkohutka/documentation/wiki/3.-Backend#setting-up-a-development-environment) 
+- [How to setup a development environment (old)](dev-environment-setup.md)
 - [Server setup](server-setup.md)
 
 ## Development guides
 
-- [Development lifecycle](dev-lifecycle.md)
+- [Development lifecycle]([dev-lifecycle.md](https://github.com/xkohutka/documentation/wiki/1.-Developer-guide-and-lifecycle))
 
 ## Deployment guides
 

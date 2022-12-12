@@ -4,13 +4,14 @@
 
 # ASICDE project website
 
-This project contains the official website for the ASICDE project. You can visit the site over at [www.asicde.org](https://www.asicde.org).
+This project contains the official website for the ASICDE project.
 
 ## Requirements
 
 The website is build with the ReactJS framework. To build it on your own, you will need the following prerequisites:
 
 - [NodeJS](https://nodejs.org/en/download/) (verify if you have access to `nodejs` and `npm` commands)
+	- Recommended version 14.21.1
 - (Optional) [Docker](https://docs.docker.com/desktop/) - for deployment of Docker image
 
 ## Building the web application

@@ -1,12 +1,27 @@
 [<< Return to documentation overview](README.md)
 
 
+
+
 # Server setup
 [Old version](dev-stack-installation.md)
 
-## 1. Preparation
-- Configure SSH keys for you VM to enable remote access
-- Download and install Putty (on Windows) SSH client
+## 1a. Preparation
+- Configure SSH keys for your VM to enable remote access
+- Download and install Putty (https://www.putty.org/) or any other SSH client
+- Optional - download and install FileZilla (https://filezilla-project.org/) 
+
+## 1b. Hardware 
+
+- Motherboard : GIGABYTE Z690 AORUS ELITE AX
+- CPU : Intel Core i9-13900K
+- CPU Cooler : Noctua NH-U12A
+- RAM : Crucial 64GB Kit (2 x 32GB) DDR5-4800 UDIMM CT2K32G48C40U5
+- SSD : Seagate FireCuda 530 4 TB Heatsink
+- PSU : Corsair RM850
+- Case : Fractal Design Torrent
+
+- Hardware access shall be provided by organization ( FIIT STU )
 
 ### Updating the Ubuntu installation
 
@@ -19,6 +34,10 @@ Connect to your Ubuntu VM and update the system
   - Keep local versions of configs
   - Remove old packages
   - Reboot
+  
+Possible use of stable versions
+- Ubuntu 18.04.6 LTS
+- Ubuntu 16.04.7 LTS
   
 ### Installing required packages
 

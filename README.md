@@ -1,5 +1,7 @@
 # ASICDE - SystemVerilog WEB IDE
 
+> :warning: This is legacy documentation repository. Try to use [wiki](https://github.com/xkohutka/documentation/wiki) page in this repository instead. 
+
 This repository holds the documentation for various dependencies of this project as well as some development, installation and deployment guides.
 
 ## Code documentation

@@ -29,6 +29,7 @@ This will build image with the name `syn`. No additional configuration is needed
 
 #### Main parts of the image
 `Dockerfile` - defines the image
+
 `syn.py` - Python script that runs the synthesis in container's console and communicates with BE (core).
 
 ## Production use

@@ -12,6 +12,7 @@ This repository holds the documentation for various dependencies of this project
 - [Frontend `asicde-frontend`](asicde-frontend.md)
 - [Project parent `asicde-parent`](asicde-parent.md)
 - [Orchestrator / router `asicde-router`](asicde-router.md)
+- [HDL Synthsis + place-and-route  `asicde-synthesis`](asicde-synthesis.md)
 - [ASICDE.org website `website`](website.md)
 
 ## Installation guides
